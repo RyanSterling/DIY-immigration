@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+/* Import Google Fonts - Libre Baskerville for headlines */
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
+
+/* Söhne font family */
+/* buch = book/light weight for body text and descriptions */
+@font-face {
+  font-family: 'Soehne';
+  src: url('/fonts/soehne-buch.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* kraftig = medium weight for emphasis and labels */
+@font-face {
+  font-family: 'Soehne';
+  src: url('/fonts/soehne-kraftig.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* dreiviertelfett = semi-bold for headings */
+@font-face {
+  font-family: 'Soehne';
+  src: url('/fonts/soehne-dreiviertelfett.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Soehne';
+  src: url('/fonts/soehne-dreiviertelfett.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Base styles */
+body {
+  font-family: 'Soehne', sans-serif;
+  background-color: #EEEEEF;
+  color: #1E1F1C;
+  margin: 0;
+  padding: 0;
+}
+
+/* Heading font */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Libre Baskerville', serif;
+}

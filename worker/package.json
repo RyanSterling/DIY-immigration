@@ -1,0 +1,18 @@
+{
+  "name": "immigration-diy-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker API for Immigration DIY Visa Assessment",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.20.0",
+    "@supabase/supabase-js": "^2.89.0",
+    "hono": "^4.0.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.56.0"
+  }
+}
