@@ -105,7 +105,7 @@ export default function Dashboard() {
         {/* Quick Actions */}
         <div className="grid md:grid-cols-2 gap-4 mb-8">
           <button
-            onClick={() => navigate('/k1')}
+            onClick={() => navigate('/assessment/k1')}
             className="p-6 rounded-lg text-left transition-all hover:shadow-md"
             style={{ backgroundColor: 'white', border: '1px solid #E6E4E1' }}
           >
@@ -117,7 +117,7 @@ export default function Dashboard() {
             </p>
           </button>
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/assessment')}
             className="p-6 rounded-lg text-left transition-all hover:shadow-md"
             style={{ backgroundColor: 'white', border: '1px solid #E6E4E1' }}
           >
@@ -149,7 +149,7 @@ export default function Dashboard() {
                 You haven't completed any assessments yet.
               </p>
               <button
-                onClick={() => navigate('/k1')}
+                onClick={() => navigate('/assessment/k1')}
                 className="px-6 py-2 rounded-full transition-all hover:opacity-90"
                 style={{ backgroundColor: '#1E3A5F', color: 'white', fontFamily: 'Soehne, sans-serif' }}
               >

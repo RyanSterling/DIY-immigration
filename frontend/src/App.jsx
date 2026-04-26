@@ -1,7 +1,8 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Show, RedirectToSignIn } from '@clerk/react';
 import QuizContainer from './components/quiz/QuizContainer';
 import K1QuizContainer from './components/quiz/K1QuizContainer';
+import LandingPage from './pages/LandingPage';
 import Privacy from './pages/Privacy';
 import Dashboard from './pages/Dashboard';
 import K1Dashboard from './pages/K1Dashboard';
@@ -13,18 +14,21 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/assessment" element={
           <>
             <QuizContainer />
             <Footer />
           </>
         } />
-        <Route path="/k1" element={
+        <Route path="/assessment/k1" element={
           <>
             <K1QuizContainer />
             <Footer />
           </>
         } />
+        {/* Backward compatibility redirect */}
+        <Route path="/k1" element={<Navigate to="/assessment/k1" replace />} />
         <Route path="/privacy" element={
           <>
             <Privacy />
