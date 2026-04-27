@@ -4,7 +4,7 @@ import QuizContainer from './components/quiz/QuizContainer';
 import K1QuizContainer from './components/quiz/K1QuizContainer';
 import LandingPage from './pages/LandingPage';
 import Privacy from './pages/Privacy';
-import Dashboard from './pages/Dashboard';
+import AccountPage from './pages/AccountPage';
 import K1Dashboard from './pages/K1Dashboard';
 import VisaDashboard from './pages/VisaDashboard';
 import Footer from './components/shared/Footer';
@@ -59,17 +59,19 @@ function App() {
             </Show>
           </>
         } />
-        <Route path="/dashboard" element={
+        {/* Account page with sidebar */}
+        <Route path="/account" element={
           <>
             <Show when="signed-in">
-              <Dashboard />
-              <Footer />
+              <AccountPage />
             </Show>
             <Show when="signed-out">
               <RedirectToSignIn />
             </Show>
           </>
         } />
+        {/* Redirect old dashboard to account */}
+        <Route path="/dashboard" element={<Navigate to="/account" replace />} />
       </Routes>
     </BrowserRouter>
   );

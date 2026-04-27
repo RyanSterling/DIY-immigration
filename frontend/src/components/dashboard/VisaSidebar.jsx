@@ -265,7 +265,7 @@ export default function VisaSidebar({
           <div className="flex items-center gap-3">
             <UserButton afterSignOutUrl="/" />
             <Link
-              to="/dashboard"
+              to="/account"
               style={{
                 fontFamily: 'Soehne, sans-serif',
                 fontSize: '0.875rem',

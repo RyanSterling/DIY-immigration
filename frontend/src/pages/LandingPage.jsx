@@ -32,7 +32,7 @@ export default function LandingPage() {
               isSignedIn ? (
                 <div className="flex items-center gap-3">
                   <Link
-                    to="/dashboard"
+                    to="/account"
                     style={{
                       fontFamily: 'Soehne, sans-serif',
                       fontSize: '0.875rem',
@@ -40,7 +40,7 @@ export default function LandingPage() {
                       textDecoration: 'none'
                     }}
                   >
-                    Dashboard
+                    My Account
                   </Link>
                   <UserButton afterSignOutUrl="/" />
                 </div>
