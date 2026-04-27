@@ -102,32 +102,80 @@ export default function Dashboard() {
           Track your visa assessments and application progress.
         </p>
 
-        {/* Quick Actions */}
-        <div className="grid md:grid-cols-2 gap-4 mb-8">
-          <button
-            onClick={() => navigate('/assessment/k1')}
-            className="p-6 rounded-lg text-left transition-all hover:shadow-md"
-            style={{ backgroundColor: 'white', border: '1px solid #E6E4E1' }}
-          >
-            <h3 style={{ fontFamily: 'Soehne, sans-serif', fontWeight: '600', color: '#1E3A5F', marginBottom: '0.5rem' }}>
-              K-1 Fiancé Visa Assessment
-            </h3>
-            <p style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.875rem', color: '#77716E' }}>
-              Check your eligibility for a K-1 fiancé visa
-            </p>
-          </button>
-          <button
-            onClick={() => navigate('/assessment')}
-            className="p-6 rounded-lg text-left transition-all hover:shadow-md"
-            style={{ backgroundColor: 'white', border: '1px solid #E6E4E1' }}
-          >
-            <h3 style={{ fontFamily: 'Soehne, sans-serif', fontWeight: '600', color: '#1E3A5F', marginBottom: '0.5rem' }}>
-              Work Visa Assessment
-            </h3>
-            <p style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.875rem', color: '#77716E' }}>
-              Explore H-1B, L-1, O-1, and other work visa options
-            </p>
-          </button>
+        {/* My Applications */}
+        <div className="mb-8">
+          <h2 style={{
+            fontFamily: 'Libre Baskerville, serif',
+            fontSize: '1.25rem',
+            color: '#1E1F1C',
+            marginBottom: '1rem'
+          }}>
+            My Applications
+          </h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <button
+              onClick={() => navigate('/visa/k1')}
+              className="p-6 rounded-lg text-left transition-all hover:shadow-md"
+              style={{ backgroundColor: '#1E3A5F', border: 'none' }}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span
+                  className="px-2 py-0.5 rounded text-xs"
+                  style={{
+                    backgroundColor: 'rgba(255,255,255,0.2)',
+                    color: 'white',
+                    fontFamily: 'Soehne, sans-serif'
+                  }}
+                >
+                  DIY GUIDE
+                </span>
+              </div>
+              <h3 style={{ fontFamily: 'Soehne, sans-serif', fontWeight: '600', color: 'white', marginBottom: '0.5rem' }}>
+                K-1 Fiancé Visa
+              </h3>
+              <p style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.875rem', color: 'rgba(255,255,255,0.8)' }}>
+                Step-by-step application guidance
+              </p>
+            </button>
+          </div>
+        </div>
+
+        {/* Take an Assessment */}
+        <div className="mb-8">
+          <h2 style={{
+            fontFamily: 'Libre Baskerville, serif',
+            fontSize: '1.25rem',
+            color: '#1E1F1C',
+            marginBottom: '1rem'
+          }}>
+            Take an Assessment
+          </h2>
+          <div className="grid md:grid-cols-2 gap-4">
+            <button
+              onClick={() => navigate('/assessment/k1')}
+              className="p-6 rounded-lg text-left transition-all hover:shadow-md"
+              style={{ backgroundColor: 'white', border: '1px solid #E6E4E1' }}
+            >
+              <h3 style={{ fontFamily: 'Soehne, sans-serif', fontWeight: '600', color: '#1E3A5F', marginBottom: '0.5rem' }}>
+                K-1 Fiancé Visa Assessment
+              </h3>
+              <p style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.875rem', color: '#77716E' }}>
+                Check your eligibility for a K-1 fiancé visa
+              </p>
+            </button>
+            <button
+              onClick={() => navigate('/assessment')}
+              className="p-6 rounded-lg text-left transition-all hover:shadow-md"
+              style={{ backgroundColor: 'white', border: '1px solid #E6E4E1' }}
+            >
+              <h3 style={{ fontFamily: 'Soehne, sans-serif', fontWeight: '600', color: '#1E3A5F', marginBottom: '0.5rem' }}>
+                Work Visa Assessment
+              </h3>
+              <p style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.875rem', color: '#77716E' }}>
+                Explore H-1B, L-1, O-1, and other work visa options
+              </p>
+            </button>
+          </div>
         </div>
 
         {/* Assessment History */}
