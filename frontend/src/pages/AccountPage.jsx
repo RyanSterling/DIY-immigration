@@ -298,7 +298,7 @@ export default function AccountPage() {
                 color: '#77716E',
                 marginBottom: '2rem'
               }}>
-                View your past assessments and results.
+                Your most recent assessment results.
               </p>
 
               {isLoading ? (
@@ -319,121 +319,167 @@ export default function AccountPage() {
                   </button>
                 </div>
               ) : (
-                <div className="space-y-4">
-                  {assessments.map((assessment) => {
-                    // Get top recommended visas from results
-                    const visaResults = assessment.visa_eligibility_results || [];
-                    const topVisa = visaResults[0];
-                    const isK1Assessment = assessment.k1_answers !== null;
-                    const topVisaInfo = topVisa ? VISA_TYPES[topVisa.visa_type_id] : null;
-                    const purchased = topVisa ? isPurchased(topVisa.visa_type_id) : false;
+                <div className="space-y-6">
+                  {/* Filter to most recent assessment per type (K-1 vs Work) */}
+                  {(() => {
+                    const mostRecentK1 = assessments.find(a => a.k1_answers !== null);
+                    const mostRecentWork = assessments.find(a => a.k1_answers === null);
+                    const uniqueAssessments = [mostRecentK1, mostRecentWork].filter(Boolean);
 
-                    return (
-                      <div
-                        key={assessment.id}
-                        className="rounded-lg p-6"
-                        style={{ backgroundColor: 'white', border: '1px solid #E6E4E1' }}
-                      >
-                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                          {/* Assessment info */}
-                          <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-2">
-                              <div
-                                className="w-10 h-10 rounded-full flex items-center justify-center"
-                                style={{ backgroundColor: isK1Assessment ? '#FEE2E2' : '#DBEAFE' }}
-                              >
-                                {isK1Assessment ? (
-                                  <svg className="w-5 h-5" fill="none" stroke="#991B1B" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                                  </svg>
-                                ) : (
-                                  <svg className="w-5 h-5" fill="none" stroke="#1E40AF" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                  </svg>
-                                )}
-                              </div>
-                              <div>
-                                <p style={{ fontFamily: 'Soehne, sans-serif', fontWeight: '600', color: '#1E1F1C' }}>
-                                  {isK1Assessment ? 'K-1 Fiancé Visa Assessment' : 'Work Visa Assessment'}
-                                </p>
-                                <p style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.875rem', color: '#77716E' }}>
-                                  {new Date(assessment.created_at).toLocaleDateString('en-US', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric'
-                                  })}
-                                </p>
-                              </div>
-                            </div>
+                    return uniqueAssessments.map((assessment) => {
+                      const visaResults = assessment.visa_eligibility_results || [];
+                      const topVisa = visaResults[0];
+                      const isK1Assessment = assessment.k1_answers !== null;
+                      const topVisaInfo = topVisa ? VISA_TYPES[topVisa.visa_type_id] : null;
+                      const purchased = topVisa ? isPurchased(topVisa.visa_type_id) : false;
 
-                            {/* Top result badge */}
-                            {topVisa && topVisaInfo && (
-                              <div className="flex items-center gap-2 mt-3">
-                                <span style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.75rem', color: '#77716E' }}>
-                                  Top match:
-                                </span>
-                                <span
-                                  className="px-2 py-1 rounded text-xs"
-                                  style={{
-                                    backgroundColor: '#F3F4F6',
-                                    color: '#1E1F1C',
-                                    fontFamily: 'Soehne, sans-serif',
-                                    fontWeight: '500'
-                                  }}
+                      // Get strengths and challenges from the result
+                      const strengths = topVisa?.key_strengths || [];
+                      const challenges = topVisa?.key_challenges || [];
+
+                      return (
+                        <div
+                          key={assessment.id}
+                          className="rounded-xl overflow-hidden"
+                          style={{ backgroundColor: 'white', border: '1px solid #E6E4E1' }}
+                        >
+                          {/* Header */}
+                          <div
+                            className="p-6"
+                            style={{ backgroundColor: '#1E3A5F' }}
+                          >
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center gap-3">
+                                <div
+                                  className="w-10 h-10 rounded-full flex items-center justify-center"
+                                  style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}
                                 >
-                                  {topVisaInfo.name}
-                                </span>
+                                  {isK1Assessment ? (
+                                    <svg className="w-5 h-5" fill="none" stroke="white" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                    </svg>
+                                  ) : (
+                                    <svg className="w-5 h-5" fill="none" stroke="white" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                  )}
+                                </div>
+                                <div>
+                                  <h3 style={{ fontFamily: 'Libre Baskerville, serif', fontSize: '1.25rem', color: 'white', margin: 0 }}>
+                                    {topVisaInfo?.name || (isK1Assessment ? 'K-1 Fiancé Visa' : 'Work Visa')}
+                                  </h3>
+                                  <p style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.875rem', color: 'rgba(255,255,255,0.7)', margin: 0 }}>
+                                    Assessed {new Date(assessment.created_at).toLocaleDateString('en-US', {
+                                      month: 'long',
+                                      day: 'numeric',
+                                      year: 'numeric'
+                                    })}
+                                  </p>
+                                </div>
+                              </div>
+                              {topVisa && (
                                 <span
-                                  className="px-2 py-0.5 rounded-full text-xs"
+                                  className="px-3 py-1 rounded-full text-sm font-medium"
                                   style={{
-                                    backgroundColor: topVisa.likelihood_rating === 'high' ? '#D1FAE5' :
-                                                   topVisa.likelihood_rating === 'medium' ? '#FEF3C7' : '#FEE2E2',
-                                    color: topVisa.likelihood_rating === 'high' ? '#065F46' :
-                                          topVisa.likelihood_rating === 'medium' ? '#92400E' : '#991B1B',
+                                    backgroundColor: topVisa.likelihood_rating === 'high' ? '#166534' :
+                                                   topVisa.likelihood_rating === 'medium' ? '#B45309' : '#991B1B',
+                                    color: 'white',
                                     fontFamily: 'Soehne, sans-serif'
                                   }}
                                 >
                                   {isK1Assessment
                                     ? (topVisa.likelihood_rating === 'high' ? 'Strong Case' :
                                        topVisa.likelihood_rating === 'medium' ? 'Good Case' : 'May Need Work')
-                                    : topVisa.likelihood_rating}
+                                    : `${topVisa.likelihood_rating.charAt(0).toUpperCase()}${topVisa.likelihood_rating.slice(1)} Likelihood`}
                                 </span>
-                              </div>
-                            )}
+                              )}
+                            </div>
                           </div>
 
-                          {/* CTA Button */}
-                          <div className="flex-shrink-0">
-                            {purchased ? (
-                              <button
-                                onClick={() => navigate(`/visa/${topVisa.visa_type_id}`)}
-                                className="px-6 py-3 rounded-lg font-medium transition-all hover:opacity-90"
-                                style={{ backgroundColor: '#1E3A5F', color: 'white', fontFamily: 'Soehne, sans-serif', border: 'none', cursor: 'pointer' }}
-                              >
-                                Continue Application
-                              </button>
-                            ) : topVisaInfo?.pricing ? (
-                              <button
-                                onClick={() => navigate(`/assessment/${isK1Assessment ? 'k1' : ''}?viewResults=${assessment.id}`)}
-                                className="px-6 py-3 rounded-lg font-medium transition-all hover:shadow-md"
-                                style={{ backgroundColor: 'white', color: '#1E3A5F', fontFamily: 'Soehne, sans-serif', border: '2px solid #1E3A5F', cursor: 'pointer' }}
-                              >
-                                View Results
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() => navigate(isK1Assessment ? '/assessment/k1' : '/assessment')}
-                                className="px-6 py-3 rounded-lg font-medium transition-all hover:shadow-md"
-                                style={{ backgroundColor: 'white', color: '#77716E', fontFamily: 'Soehne, sans-serif', border: '1px solid #E6E4E1', cursor: 'pointer' }}
-                              >
-                                Retake Assessment
-                              </button>
-                            )}
+                          {/* Results Body */}
+                          <div className="p-6">
+                            <div className="grid md:grid-cols-2 gap-6 mb-6">
+                              {/* Strengths */}
+                              {strengths.length > 0 && (
+                                <div>
+                                  <h4 style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.75rem', color: '#77716E', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.75rem' }}>
+                                    Your Strengths
+                                  </h4>
+                                  <ul className="space-y-2">
+                                    {strengths.slice(0, 4).map((strength, i) => (
+                                      <li key={i} className="flex items-start gap-2">
+                                        <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="#059669" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        <span style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.875rem', color: '#1E1F1C' }}>
+                                          {strength}
+                                        </span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+
+                              {/* Considerations */}
+                              {challenges.length > 0 && (
+                                <div>
+                                  <h4 style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.75rem', color: '#77716E', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.75rem' }}>
+                                    Considerations
+                                  </h4>
+                                  <ul className="space-y-2">
+                                    {challenges.slice(0, 3).map((challenge, i) => (
+                                      <li key={i} className="flex items-start gap-2">
+                                        <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="#D97706" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                        </svg>
+                                        <span style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.875rem', color: '#1E1F1C' }}>
+                                          {challenge}
+                                        </span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* CTA */}
+                            <div className="pt-4" style={{ borderTop: '1px solid #E6E4E1' }}>
+                              {purchased ? (
+                                <button
+                                  onClick={() => navigate(`/visa/${topVisa.visa_type_id}`)}
+                                  className="w-full md:w-auto px-8 py-3 rounded-lg font-medium transition-all hover:opacity-90"
+                                  style={{ backgroundColor: '#1E3A5F', color: 'white', fontFamily: 'Soehne, sans-serif', border: 'none', cursor: 'pointer' }}
+                                >
+                                  Continue Your Application
+                                </button>
+                              ) : topVisaInfo?.pricing ? (
+                                <div className="flex flex-col md:flex-row md:items-center gap-4">
+                                  <button
+                                    onClick={() => navigate(`/visa/${topVisa.visa_type_id}/pricing`)}
+                                    className="px-8 py-3 rounded-lg font-medium transition-all hover:opacity-90"
+                                    style={{ backgroundColor: '#1E3A5F', color: 'white', fontFamily: 'Soehne, sans-serif', border: 'none', cursor: 'pointer' }}
+                                  >
+                                    Start Your {topVisaInfo.name} Application
+                                  </button>
+                                  <span style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.875rem', color: '#77716E' }}>
+                                    {topVisaInfo.pricing.display} one-time
+                                  </span>
+                                </div>
+                              ) : (
+                                <button
+                                  onClick={() => navigate(isK1Assessment ? '/assessment/k1' : '/assessment')}
+                                  className="px-6 py-3 rounded-lg font-medium transition-all hover:shadow-md"
+                                  style={{ backgroundColor: 'white', color: '#1E3A5F', fontFamily: 'Soehne, sans-serif', border: '1px solid #E6E4E1', cursor: 'pointer' }}
+                                >
+                                  Retake Assessment
+                                </button>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    });
+                  })()}
                 </div>
               )}
             </>
