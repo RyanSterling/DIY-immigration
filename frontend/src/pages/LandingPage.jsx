@@ -1,14 +1,88 @@
 import { Link } from 'react-router-dom';
+import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/react';
 import Footer from '../components/shared/Footer';
 import VisaSelector from '../components/landing/VisaSelector';
 
 export default function LandingPage() {
+  const { isSignedIn, isLoaded } = useUser();
+
   const scrollToVisas = () => {
     document.getElementById('visa-selector')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#EFEDEC' }}>
+      {/* Header */}
+      <header className="px-4 py-4">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <Link
+            to="/"
+            style={{
+              fontFamily: 'Libre Baskerville, serif',
+              fontSize: '1.25rem',
+              color: '#1E3A5F',
+              textDecoration: 'none'
+            }}
+          >
+            Immigration DIY
+          </Link>
+
+          <div className="flex items-center gap-3">
+            {isLoaded && (
+              isSignedIn ? (
+                <div className="flex items-center gap-3">
+                  <Link
+                    to="/dashboard"
+                    style={{
+                      fontFamily: 'Soehne, sans-serif',
+                      fontSize: '0.875rem',
+                      color: '#1E3A5F',
+                      textDecoration: 'none'
+                    }}
+                  >
+                    Dashboard
+                  </Link>
+                  <UserButton afterSignOutUrl="/" />
+                </div>
+              ) : (
+                <>
+                  <SignInButton mode="modal">
+                    <button
+                      style={{
+                        fontFamily: 'Soehne, sans-serif',
+                        fontSize: '0.875rem',
+                        color: '#1E3A5F',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Log in
+                    </button>
+                  </SignInButton>
+                  <SignUpButton mode="modal">
+                    <button
+                      className="px-4 py-2 transition-all hover:opacity-90"
+                      style={{
+                        fontFamily: 'Soehne, sans-serif',
+                        fontSize: '0.875rem',
+                        backgroundColor: '#1E3A5F',
+                        color: 'white',
+                        borderRadius: '20px',
+                        border: 'none',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Sign up
+                    </button>
+                  </SignUpButton>
+                </>
+              )
+            )}
+          </div>
+        </div>
+      </header>
+
       {/* Hero Section */}
       <section className="flex-1 flex items-center justify-center px-4 py-16 md:py-24">
         <div className="max-w-3xl mx-auto text-center">
