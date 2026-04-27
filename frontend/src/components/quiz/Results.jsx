@@ -324,7 +324,7 @@ export default function Results({ visaResults, aiContent }) {
             </ol>
           </div>
 
-          {/* K-1 Dashboard CTA */}
+          {/* K-1 Purchase CTA */}
           {isK1 && isEligible && (
             <div style={{
               backgroundColor: '#1E3A5F',
@@ -355,7 +355,7 @@ export default function Results({ visaResults, aiContent }) {
 
               {isSignedIn ? (
                 <button
-                  onClick={() => navigate('/dashboard/k1')}
+                  onClick={() => navigate('/visa/k1/pricing')}
                   className="px-8 py-3 rounded-full font-medium transition-all hover:opacity-90"
                   style={{
                     backgroundColor: 'white',
@@ -365,10 +365,10 @@ export default function Results({ visaResults, aiContent }) {
                     cursor: 'pointer'
                   }}
                 >
-                  Go to My Dashboard
+                  Get Started - $400
                 </button>
               ) : (
-                <SignUpButton mode="modal" forceRedirectUrl="/dashboard/k1">
+                <SignUpButton mode="modal" forceRedirectUrl="/visa/k1/pricing">
                   <button
                     className="px-8 py-3 rounded-full font-medium transition-all hover:opacity-90"
                     style={{
@@ -379,10 +379,19 @@ export default function Results({ visaResults, aiContent }) {
                       cursor: 'pointer'
                     }}
                   >
-                    Create Free Account to Continue
+                    Create Account to Get Started - $400
                   </button>
                 </SignUpButton>
               )}
+
+              <p style={{
+                fontFamily: 'Soehne, sans-serif',
+                fontSize: '0.75rem',
+                opacity: 0.7,
+                marginTop: '1rem'
+              }}>
+                One-time purchase. Lifetime access.
+              </p>
             </div>
           )}
 

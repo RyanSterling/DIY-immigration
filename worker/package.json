@@ -10,7 +10,8 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.20.0",
     "@supabase/supabase-js": "^2.89.0",
-    "hono": "^4.0.0"
+    "hono": "^4.0.0",
+    "stripe": "^22.1.0"
   },
   "devDependencies": {
     "wrangler": "^4.56.0"

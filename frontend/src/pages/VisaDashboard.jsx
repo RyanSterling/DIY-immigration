@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams, Navigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@clerk/react';
 import { useCurrentUser, syncUserToBackend } from '../lib/auth';
 import { getVisaConfig, isValidVisaType } from '../data/visaConfigs';
@@ -18,13 +18,21 @@ import {
   fetchVisaPreferences,
   saveVisaPreferences
 } from '../lib/visaApi';
+import { checkPurchaseStatus } from '../lib/stripeApi';
 import VisaDashboardLayout from '../components/dashboard/VisaDashboardLayout';
 import VisaOnboardingModal from '../components/dashboard/VisaOnboardingModal';
 
 export default function VisaDashboard() {
   const { visaType } = useParams();
+  const [searchParams] = useSearchParams();
   const { getToken } = useAuth();
   const { user, isLoaded } = useCurrentUser();
+
+  // Purchase state
+  const [purchaseChecked, setPurchaseChecked] = useState(false);
+  const [hasPurchased, setHasPurchased] = useState(false);
+  const [showPurchaseSuccess, setShowPurchaseSuccess] = useState(false);
+  const [purchaseSuccessFromUrl, setPurchaseSuccessFromUrl] = useState(false);
 
   // Visa config (loaded dynamically)
   const [visaConfig, setVisaConfig] = useState(null);
@@ -40,6 +48,44 @@ export default function VisaDashboard() {
   const [syncComplete, setSyncComplete] = useState(false);
   const [preferences, setPreferences] = useState(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
+
+  // Check for purchase success in URL
+  useEffect(() => {
+    if (searchParams.get('purchase') === 'success') {
+      setPurchaseSuccessFromUrl(true);
+      setShowPurchaseSuccess(true);
+      // Remove the query param from URL without reload
+      window.history.replaceState({}, '', `/visa/${visaType}`);
+      // Auto-hide after 5 seconds
+      setTimeout(() => setShowPurchaseSuccess(false), 5000);
+    }
+  }, [searchParams, visaType]);
+
+  // Check purchase status after sync
+  // Backend now verifies with Stripe directly if webhook hasn't processed
+  useEffect(() => {
+    async function checkPurchase() {
+      if (!syncComplete) return;
+
+      const token = await getToken();
+
+      // If coming from successful payment, add a small delay for Stripe to finalize
+      if (purchaseSuccessFromUrl) {
+        await new Promise(resolve => setTimeout(resolve, 1500));
+      }
+
+      try {
+        const { hasPurchased: purchased } = await checkPurchaseStatus(token, visaType);
+        setHasPurchased(purchased);
+      } catch (err) {
+        console.error('Error checking purchase:', err);
+        setHasPurchased(false);
+      } finally {
+        setPurchaseChecked(true);
+      }
+    }
+    checkPurchase();
+  }, [syncComplete, getToken, visaType, purchaseSuccessFromUrl]);
 
   // Load visa config on mount or visa type change
   useEffect(() => {
@@ -77,12 +123,12 @@ export default function VisaDashboard() {
     sync();
   }, [isLoaded, user, getToken]);
 
-  // Load dashboard data after sync and config load
+  // Load dashboard data after sync, config load, and purchase verification
   useEffect(() => {
-    if (syncComplete && visaConfig) {
+    if (syncComplete && visaConfig && purchaseChecked && hasPurchased) {
       loadDashboard();
     }
-  }, [syncComplete, visaConfig]);
+  }, [syncComplete, visaConfig, purchaseChecked, hasPurchased]);
 
   async function loadDashboard() {
     try {
@@ -202,8 +248,13 @@ export default function VisaDashboard() {
     return <Navigate to="/dashboard" replace />;
   }
 
+  // Redirect to pricing if not purchased
+  if (purchaseChecked && !hasPurchased) {
+    return <Navigate to={`/visa/${visaType}/pricing`} replace />;
+  }
+
   // Loading states
-  if (!isLoaded || !syncComplete || configLoading) {
+  if (!isLoaded || !syncComplete || configLoading || !purchaseChecked) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#EEEEEF' }}>
         <div className="flex flex-col items-center gap-3">
@@ -216,6 +267,36 @@ export default function VisaDashboard() {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#EEEEEF' }}>
+      {/* Purchase success toast */}
+      {showPurchaseSuccess && (
+        <div
+          className="fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg flex items-center gap-3"
+          style={{ backgroundColor: '#D1FAE5', border: '1px solid #A7F3D0' }}
+        >
+          <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: '#059669' }}>
+            <svg className="w-5 h-5" fill="none" stroke="white" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <div>
+            <p style={{ fontFamily: 'Soehne, sans-serif', fontWeight: '600', color: '#065F46' }}>
+              Purchase successful!
+            </p>
+            <p style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.875rem', color: '#047857' }}>
+              Welcome to your DIY guide
+            </p>
+          </div>
+          <button
+            onClick={() => setShowPurchaseSuccess(false)}
+            className="ml-2 p-1 rounded hover:bg-green-200"
+          >
+            <svg className="w-4 h-4" fill="#065F46" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </button>
+        </div>
+      )}
+
       {/* Error state */}
       {error && (
         <div

@@ -5,6 +5,7 @@ import { sendWebhook } from './webhook.js';
 import { checkRateLimit } from './rateLimit.js';
 import { authMiddleware } from './auth.js';
 import { createClient } from '@supabase/supabase-js';
+import { getStripeClient, createCheckoutSession, VISA_PRICING } from './stripe.js';
 
 const app = new Hono();
 
@@ -175,24 +176,61 @@ app.get('/my-assessments', authMiddleware({ required: true }), async (c) => {
       .eq('clerk_user_id', user.clerkId)
       .single();
 
-    if (userError || !dbUser) {
-      return c.json({ assessments: [] });
+    // Query assessments by user_id if user exists in DB
+    let assessmentsByUserId = [];
+    if (dbUser) {
+      const { data, error } = await supabase
+        .from('assessments')
+        .select(`
+          *,
+          visa_eligibility_results (*)
+        `)
+        .eq('user_id', dbUser.id)
+        .order('created_at', { ascending: false });
+
+      if (!error) {
+        assessmentsByUserId = data || [];
+      }
     }
 
-    const { data: assessments, error: assessmentsError } = await supabase
-      .from('assessments')
-      .select(`
-        *,
-        visa_eligibility_results (*)
-      `)
-      .eq('user_id', dbUser.id)
-      .order('created_at', { ascending: false });
+    // Also query assessments by email (for quizzes taken before account creation)
+    // Use case-insensitive matching since emails can be stored differently
+    let assessmentsByEmail = [];
+    if (user.email) {
+      const { data, error } = await supabase
+        .from('assessments')
+        .select(`
+          *,
+          visa_eligibility_results (*)
+        `)
+        .ilike('email', user.email) // Case-insensitive email match
+        .is('user_id', null) // Only get assessments not yet linked to a user
+        .order('created_at', { ascending: false });
 
-    if (assessmentsError) {
-      throw assessmentsError;
+      if (!error) {
+        assessmentsByEmail = data || [];
+      }
+
+      // Link these assessments to the user for future queries
+      if (dbUser && assessmentsByEmail.length > 0) {
+        const assessmentIds = assessmentsByEmail.map(a => a.id);
+        await supabase
+          .from('assessments')
+          .update({ user_id: dbUser.id })
+          .in('id', assessmentIds);
+      }
     }
 
-    return c.json({ assessments: assessments || [] });
+    // Combine and deduplicate by id
+    const allAssessments = [...assessmentsByUserId, ...assessmentsByEmail];
+    const uniqueAssessments = allAssessments.filter((assessment, index, self) =>
+      index === self.findIndex(a => a.id === assessment.id)
+    );
+
+    // Sort by created_at descending
+    uniqueAssessments.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+    return c.json({ assessments: uniqueAssessments });
 
   } catch (error) {
     console.error('Error fetching assessments:', error);
@@ -232,6 +270,314 @@ app.post('/sync-user', authMiddleware({ required: true }), async (c) => {
   } catch (error) {
     console.error('Error syncing user:', error);
     return c.json({ error: 'Failed to sync user' }, 500);
+  }
+});
+
+// ============================================
+// STRIPE PAYMENT ROUTES
+// ============================================
+
+// Create Stripe Checkout session for visa purchase
+app.post('/stripe/create-checkout', authMiddleware({ required: true }), async (c) => {
+  try {
+    const user = c.get('user');
+    const { visaType, successUrl, cancelUrl } = await c.req.json();
+
+    if (!visaType) {
+      return c.json({ error: 'visaType is required' }, 400);
+    }
+
+    // Check if pricing exists for this visa type
+    if (!VISA_PRICING[visaType]) {
+      return c.json({ error: `No pricing configured for visa type: ${visaType}` }, 400);
+    }
+
+    const supabase = createClient(
+      c.env.SUPABASE_URL,
+      c.env.SUPABASE_SERVICE_KEY
+    );
+
+    // Get user's internal ID
+    const { data: dbUser, error: userError } = await supabase
+      .from('users')
+      .select('id')
+      .eq('clerk_user_id', user.clerkId)
+      .single();
+
+    if (userError || !dbUser) {
+      return c.json({ error: 'User not found' }, 404);
+    }
+
+    // Check if user already has a completed purchase for this visa
+    const { data: existingPurchase } = await supabase
+      .from('purchases')
+      .select('id')
+      .eq('user_id', dbUser.id)
+      .eq('visa_type', visaType)
+      .eq('status', 'completed')
+      .maybeSingle();
+
+    if (existingPurchase) {
+      return c.json({ error: 'Already purchased', alreadyPurchased: true }, 400);
+    }
+
+    // Create Stripe checkout session
+    const session = await createCheckoutSession(c.env, {
+      userId: dbUser.id,
+      userEmail: user.email,
+      visaType,
+      successUrl: successUrl || `${c.req.header('origin')}/visa/${visaType}?purchase=success`,
+      cancelUrl: cancelUrl || `${c.req.header('origin')}/visa/${visaType}/pricing?cancelled=true`
+    });
+
+    // Create pending purchase record
+    await supabase
+      .from('purchases')
+      .insert({
+        user_id: dbUser.id,
+        visa_type: visaType,
+        stripe_checkout_session_id: session.id,
+        amount_cents: VISA_PRICING[visaType].amountCents,
+        currency: 'usd',
+        status: 'pending'
+      });
+
+    return c.json({
+      checkoutUrl: session.url,
+      sessionId: session.id
+    });
+
+  } catch (error) {
+    console.error('Error creating checkout session:', error);
+    return c.json({ error: 'Failed to create checkout session' }, 500);
+  }
+});
+
+// Stripe webhook handler
+app.post('/stripe/webhook', async (c) => {
+  try {
+    const stripe = getStripeClient(c.env);
+    const signature = c.req.header('stripe-signature');
+
+    if (!signature) {
+      return c.json({ error: 'Missing stripe-signature header' }, 400);
+    }
+
+    // Get raw body for signature verification
+    const rawBody = await c.req.text();
+
+    let event;
+    try {
+      event = stripe.webhooks.constructEvent(
+        rawBody,
+        signature,
+        c.env.STRIPE_WEBHOOK_SECRET
+      );
+    } catch (err) {
+      console.error('Webhook signature verification failed:', err.message);
+      return c.json({ error: 'Invalid signature' }, 400);
+    }
+
+    const supabase = createClient(
+      c.env.SUPABASE_URL,
+      c.env.SUPABASE_SERVICE_KEY
+    );
+
+    // Handle the event
+    switch (event.type) {
+      case 'checkout.session.completed': {
+        const session = event.data.object;
+        const { userId, visaType } = session.metadata;
+
+        // Update purchase record to completed
+        const { error } = await supabase
+          .from('purchases')
+          .update({
+            status: 'completed',
+            stripe_payment_intent_id: session.payment_intent,
+            stripe_customer_id: session.customer,
+            purchased_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          })
+          .eq('stripe_checkout_session_id', session.id);
+
+        if (error) {
+          console.error('Error updating purchase:', error);
+        } else {
+          console.log(`Purchase completed for user ${userId}, visa ${visaType}`);
+        }
+        break;
+      }
+
+      case 'checkout.session.expired': {
+        const session = event.data.object;
+
+        // Update purchase record to failed
+        await supabase
+          .from('purchases')
+          .update({
+            status: 'failed',
+            updated_at: new Date().toISOString()
+          })
+          .eq('stripe_checkout_session_id', session.id);
+        break;
+      }
+
+      case 'charge.refunded': {
+        const charge = event.data.object;
+
+        // Update purchase record to refunded if we have payment_intent
+        if (charge.payment_intent) {
+          await supabase
+            .from('purchases')
+            .update({
+              status: 'refunded',
+              updated_at: new Date().toISOString()
+            })
+            .eq('stripe_payment_intent_id', charge.payment_intent);
+        }
+        break;
+      }
+    }
+
+    return c.json({ received: true });
+
+  } catch (error) {
+    console.error('Webhook error:', error);
+    return c.json({ error: 'Webhook handler failed' }, 500);
+  }
+});
+
+// Check purchase status for a specific visa type
+// Also verifies pending purchases with Stripe directly (webhook backup)
+app.get('/purchases/:visaType', authMiddleware({ required: true }), async (c) => {
+  try {
+    const user = c.get('user');
+    const visaType = c.req.param('visaType');
+
+    const supabase = createClient(
+      c.env.SUPABASE_URL,
+      c.env.SUPABASE_SERVICE_KEY
+    );
+
+    // Get user's internal ID
+    const { data: dbUser, error: userError } = await supabase
+      .from('users')
+      .select('id')
+      .eq('clerk_user_id', user.clerkId)
+      .single();
+
+    if (userError || !dbUser) {
+      return c.json({ hasPurchased: false });
+    }
+
+    // Check for completed purchase
+    const { data: completedPurchase } = await supabase
+      .from('purchases')
+      .select('id, purchased_at, amount_cents')
+      .eq('user_id', dbUser.id)
+      .eq('visa_type', visaType)
+      .eq('status', 'completed')
+      .maybeSingle();
+
+    if (completedPurchase) {
+      return c.json({
+        hasPurchased: true,
+        purchase: completedPurchase
+      });
+    }
+
+    // No completed purchase - check if there's a pending one and verify with Stripe
+    // This handles the case where webhook hasn't been processed yet
+    const { data: pendingPurchase } = await supabase
+      .from('purchases')
+      .select('id, stripe_checkout_session_id')
+      .eq('user_id', dbUser.id)
+      .eq('visa_type', visaType)
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (pendingPurchase?.stripe_checkout_session_id) {
+      // Check Stripe directly to see if payment completed
+      const stripe = getStripeClient(c.env);
+      try {
+        const session = await stripe.checkout.sessions.retrieve(
+          pendingPurchase.stripe_checkout_session_id
+        );
+
+        if (session.payment_status === 'paid') {
+          // Payment completed! Update our database
+          const { error: updateError } = await supabase
+            .from('purchases')
+            .update({
+              status: 'completed',
+              stripe_payment_intent_id: session.payment_intent,
+              stripe_customer_id: session.customer,
+              purchased_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', pendingPurchase.id);
+
+          if (!updateError) {
+            console.log(`Purchase verified via Stripe API for user ${dbUser.id}, visa ${visaType}`);
+            return c.json({
+              hasPurchased: true,
+              purchase: { id: pendingPurchase.id }
+            });
+          }
+        }
+      } catch (stripeError) {
+        console.error('Error checking Stripe session:', stripeError);
+      }
+    }
+
+    return c.json({
+      hasPurchased: false,
+      purchase: null
+    });
+
+  } catch (error) {
+    console.error('Error checking purchase:', error);
+    return c.json({ error: 'Failed to check purchase' }, 500);
+  }
+});
+
+// Get all user's purchases
+app.get('/my-purchases', authMiddleware({ required: true }), async (c) => {
+  try {
+    const user = c.get('user');
+
+    const supabase = createClient(
+      c.env.SUPABASE_URL,
+      c.env.SUPABASE_SERVICE_KEY
+    );
+
+    // Get user's internal ID
+    const { data: dbUser, error: userError } = await supabase
+      .from('users')
+      .select('id')
+      .eq('clerk_user_id', user.clerkId)
+      .single();
+
+    if (userError || !dbUser) {
+      return c.json({ purchases: [] });
+    }
+
+    // Get all completed purchases
+    const { data: purchases } = await supabase
+      .from('purchases')
+      .select('id, visa_type, purchased_at, amount_cents')
+      .eq('user_id', dbUser.id)
+      .eq('status', 'completed')
+      .order('purchased_at', { ascending: false });
+
+    return c.json({ purchases: purchases || [] });
+
+  } catch (error) {
+    console.error('Error fetching purchases:', error);
+    return c.json({ error: 'Failed to fetch purchases' }, 500);
   }
 });
 
@@ -599,6 +945,19 @@ app.post('/k1/preferences', authMiddleware({ required: true }), async (c) => {
 // Parameterized routes that work with any visa type
 // ============================================
 
+// Helper function to check if user has purchased a visa
+async function checkPurchase(supabase, userId, visaType) {
+  const { data: purchase } = await supabase
+    .from('purchases')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('visa_type', visaType)
+    .eq('status', 'completed')
+    .maybeSingle();
+
+  return !!purchase;
+}
+
 // Get visa dashboard summary (progress stats + latest assessment)
 app.get('/visa/:visaType/dashboard', authMiddleware({ required: true }), async (c) => {
   try {
@@ -619,6 +978,16 @@ app.get('/visa/:visaType/dashboard', authMiddleware({ required: true }), async (
 
     if (userError || !dbUser) {
       return c.json({ error: 'User not found' }, 404);
+    }
+
+    // Check if user has purchased this visa type
+    const hasPurchased = await checkPurchase(supabase, dbUser.id, visaType);
+    if (!hasPurchased) {
+      return c.json({
+        error: 'Purchase required',
+        requiresPurchase: true,
+        visaType
+      }, 403);
     }
 
     // Get visa type record
@@ -705,6 +1074,16 @@ app.get('/visa/:visaType/documents', authMiddleware({ required: true }), async (
 
     if (userError || !dbUser) {
       return c.json({ error: 'User not found' }, 404);
+    }
+
+    // Check if user has purchased this visa type
+    const hasPurchased = await checkPurchase(supabase, dbUser.id, visaType);
+    if (!hasPurchased) {
+      return c.json({
+        error: 'Purchase required',
+        requiresPurchase: true,
+        visaType
+      }, 403);
     }
 
     // Get visa type record
