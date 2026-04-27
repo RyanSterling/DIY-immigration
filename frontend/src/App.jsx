@@ -7,6 +7,7 @@ import Privacy from './pages/Privacy';
 import AccountPage from './pages/AccountPage';
 import K1Dashboard from './pages/K1Dashboard';
 import VisaDashboard from './pages/VisaDashboard';
+import VisaPricingPage from './pages/VisaPricingPage';
 import Footer from './components/shared/Footer';
 
 function App() {
@@ -37,6 +38,17 @@ function App() {
         } />
 
         {/* Protected Routes */}
+        {/* Visa pricing page */}
+        <Route path="/visa/:visaType/pricing" element={
+          <>
+            <Show when="signed-in">
+              <VisaPricingPage />
+            </Show>
+            <Show when="signed-out">
+              <RedirectToSignIn />
+            </Show>
+          </>
+        } />
         {/* Generic visa dashboard - supports any visa type via URL param */}
         <Route path="/visa/:visaType" element={
           <>
