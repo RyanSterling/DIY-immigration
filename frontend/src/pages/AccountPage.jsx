@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@clerk/react';
 import { useCurrentUser, syncUserToBackend } from '../lib/auth';
 import { VISA_TYPES } from '../data/visaTypes';
+import { getUserPurchases } from '../lib/stripeApi';
 import AccountSidebar from '../components/dashboard/AccountSidebar';
 
 const WORKER_URL = import.meta.env.VITE_WORKER_URL || 'http://localhost:8787';
@@ -18,53 +19,67 @@ export default function AccountPage() {
   const { getToken } = useAuth();
   const { user, isLoaded } = useCurrentUser();
   const [assessments, setAssessments] = useState([]);
+  const [purchases, setPurchases] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [syncComplete, setSyncComplete] = useState(false);
 
-  // For now, hardcode K-1 as the available visa application
-  // In the future, this would come from the backend based on user purchases/progress
-  const visaApplications = [
-    { type: 'k1', name: 'K-1 Fiancé Visa', progress: undefined }
-  ];
+  // Build visa applications from purchases
+  const visaApplications = purchases.map(p => ({
+    type: p.visa_type,
+    name: VISA_TYPES[p.visa_type]?.name || p.visa_type.toUpperCase(),
+    progress: undefined
+  }));
 
   // Sync user to backend on mount
   useEffect(() => {
     async function sync() {
       if (isLoaded && user) {
-        await syncUserToBackend(getToken);
+        await syncUserToBackend(getToken, user);
         setSyncComplete(true);
       }
     }
     sync();
   }, [isLoaded, user, getToken]);
 
-  // Fetch assessments after sync
+  // Fetch assessments and purchases after sync
   useEffect(() => {
-    async function fetchAssessments() {
+    async function fetchData() {
       if (!syncComplete) return;
 
       try {
         const token = await getToken();
-        const response = await fetch(`${WORKER_URL}/my-assessments`, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-        });
 
-        if (response.ok) {
-          const data = await response.json();
+        // Fetch assessments and purchases in parallel
+        const [assessmentsResponse, purchasesData] = await Promise.all([
+          fetch(`${WORKER_URL}/my-assessments`, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+          }),
+          getUserPurchases(token)
+        ]);
+
+        if (assessmentsResponse.ok) {
+          const data = await assessmentsResponse.json();
           setAssessments(data.assessments || []);
         }
+
+        setPurchases(purchasesData.purchases || []);
       } catch (error) {
-        console.error('Error fetching assessments:', error);
+        console.error('Error fetching data:', error);
       } finally {
         setIsLoading(false);
       }
     }
 
-    fetchAssessments();
+    fetchData();
   }, [syncComplete, getToken]);
+
+  // Helper to check if a visa type is purchased
+  const isPurchased = (visaType) => {
+    return purchases.some(p => p.visa_type === visaType);
+  };
 
   if (!isLoaded) {
     return (
@@ -109,6 +124,20 @@ export default function AccountPage() {
               My Visa Applications
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {visaApplications.length === 0 && !isLoading && (
+                <div
+                  className="col-span-full p-6 rounded-lg text-center"
+                  style={{ backgroundColor: '#F8F7F6', border: '1px solid #E6E4E1' }}
+                >
+                  <p style={{ fontFamily: 'Soehne, sans-serif', color: '#77716E', marginBottom: '0.5rem' }}>
+                    No active visa applications yet.
+                  </p>
+                  <p style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.875rem', color: '#77716E' }}>
+                    Take an assessment below to find the right visa for you.
+                  </p>
+                </div>
+              )}
+
               {visaApplications.map((visa) => (
                 <button
                   key={visa.type}
@@ -220,21 +249,23 @@ export default function AccountPage() {
                   No assessments yet. Take one above to get started.
                 </p>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {assessments.map((assessment) => {
-                    const topVisa = assessment.visa_eligibility_results?.[0];
-                    const visaInfo = topVisa ? VISA_TYPES[topVisa.visa_type_id] : null;
+                    // Get top recommended visas from results
+                    const visaResults = assessment.visa_eligibility_results || [];
+                    const topVisas = visaResults.slice(0, 3);
 
                     return (
                       <div
                         key={assessment.id}
-                        className="p-4 rounded-lg"
+                        className="p-5 rounded-lg"
                         style={{ backgroundColor: '#F8F7F6', border: '1px solid #E6E4E1' }}
                       >
-                        <div className="flex justify-between items-start">
+                        {/* Assessment header */}
+                        <div className="flex justify-between items-start mb-4">
                           <div>
                             <p style={{ fontFamily: 'Soehne, sans-serif', fontWeight: '600', color: '#1E1F1C' }}>
-                              {visaInfo?.name || 'Visa Assessment'}
+                              {assessment.k1_answers ? 'K-1 Visa Assessment' : 'Work Visa Assessment'}
                             </p>
                             <p style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.875rem', color: '#77716E' }}>
                               {new Date(assessment.created_at).toLocaleDateString('en-US', {
@@ -244,21 +275,74 @@ export default function AccountPage() {
                               })}
                             </p>
                           </div>
-                          {topVisa && (
-                            <span
-                              className="px-3 py-1 rounded-full text-sm"
-                              style={{
-                                backgroundColor: topVisa.likelihood_rating === 'high' ? '#D1FAE5' :
-                                               topVisa.likelihood_rating === 'medium' ? '#FEF3C7' : '#FEE2E2',
-                                color: topVisa.likelihood_rating === 'high' ? '#065F46' :
-                                      topVisa.likelihood_rating === 'medium' ? '#92400E' : '#991B1B',
-                                fontFamily: 'Soehne, sans-serif'
-                              }}
-                            >
-                              {topVisa.likelihood_rating} likelihood
-                            </span>
-                          )}
                         </div>
+
+                        {/* Top visa recommendations */}
+                        {topVisas.length > 0 && (
+                          <div>
+                            <p style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.75rem', color: '#77716E', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                              Top Matches
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              {topVisas.map((result) => {
+                                const visaInfo = VISA_TYPES[result.visa_type_id];
+                                const purchased = isPurchased(result.visa_type_id);
+                                const hasPricing = visaInfo?.pricing;
+
+                                return (
+                                  <button
+                                    key={result.id}
+                                    onClick={() => navigate(
+                                      purchased
+                                        ? `/visa/${result.visa_type_id}`
+                                        : `/visa/${result.visa_type_id}/pricing`
+                                    )}
+                                    className="flex items-center gap-2 px-3 py-2 rounded-lg transition-all hover:shadow-md"
+                                    style={{
+                                      backgroundColor: purchased ? '#1E3A5F' : 'white',
+                                      border: purchased ? 'none' : '1px solid #E6E4E1'
+                                    }}
+                                  >
+                                    <span style={{
+                                      fontFamily: 'Soehne, sans-serif',
+                                      fontSize: '0.875rem',
+                                      fontWeight: '500',
+                                      color: purchased ? 'white' : '#1E1F1C'
+                                    }}>
+                                      {visaInfo?.name || result.visa_type_id.toUpperCase()}
+                                    </span>
+                                    <span
+                                      className="px-2 py-0.5 rounded-full text-xs"
+                                      style={{
+                                        backgroundColor: result.likelihood_rating === 'high' ? '#D1FAE5' :
+                                                       result.likelihood_rating === 'medium' ? '#FEF3C7' : '#FEE2E2',
+                                        color: result.likelihood_rating === 'high' ? '#065F46' :
+                                              result.likelihood_rating === 'medium' ? '#92400E' : '#991B1B',
+                                        fontFamily: 'Soehne, sans-serif'
+                                      }}
+                                    >
+                                      {result.likelihood_rating}
+                                    </span>
+                                    {purchased ? (
+                                      <svg className="w-4 h-4" fill="none" stroke="white" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                      </svg>
+                                    ) : hasPricing ? (
+                                      <span style={{
+                                        fontFamily: 'Soehne, sans-serif',
+                                        fontSize: '0.75rem',
+                                        color: '#059669',
+                                        fontWeight: '600'
+                                      }}>
+                                        {visaInfo.pricing.display}
+                                      </span>
+                                    ) : null}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     );
                   })}

@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs ls:*)",
+      "Bash(cd:*)",
+      "Bash(npm install:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm run dev:*)",
+      "Bash(curl -s -H \"Authorization: Bearer sk_test_qnaXkekqe0lfeEvx55GYbKHDiTQo5StWQrKE3K2vd7\" \"https://api.clerk.com/v1/jwks\")",
+      "Bash(curl:*)",
+      "Bash(npm run build:*)",
+      "Bash(lsof:*)",
+      "Bash(xargs kill:*)",
+      "Bash(git add .gitignore ADDING_VISA_TYPES.md CLAUDE.md K1.md frontend/ supabase/ worker/)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial commit: US Visa Assessment & Application Platform\n\n- Quiz-based visa eligibility assessment tool\n- K-1 Fiancé visa DIY dashboard with document tracking\n- React + Vite frontend with Tailwind CSS\n- Cloudflare Workers backend with Hono\n- Supabase database with RLS policies\n- Claude API integration for AI assessments\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push -u origin main)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nFix Netlify deployment configuration\n\n- Add netlify.toml with correct base/publish directories\n- Add SPA redirect rule for React Router\n- Remove broken favicon reference\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push)",
+      "Bash(npm run deploy)",
+      "Bash(npx wrangler secret put:*)",
+      "Bash(cd /Users/ryansterling/Desktop/Code\\\\ Projects/immigration-diy/worker && npx wrangler secret list:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd login/signup buttons to landing page header\n\n- Show Log in and Sign up buttons for unauthenticated users\n- Show Dashboard link and UserButton for authenticated users\n- Uses Clerk modal authentication\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit:*)",
+      "Bash(stripe:*)",
+      "Bash(git push origin main)",
+      "Bash(cd /Users/ryansterling/Desktop/Code\\\\ Projects/immigration-diy/worker && wrangler secret list:*)",
+      "Bash(npx supabase:*)",
+      "Bash(DELETE FROM purchases WHERE visa_type = 'k1')",
+      "Bash(__NEW_LINE_1a82791a3551dc17__ EOF)"
+    ]
+  }
+}

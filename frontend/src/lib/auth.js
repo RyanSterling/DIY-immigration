@@ -54,8 +54,10 @@ export function useCurrentUser() {
 /**
  * Sync user to backend after sign-in
  * Call this after successful authentication to ensure user exists in database
+ * @param {Function} getToken - Function to get auth token
+ * @param {Object} userData - User data from Clerk (email, firstName, lastName)
  */
-export async function syncUserToBackend(getToken) {
+export async function syncUserToBackend(getToken, userData = null) {
   try {
     const token = await getToken();
     if (!token) return { success: false, error: 'No token' };
@@ -68,6 +70,11 @@ export async function syncUserToBackend(getToken) {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
+      body: JSON.stringify({
+        email: userData?.email,
+        firstName: userData?.firstName,
+        lastName: userData?.lastName,
+      }),
     });
 
     if (!response.ok) {

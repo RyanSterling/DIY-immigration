@@ -241,7 +241,13 @@ app.get('/my-assessments', authMiddleware({ required: true }), async (c) => {
 // Sync user from Clerk (called after sign up/sign in)
 app.post('/sync-user', authMiddleware({ required: true }), async (c) => {
   try {
-    const user = c.get('user');
+    const authUser = c.get('user');
+    const body = await c.req.json().catch(() => ({}));
+
+    // Get email from body (sent by frontend) or from JWT (if available)
+    const email = body.email || authUser.email;
+    const firstName = body.firstName || null;
+    const lastName = body.lastName || null;
 
     const supabase = createClient(
       c.env.SUPABASE_URL,
@@ -252,8 +258,10 @@ app.post('/sync-user', authMiddleware({ required: true }), async (c) => {
     const { data, error } = await supabase
       .from('users')
       .upsert({
-        clerk_user_id: user.clerkId,
-        email: user.email,
+        clerk_user_id: authUser.clerkId,
+        email: email,
+        first_name: firstName,
+        last_name: lastName,
         updated_at: new Date().toISOString()
       }, {
         onConflict: 'clerk_user_id'

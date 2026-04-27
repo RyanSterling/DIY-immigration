@@ -311,7 +311,12 @@ export const VISA_TYPES = {
     },
     diyDifficulty: 'intermediate',
     annualCap: null,
-    notes: 'Must marry US citizen within 90 days of entry. Can apply for green card and work permit after marriage.'
+    notes: 'Must marry US citizen within 90 days of entry. Can apply for green card and work permit after marriage.',
+    pricing: {
+      amountCents: 40000,
+      display: '$400',
+      stripePriceId: null // Set after creating in Stripe dashboard
+    }
   }
 };
 

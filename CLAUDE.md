@@ -31,13 +31,14 @@ immigration-diy/
 │   │   │   ├── dashboard/ # DIY dashboard (Phase 2+)
 │   │   │   ├── admin/     # Admin dashboard
 │   │   │   └── shared/    # Shared UI components
-│   │   ├── lib/           # Utilities (supabase, api, scoring)
+│   │   ├── lib/           # Utilities (supabase, api, scoring, stripeApi)
 │   │   ├── data/          # Questions, visa types, countries
-│   │   └── pages/         # Static pages
+│   │   └── pages/         # Static pages + VisaPricingPage
 │   └── public/
 ├── worker/             # Cloudflare Worker backend
 │   └── src/
 │       ├── index.js       # Hono API routes
+│       ├── stripe.js      # Stripe payment integration
 │       ├── claude.js      # AI integration
 │       ├── rateLimit.js   # Rate limiting
 │       └── webhook.js     # Email provider webhooks
@@ -72,12 +73,23 @@ VITE_SUPABASE_ANON_KEY=xxx
 VITE_WORKER_URL=http://localhost:8787
 ```
 
-**Worker** (wrangler secrets):
+**Worker** (wrangler secrets for production):
 ```bash
 wrangler secret put CLAUDE_API_KEY
 wrangler secret put SUPABASE_URL
 wrangler secret put SUPABASE_SERVICE_KEY
+wrangler secret put STRIPE_SECRET_KEY
+wrangler secret put STRIPE_WEBHOOK_SECRET
 wrangler secret put N8N_WEBHOOK_URL  # optional
+```
+
+**Worker** (local development - `.dev.vars`):
+```
+CLERK_SECRET_KEY=sk_test_xxx
+SUPABASE_URL=https://xxx.supabase.co
+SUPABASE_SERVICE_KEY=xxx
+STRIPE_SECRET_KEY=sk_test_xxx
+STRIPE_WEBHOOK_SECRET=whsec_xxx
 ```
 
 ## Database Setup
@@ -88,6 +100,7 @@ wrangler secret put N8N_WEBHOOK_URL  # optional
    - `supabase/migrations/002_k1_and_users.sql` - K-1 visa type + users table
    - `supabase/migrations/003_k1_dashboard.sql` - Document progress tracking
    - `supabase/migrations/004_document_comments.sql` - Document comments/notes
+   - `supabase/migrations/007_purchases.sql` - Stripe purchase tracking
 3. Copy your project URL and anon key to frontend .env
 
 **Note:** The quiz will show results even if database tables don't exist (graceful degradation).
@@ -146,11 +159,21 @@ This platform has **two separate quiz products**:
 |----------|--------|-------------|
 | `/sync-user` | POST | Sync Clerk user to database |
 | `/my-assessments` | GET | User's assessment history |
+| `/my-purchases` | GET | User's completed purchases |
+| `/purchases/:visaType` | GET | Check if user purchased visa |
+| `/stripe/create-checkout` | POST | Create Stripe checkout session |
+| `/visa/:visaType/dashboard` | GET | Visa dashboard (purchase required) |
+| `/visa/:visaType/documents` | GET | Visa documents (purchase required) |
 | `/k1/dashboard` | GET | K-1 dashboard summary |
 | `/k1/documents` | GET | K-1 documents with progress |
 | `/k1/documents/:id/progress` | PUT | Update document status |
 | `/k1/documents/:id/comments` | GET | Fetch document comments |
 | `/k1/documents/:id/comments` | POST | Add document comment |
+
+### Stripe Webhook (signature verified)
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/stripe/webhook` | POST | Handle Stripe events |
 
 ## Implementation Phases
 
@@ -176,10 +199,66 @@ This platform has **two separate quiz products**:
 - AI form guidance
 - Form auto-fill from quiz answers
 
-### Phase 4: Payments
-- Stripe one-time purchases
-- Per-visa-type pricing
-- Purchase verification
+### Phase 4: Stripe Payments ✅
+- Stripe Checkout integration
+- Per-visa-type pricing (K-1: $400)
+- Purchase gating on dashboards
+- Webhook handling for payment confirmation
+- Success/cancel redirect flows
+
+---
+
+## Stripe Payment Integration
+
+### User Flow
+```
+[Free Quiz] → [Results] → [Create Account] → [Account Page]
+                                                   ↓
+                                    [Assessment History + "Get Started $400"]
+                                                   ↓
+                                    [Pricing Page: /visa/k1/pricing]
+                                                   ↓
+                                    [Stripe Checkout]
+                                                   ↓
+                                    [Redirect back → Dashboard unlocked]
+```
+
+### Pricing Configuration
+Pricing is defined in two places (keep in sync):
+- **Frontend**: `frontend/src/data/visaTypes.js` → `pricing` field
+- **Backend**: `worker/src/stripe.js` → `VISA_PRICING` object
+
+```js
+// Example: K-1 pricing
+k1: {
+  amountCents: 40000,  // $400
+  name: 'K-1 Fiancé Visa DIY Guide',
+  description: 'Complete step-by-step K-1 visa application guidance'
+}
+```
+
+### Key Files
+| File | Purpose |
+|------|---------|
+| `worker/src/stripe.js` | Stripe client, checkout session creation, pricing |
+| `frontend/src/lib/stripeApi.js` | Frontend API calls for Stripe |
+| `frontend/src/pages/VisaPricingPage.jsx` | Pricing page with checkout button |
+| `frontend/src/pages/VisaDashboard.jsx` | Dashboard with purchase gate |
+| `frontend/src/pages/AccountPage.jsx` | Shows purchases + CTAs |
+| `supabase/migrations/007_purchases.sql` | Purchases table schema |
+
+### Local Development with Stripe
+1. Install Stripe CLI: `brew install stripe/stripe-cli/stripe`
+2. Login: `stripe login`
+3. Forward webhooks: `stripe listen --forward-to localhost:8787/stripe/webhook`
+4. Copy webhook secret to `worker/.dev.vars` as `STRIPE_WEBHOOK_SECRET`
+5. Add test secret key to `worker/.dev.vars` as `STRIPE_SECRET_KEY`
+
+### Test Cards
+- Success: `4242 4242 4242 4242`
+- Decline: `4000 0000 0000 0002`
+
+---
 
 ## Design Decisions
 
@@ -214,3 +293,5 @@ npm run deploy
 - Quiz framework adapted from existing nervous system quiz
 - Rate limiting: 2 assessments per email per 24h
 - AI content is optional - local scoring always works
+- Stripe: Use test mode keys for development, webhook forwarding required locally
+- Dashboard access is gated by purchase - redirects to pricing page if not purchased

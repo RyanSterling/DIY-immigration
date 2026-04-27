@@ -35,7 +35,7 @@ export default function K1Dashboard() {
   useEffect(() => {
     async function sync() {
       if (isLoaded && user) {
-        await syncUserToBackend(getToken);
+        await syncUserToBackend(getToken, user);
         setSyncComplete(true);
       }
     }
