@@ -71,8 +71,28 @@ function App() {
             </Show>
           </>
         } />
-        {/* Account page with sidebar */}
+        {/* Account pages with sidebar */}
         <Route path="/account" element={
+          <>
+            <Show when="signed-in">
+              <AccountPage />
+            </Show>
+            <Show when="signed-out">
+              <RedirectToSignIn />
+            </Show>
+          </>
+        } />
+        <Route path="/account/take-assessment" element={
+          <>
+            <Show when="signed-in">
+              <AccountPage />
+            </Show>
+            <Show when="signed-out">
+              <RedirectToSignIn />
+            </Show>
+          </>
+        } />
+        <Route path="/account/history" element={
           <>
             <Show when="signed-in">
               <AccountPage />
