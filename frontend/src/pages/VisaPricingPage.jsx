@@ -84,7 +84,7 @@ export default function VisaPricingPage() {
             Already Purchased
           </h2>
           <p style={{ fontFamily: 'Soehne, sans-serif', color: '#77716E', marginBottom: '1.5rem' }}>
-            You already have access to this DIY guide.
+            You already have access to this guide.
           </p>
           <button
             onClick={() => navigate(`/visa/${visaType}`)}
@@ -159,7 +159,7 @@ export default function VisaPricingPage() {
             className="inline-block px-3 py-1 rounded-full text-sm mb-4"
             style={{ backgroundColor: '#E0E7FF', color: '#3730A3', fontFamily: 'Soehne, sans-serif' }}
           >
-            DIY Guide
+            Application Guide
           </span>
           <h1 style={{
             fontFamily: 'Libre Baskerville, serif',
@@ -201,7 +201,7 @@ export default function VisaPricingPage() {
               </span>
             </div>
             <p style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.875rem', color: '#77716E' }}>
-              Lifetime access to your DIY guide
+              Lifetime access to your guide
             </p>
           </div>
 

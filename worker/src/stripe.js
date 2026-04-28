@@ -10,7 +10,7 @@ import Stripe from 'stripe';
 export const VISA_PRICING = {
   k1: {
     amountCents: 40000, // $400
-    name: 'K-1 Fiancé Visa DIY Guide',
+    name: 'K-1 Fiancé Visa Application Guide',
     description: 'Complete step-by-step K-1 visa application guidance'
   }
   // Add more visa types as needed

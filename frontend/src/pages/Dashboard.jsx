@@ -127,7 +127,7 @@ export default function Dashboard() {
                     fontFamily: 'Soehne, sans-serif'
                   }}
                 >
-                  DIY GUIDE
+                  GUIDE
                 </span>
               </div>
               <h3 style={{ fontFamily: 'Soehne, sans-serif', fontWeight: '600', color: 'white', marginBottom: '0.5rem' }}>

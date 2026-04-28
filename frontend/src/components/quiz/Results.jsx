@@ -443,7 +443,7 @@ function K1PricingBlock({ isSignedIn, getToken, isCheckoutLoading, setIsCheckout
           className="inline-block px-3 py-1 rounded-full text-sm mb-3"
           style={{ backgroundColor: '#E0E7FF', color: '#3730A3', fontFamily: 'Soehne, sans-serif' }}
         >
-          DIY Guide
+          Application Guide
         </span>
         <h3 style={{
           fontFamily: 'Libre Baskerville, serif',
@@ -471,7 +471,7 @@ function K1PricingBlock({ isSignedIn, getToken, isCheckoutLoading, setIsCheckout
           </span>
         </div>
         <p style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.875rem', color: '#77716E' }}>
-          Lifetime access to your DIY guide
+          Lifetime access to your guide
         </p>
       </div>
 

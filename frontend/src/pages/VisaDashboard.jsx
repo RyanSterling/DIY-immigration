@@ -283,7 +283,7 @@ export default function VisaDashboard() {
               Purchase successful!
             </p>
             <p style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.875rem', color: '#047857' }}>
-              Welcome to your DIY guide
+              Welcome to your application guide
             </p>
           </div>
           <button
