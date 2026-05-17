@@ -69,11 +69,36 @@ export default function VisaDashboard() {
 
       const token = await getToken();
 
-      // If coming from successful payment, add a small delay for Stripe to finalize
+      // If coming from successful payment, give Stripe time to process
+      // and retry a few times if needed
       if (purchaseSuccessFromUrl) {
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        // Initial delay for Stripe webhook
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // Try up to 3 times with delays
+        for (let attempt = 0; attempt < 3; attempt++) {
+          try {
+            const { hasPurchased: purchased } = await checkPurchaseStatus(token, visaType);
+            if (purchased) {
+              setHasPurchased(true);
+              setPurchaseChecked(true);
+              return;
+            }
+            // Not found yet, wait and retry
+            if (attempt < 2) {
+              await new Promise(resolve => setTimeout(resolve, 1500));
+            }
+          } catch (err) {
+            console.error(`Error checking purchase (attempt ${attempt + 1}):`, err);
+          }
+        }
+        // All retries failed
+        setHasPurchased(false);
+        setPurchaseChecked(true);
+        return;
       }
 
+      // Not coming from payment success, just check once
       try {
         const { hasPurchased: purchased } = await checkPurchaseStatus(token, visaType);
         setHasPurchased(purchased);

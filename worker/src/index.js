@@ -443,8 +443,8 @@ app.post('/stripe/create-checkout', authMiddleware({ required: true }), async (c
       cancelUrl: cancelUrl || `${c.req.header('origin')}/visa/${visaType}/pricing?cancelled=true`
     });
 
-    // Create pending purchase record
-    await supabase
+    // Create pending purchase record (important for webhook backup verification)
+    const { error: purchaseError } = await supabase
       .from('purchases')
       .insert({
         user_id: dbUser.id,
@@ -454,6 +454,13 @@ app.post('/stripe/create-checkout', authMiddleware({ required: true }), async (c
         currency: 'usd',
         status: 'pending'
       });
+
+    if (purchaseError) {
+      console.error('Failed to create pending purchase record:', purchaseError);
+      // Continue anyway - webhook will still work, but Stripe verification won't
+    } else {
+      console.log(`Created pending purchase for user ${dbUser.id}, visa ${visaType}, session ${session.id}`);
+    }
 
     return c.json({
       checkoutUrl: session.url,
@@ -568,6 +575,8 @@ app.get('/purchases/:visaType', authMiddleware({ required: true }), async (c) =>
     const user = c.get('user');
     const visaType = c.req.param('visaType');
 
+    console.log(`Checking purchase status for clerk_user_id=${user.clerkId}, visaType=${visaType}`);
+
     const supabase = createClient(
       c.env.SUPABASE_URL,
       c.env.SUPABASE_SERVICE_KEY
@@ -581,11 +590,14 @@ app.get('/purchases/:visaType', authMiddleware({ required: true }), async (c) =>
       .single();
 
     if (userError || !dbUser) {
+      console.log(`User lookup failed: error=${userError?.message}, dbUser=${!!dbUser}`);
       return c.json({ hasPurchased: false });
     }
 
+    console.log(`Found user with internal id=${dbUser.id}`);
+
     // Check for completed purchase
-    const { data: completedPurchase } = await supabase
+    const { data: completedPurchase, error: completedError } = await supabase
       .from('purchases')
       .select('id, purchased_at, amount_cents')
       .eq('user_id', dbUser.id)
@@ -594,15 +606,18 @@ app.get('/purchases/:visaType', authMiddleware({ required: true }), async (c) =>
       .maybeSingle();
 
     if (completedPurchase) {
+      console.log(`Found completed purchase id=${completedPurchase.id}`);
       return c.json({
         hasPurchased: true,
         purchase: completedPurchase
       });
     }
 
+    console.log(`No completed purchase found, checking for pending...`);
+
     // No completed purchase - check if there's a pending one and verify with Stripe
     // This handles the case where webhook hasn't been processed yet
-    const { data: pendingPurchase } = await supabase
+    const { data: pendingPurchase, error: pendingError } = await supabase
       .from('purchases')
       .select('id, stripe_checkout_session_id')
       .eq('user_id', dbUser.id)
@@ -612,6 +627,8 @@ app.get('/purchases/:visaType', authMiddleware({ required: true }), async (c) =>
       .limit(1)
       .maybeSingle();
 
+    console.log(`Pending purchase lookup: found=${!!pendingPurchase}, session_id=${pendingPurchase?.stripe_checkout_session_id?.substring(0,20)}...`);
+
     if (pendingPurchase?.stripe_checkout_session_id) {
       // Check Stripe directly to see if payment completed
       const stripe = getStripeClient(c.env);
@@ -619,6 +636,8 @@ app.get('/purchases/:visaType', authMiddleware({ required: true }), async (c) =>
         const session = await stripe.checkout.sessions.retrieve(
           pendingPurchase.stripe_checkout_session_id
         );
+
+        console.log(`Stripe session status: payment_status=${session.payment_status}`);
 
         if (session.payment_status === 'paid') {
           // Payment completed! Update our database
@@ -639,6 +658,8 @@ app.get('/purchases/:visaType', authMiddleware({ required: true }), async (c) =>
               hasPurchased: true,
               purchase: { id: pendingPurchase.id }
             });
+          } else {
+            console.error(`Failed to update purchase to completed: ${updateError.message}`);
           }
         }
       } catch (stripeError) {
@@ -646,6 +667,7 @@ app.get('/purchases/:visaType', authMiddleware({ required: true }), async (c) =>
       }
     }
 
+    console.log(`No valid purchase found for user ${dbUser.id}, visa ${visaType}`);
     return c.json({
       hasPurchased: false,
       purchase: null
