@@ -456,7 +456,7 @@ function K1PricingBlock({ isSignedIn, getToken, isCheckoutLoading, setIsCheckout
       </div>
 
       {/* Price */}
-      <div className="text-center mb-6">
+      <div className="text-center mb-4">
         <div className="flex items-baseline justify-center gap-1 mb-2">
           <span style={{
             fontFamily: 'Soehne, sans-serif',
@@ -473,6 +473,24 @@ function K1PricingBlock({ isSignedIn, getToken, isCheckoutLoading, setIsCheckout
         <p style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.875rem', color: '#77716E' }}>
           Lifetime access to your guide
         </p>
+      </div>
+
+      {/* PROMINENT Government fees warning */}
+      <div
+        className="mb-6 p-3 rounded-lg"
+        style={{
+          backgroundColor: '#FEF3C7',
+          border: '2px solid #F59E0B'
+        }}
+      >
+        <div className="flex items-start gap-2">
+          <svg className="w-5 h-5 flex-shrink-0" fill="#D97706" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+          </svg>
+          <p style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.8rem', color: '#92400E', lineHeight: '1.4' }}>
+            <strong>Note:</strong> Government filing fees (~${visaInfo.costs?.governmentFees || 800}) are paid separately to USCIS. This is for guidance only.
+          </p>
+        </div>
       </div>
 
       {/* Benefits */}
@@ -548,17 +566,6 @@ function K1PricingBlock({ isSignedIn, getToken, isCheckoutLoading, setIsCheckout
         </span>
       </div>
 
-      {/* Government fees note */}
-      <div className="mt-6 p-3 rounded-lg" style={{ backgroundColor: '#F8F7F6', border: '1px solid #E6E4E1' }}>
-        <div className="flex items-start gap-2">
-          <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="#77716E" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <p style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.75rem', color: '#77716E' }}>
-            Government filing fees (approximately ${visaInfo.costs?.governmentFees || 800}) are paid separately directly to USCIS when you submit your application.
-          </p>
-        </div>
-      </div>
     </div>
   );
 }

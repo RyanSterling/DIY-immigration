@@ -22,6 +22,7 @@ export default function VisaPricingPage() {
   const [error, setError] = useState(null);
   const [syncComplete, setSyncComplete] = useState(false);
   const [alreadyPurchased, setAlreadyPurchased] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const visaInfo = VISA_TYPES[visaType];
   const cancelled = searchParams.get('cancelled') === 'true';
@@ -55,8 +56,14 @@ export default function VisaPricingPage() {
     checkPurchase();
   }, [syncComplete, getToken, visaType]);
 
-  // Handle checkout
-  async function handleCheckout() {
+  // Show confirmation modal before checkout
+  function handleCheckoutClick() {
+    setShowConfirmModal(true);
+  }
+
+  // Handle actual checkout after confirmation
+  async function handleConfirmedCheckout() {
+    setShowConfirmModal(false);
     setIsLoading(true);
     setError(null);
 
@@ -186,7 +193,7 @@ export default function VisaPricingPage() {
           style={{ backgroundColor: 'white', border: '1px solid #E6E4E1' }}
         >
           {/* Price */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-6">
             <div className="flex items-baseline justify-center gap-1 mb-2">
               <span style={{
                 fontFamily: 'Soehne, sans-serif',
@@ -203,6 +210,29 @@ export default function VisaPricingPage() {
             <p style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.875rem', color: '#77716E' }}>
               Lifetime access to your guide
             </p>
+          </div>
+
+          {/* PROMINENT Government fees warning */}
+          <div
+            className="mb-8 p-4 rounded-lg"
+            style={{
+              backgroundColor: '#FEF3C7',
+              border: '2px solid #F59E0B'
+            }}
+          >
+            <div className="flex items-start gap-3">
+              <svg className="w-6 h-6 flex-shrink-0" fill="#D97706" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+              </svg>
+              <div>
+                <p style={{ fontFamily: 'Soehne, sans-serif', fontWeight: '700', color: '#92400E', fontSize: '1rem', marginBottom: '0.5rem' }}>
+                  Important: Government Filing Fees Not Included
+                </p>
+                <p style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.9rem', color: '#92400E', lineHeight: '1.5' }}>
+                  USCIS government filing fees (approximately <strong>${visaInfo.costs?.governmentFees || 800}</strong>) are paid separately directly to the government when you submit your application. This ${visaInfo.pricing?.display || '$400'} purchase is for our step-by-step guidance only.
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Benefits */}
@@ -238,7 +268,7 @@ export default function VisaPricingPage() {
 
           {/* CTA button */}
           <button
-            onClick={handleCheckout}
+            onClick={handleCheckoutClick}
             disabled={isLoading}
             className="w-full py-4 px-6 rounded-lg font-medium transition-all disabled:opacity-50"
             style={{
@@ -262,23 +292,6 @@ export default function VisaPricingPage() {
           </div>
         </div>
 
-        {/* Government fees note */}
-        <div className="p-4 rounded-lg" style={{ backgroundColor: '#F8F7F6', border: '1px solid #E6E4E1' }}>
-          <div className="flex items-start gap-3">
-            <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="#77716E" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <div>
-              <p style={{ fontFamily: 'Soehne, sans-serif', fontWeight: '600', color: '#1E1F1C', marginBottom: '0.25rem' }}>
-                Government Filing Fees
-              </p>
-              <p style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.875rem', color: '#77716E' }}>
-                USCIS filing fees (approximately ${visaInfo.costs?.governmentFees || 800}) are paid separately directly to the government when you submit your application.
-              </p>
-            </div>
-          </div>
-        </div>
-
         {/* Assessment nudge */}
         <div className="mt-8 text-center">
           <p style={{ fontFamily: 'Soehne, sans-serif', color: '#77716E', marginBottom: '0.5rem' }}>
@@ -293,6 +306,80 @@ export default function VisaPricingPage() {
           </button>
         </div>
       </main>
+
+      {/* Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div
+            className="w-full max-w-md rounded-xl p-6"
+            style={{ backgroundColor: 'white' }}
+          >
+            {/* Warning icon */}
+            <div className="flex justify-center mb-4">
+              <div
+                className="w-16 h-16 rounded-full flex items-center justify-center"
+                style={{ backgroundColor: '#FEF3C7' }}
+              >
+                <svg className="w-8 h-8" fill="#D97706" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                </svg>
+              </div>
+            </div>
+
+            <h3 style={{
+              fontFamily: 'Libre Baskerville, serif',
+              fontSize: '1.5rem',
+              color: '#1E1F1C',
+              textAlign: 'center',
+              marginBottom: '1rem'
+            }}>
+              Before You Continue
+            </h3>
+
+            <div
+              className="p-4 rounded-lg mb-6"
+              style={{ backgroundColor: '#FEF3C7', border: '1px solid #F59E0B' }}
+            >
+              <p style={{
+                fontFamily: 'Soehne, sans-serif',
+                color: '#92400E',
+                fontSize: '0.95rem',
+                lineHeight: '1.6',
+                textAlign: 'center'
+              }}>
+                <strong>This {visaInfo.pricing?.display || '$400'} purchase is for our step-by-step guidance only.</strong>
+                <br /><br />
+                You will still need to pay <strong>government filing fees (approximately ${visaInfo.costs?.governmentFees || 800})</strong> separately to USCIS when you submit your application.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <button
+                onClick={handleConfirmedCheckout}
+                className="w-full py-3 px-6 rounded-lg font-medium transition-all"
+                style={{
+                  backgroundColor: '#1E3A5F',
+                  color: 'white',
+                  fontFamily: 'Soehne, sans-serif'
+                }}
+              >
+                I Understand, Continue to Checkout
+              </button>
+              <button
+                onClick={() => setShowConfirmModal(false)}
+                className="w-full py-3 px-6 rounded-lg font-medium transition-all"
+                style={{
+                  backgroundColor: '#E6E4E1',
+                  color: '#1E1F1C',
+                  fontFamily: 'Soehne, sans-serif'
+                }}
+              >
+                Go Back
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
