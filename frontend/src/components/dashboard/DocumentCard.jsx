@@ -63,6 +63,7 @@ export default function DocumentCard({
 
   // For fillable forms, clicking the card opens the PDF filler
   const handleCardClick = () => {
+    console.log('Card clicked:', document.document_name, 'isFillableForm:', isFillableForm, 'onOpenFormFiller:', !!onOpenFormFiller);
     if (isFillableForm && onOpenFormFiller) {
       onOpenFormFiller(fillableFormConfig.formType, fillableFormConfig.displayName);
     } else {
