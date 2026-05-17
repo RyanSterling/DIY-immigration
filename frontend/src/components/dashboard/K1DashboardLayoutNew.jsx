@@ -65,7 +65,12 @@ export default function K1DashboardLayoutNew({
 
   // Handle phase change - also closes form filler
   const handlePhaseChange = useCallback((newPhase) => {
-    setSearchParams({ phase: newPhase });
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set('phase', newPhase);
+      next.delete('form'); // Close form when changing phase
+      return next;
+    });
   }, [setSearchParams]);
 
   // Check if user has existing form progress for all fillable forms
@@ -146,7 +151,12 @@ export default function K1DashboardLayoutNew({
   const handleOpenFormFiller = (formType, formName) => {
     setActiveFormName(formName);
     // Add form to URL while preserving phase
-    setSearchParams({ phase: activePhase, form: formType });
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set('phase', activePhase);
+      next.set('form', formType);
+      return next;
+    });
     // Close any open panels
     handleClosePanel();
     handleCloseComments();
@@ -155,7 +165,11 @@ export default function K1DashboardLayoutNew({
   const handleCloseFormFiller = async () => {
     const closedFormType = activeFormType;
     // Remove form from URL, keep phase
-    setSearchParams({ phase: activePhase });
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.delete('form');
+      return next;
+    });
 
     // Refresh progress data for the form that was just closed
     if (getToken && closedFormType) {
