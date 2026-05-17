@@ -13,6 +13,7 @@ const PORT = process.env.PORT || 3001;
 const ALLOWED_ORIGINS = [
   'http://localhost:5173',
   'http://localhost:3000',
+  'https://diyimmigration.netlify.app',
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
