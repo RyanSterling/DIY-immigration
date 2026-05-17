@@ -140,6 +140,7 @@ export default function K1QuizContainer() {
 
     setIsTransitioning(true);
 
+    // Reduced from 300ms to 150ms for snappier mobile experience
     setTimeout(() => {
       const updatedVisibleQuestions = getVisibleK1Questions(answersToUse);
       const nextIndex = currentQuestionIndex + 1;
@@ -160,7 +161,7 @@ export default function K1QuizContainer() {
       setTimeout(() => {
         setIsTransitioning(false);
       }, 50);
-    }, 300);
+    }, 150);
   };
 
   const handleBack = () => {

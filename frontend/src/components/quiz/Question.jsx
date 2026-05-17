@@ -28,18 +28,19 @@ export default function Question({ question, value, onChange, onNext, onBack, sh
       return;
     }
 
-    // For single-select questions
+    // For single-select questions - quick highlight then advance
     setIsFlashing(true);
     setFlashingValue(optionValue);
     setSelectedValue(optionValue);
 
+    // Quick flash effect (reduced from 600ms total to 250ms)
     setTimeout(() => {
       setFlashingValue(null);
-    }, 100);
+    }, 50);
 
     setTimeout(() => {
       setFlashingValue(optionValue);
-    }, 200);
+    }, 100);
 
     setTimeout(() => {
       if (onTransitionStart) {
@@ -48,7 +49,7 @@ export default function Question({ question, value, onChange, onNext, onBack, sh
       onChange(optionValue, (newAnswers) => {
         onNext(newAnswers);
       });
-    }, 600);
+    }, 250);
   };
 
   const handleCountryChange = (e) => {
@@ -200,7 +201,8 @@ export default function Question({ question, value, onChange, onNext, onBack, sh
                       backgroundColor: isSelected ? '#1E3A5F' : '#E6E4E1',
                       borderRadius: '27px',
                       fontFamily: 'Soehne, sans-serif',
-                      color: isSelected ? 'white' : '#77716E'
+                      color: isSelected ? 'white' : '#77716E',
+                      touchAction: 'manipulation'
                     }}
                   >
                     <div className="flex items-start space-x-3">
@@ -306,7 +308,8 @@ export default function Question({ question, value, onChange, onNext, onBack, sh
                     backgroundColor: isVisuallySelected ? '#1E3A5F' : '#E6E4E1',
                     borderRadius: '27px',
                     fontFamily: 'Soehne, sans-serif',
-                    color: isVisuallySelected ? 'white' : '#77716E'
+                    color: isVisuallySelected ? 'white' : '#77716E',
+                    touchAction: 'manipulation'
                   }}
                 >
                   <div className="flex items-start space-x-3">
