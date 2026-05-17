@@ -42,6 +42,11 @@ immigration-diy/
 │       ├── claude.js      # AI integration
 │       ├── rateLimit.js   # Rate limiting
 │       └── webhook.js     # Email provider webhooks
+├── pdf-service/        # PDFtk microservice for XFA form filling
+│   ├── index.js        # Express server with /fill-pdf endpoint
+│   ├── lib/fdf.js      # JSON to FDF format converter
+│   ├── forms/          # PDF form templates (i-129f.pdf, i-134.pdf)
+│   └── Dockerfile      # For Railway/Fly.io deployment
 └── supabase/
     └── migrations/        # Database schema
 ```
@@ -64,6 +69,19 @@ npm run dev
 # Runs at http://localhost:8787
 ```
 
+### PDF Service (for USCIS form filling)
+```bash
+cd pdf-service
+npm install
+npm run dev
+# Runs at http://localhost:3001
+```
+
+**Note:** Requires `pdftk` installed locally:
+```bash
+brew install pdftk-java  # macOS
+```
+
 ### Environment Variables
 
 **Frontend** (.env):
@@ -71,6 +89,7 @@ npm run dev
 VITE_SUPABASE_URL=https://xxx.supabase.co
 VITE_SUPABASE_ANON_KEY=xxx
 VITE_WORKER_URL=http://localhost:8787
+VITE_PDF_SERVICE_URL=http://localhost:3001
 ```
 
 **Worker** (wrangler secrets for production):

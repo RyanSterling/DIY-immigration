@@ -1,0 +1,21 @@
+%FDF-1.2
+1 0 obj
+<<
+/FDF
+<<
+/Fields [
+<< /T (form1[0].#subform[0].Pt1Line6a_FamilyName[0]) /V (TESTLASTNAME) >>
+<< /T (form1[0].#subform[0].Pt1Line6b_GivenName[0]) /V (TESTFIRSTNAME) >>
+<< /T (form1[0].#subform[0].Pt1Line6c_MiddleName[0]) /V (TESTMIDDLE) >>
+<< /T (form1[0].#subform[0].Pt1Line8_StreetNumberName[0]) /V (123 Main Street) >>
+<< /T (form1[0].#subform[0].Pt1Line8_CityOrTown[0]) /V (Los Angeles) >>
+<< /T (form1[0].#subform[0].Pt1Line8_ZipCode[0]) /V (90210) >>
+]
+>>
+>>
+endobj
+trailer
+<<
+/Root 1 0 R
+>>
+%%EOF

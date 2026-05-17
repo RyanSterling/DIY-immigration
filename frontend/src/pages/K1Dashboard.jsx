@@ -228,6 +228,7 @@ export default function K1Dashboard() {
           onStatusChange={handleStatusChange}
           onAddComment={handleAddComment}
           onLoadComments={handleLoadComments}
+          getToken={getToken}
         />
       )}
 

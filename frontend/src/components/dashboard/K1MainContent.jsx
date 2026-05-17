@@ -373,7 +373,7 @@ function MailingChecklist({ documents, onOpenPanel }) {
 }
 
 // Optional Evidence Section Component - Now expanded by default for visibility
-function OptionalEvidenceSection({ documents, commentCounts, onOpenPanel, onStatusChange, onOpenComments }) {
+function OptionalEvidenceSection({ documents, commentCounts, onOpenPanel, onStatusChange, onOpenComments, onOpenFormFiller, formProgress }) {
   const [isExpanded, setIsExpanded] = useState(true); // Default to expanded
 
   return (
@@ -439,6 +439,8 @@ function OptionalEvidenceSection({ documents, commentCounts, onOpenPanel, onStat
                   onOpenPanel={onOpenPanel}
                   onStatusChange={onStatusChange}
                   onOpenComments={onOpenComments}
+                  onOpenFormFiller={onOpenFormFiller}
+                  formProgress={formProgress}
                   isOptional
                 />
                 {guidance?.strengthening_reason && (
@@ -469,7 +471,9 @@ export default function K1MainContent({
   onOpenPanel,
   onStatusChange,
   onOpenComments,
-  dashboardData
+  dashboardData,
+  onOpenFormFiller,
+  formProgress = {}
 }) {
   // Get phase config
   const phaseConfig = useMemo(() => {
@@ -620,6 +624,8 @@ export default function K1MainContent({
                   onOpenPanel={onOpenPanel}
                   onStatusChange={onStatusChange}
                   onOpenComments={onOpenComments}
+                  onOpenFormFiller={onOpenFormFiller}
+                  formProgress={formProgress}
                 />
               ))}
             </div>
@@ -667,6 +673,8 @@ export default function K1MainContent({
                   onOpenPanel={onOpenPanel}
                   onStatusChange={onStatusChange}
                   onOpenComments={onOpenComments}
+                  onOpenFormFiller={onOpenFormFiller}
+                  formProgress={formProgress}
                   isLongLeadTime
                 />
               ))}
@@ -699,6 +707,8 @@ export default function K1MainContent({
                   onOpenPanel={onOpenPanel}
                   onStatusChange={onStatusChange}
                   onOpenComments={onOpenComments}
+                  onOpenFormFiller={onOpenFormFiller}
+                  formProgress={formProgress}
                 />
               ))}
             </div>
@@ -733,6 +743,8 @@ export default function K1MainContent({
                   onOpenPanel={onOpenPanel}
                   onStatusChange={onStatusChange}
                   onOpenComments={onOpenComments}
+                  onOpenFormFiller={onOpenFormFiller}
+                  formProgress={formProgress}
                 />
               ))}
             </div>
@@ -747,6 +759,8 @@ export default function K1MainContent({
             onOpenPanel={onOpenPanel}
             onStatusChange={onStatusChange}
             onOpenComments={onOpenComments}
+            onOpenFormFiller={onOpenFormFiller}
+            formProgress={formProgress}
           />
         )}
       </div>
@@ -900,6 +914,8 @@ export default function K1MainContent({
               onOpenPanel={onOpenPanel}
               onStatusChange={onStatusChange}
               onOpenComments={onOpenComments}
+              onOpenFormFiller={onOpenFormFiller}
+              formProgress={formProgress}
               isLongLeadTime={PHASE_1_DOCS.includes(doc.document_name)}
             />
           ))}

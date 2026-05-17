@@ -4,6 +4,7 @@
  */
 
 import { useState } from 'react';
+import { FILLABLE_FORMS } from './FormFillerView';
 
 const STATUS_CONFIG = {
   not_started: {
@@ -46,23 +47,26 @@ export default function DocumentCard({
   onOpenPanel,
   onStatusChange,
   onOpenComments,
+  onOpenFormFiller,
+  formProgress = {},  // { 'i-129f': true, 'i-134': false, ... }
   isLongLeadTime = false,
   isOptional = false
 }) {
+  // Check if this document is a fillable form
+  const fillableFormConfig = FILLABLE_FORMS[document.document_name];
+  const isFillableForm = !!fillableFormConfig;
+  const hasFormProgress = isFillableForm && formProgress[fillableFormConfig?.formType];
+
   const [isUpdating, setIsUpdating] = useState(false);
   const currentStatus = document.progress?.status || 'not_started';
   const config = STATUS_CONFIG[currentStatus] || STATUS_CONFIG.not_started;
 
-  const handleCTAClick = async (e) => {
-    e.stopPropagation();
-    if (isUpdating) return;
-
-    setIsUpdating(true);
-    try {
-      // Binary toggle - go directly to completed
-      await onStatusChange(document.id, 'completed');
-    } finally {
-      setIsUpdating(false);
+  // For fillable forms, clicking the card opens the PDF filler
+  const handleCardClick = () => {
+    if (isFillableForm && onOpenFormFiller) {
+      onOpenFormFiller(fillableFormConfig.formType, fillableFormConfig.displayName);
+    } else {
+      onOpenPanel(document);
     }
   };
 
@@ -73,7 +77,7 @@ export default function DocumentCard({
 
   return (
     <div
-      onClick={() => onOpenPanel(document)}
+      onClick={handleCardClick}
       className="group relative rounded-xl p-4 cursor-pointer transition-all duration-200 hover:shadow-md"
       style={{
         backgroundColor: config.bgColor,
@@ -111,22 +115,37 @@ export default function DocumentCard({
       )}
 
       <div className="flex items-start gap-3">
-        {/* Status indicator */}
+        {/* Status indicator - clickable to toggle complete */}
         <div className="flex-shrink-0 pt-0.5">
           {currentStatus === 'completed' ? (
-            <div
-              className="w-6 h-6 rounded-full flex items-center justify-center"
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onStatusChange(document.id, 'not_started');
+              }}
+              className="w-6 h-6 rounded-full flex items-center justify-center transition-transform hover:scale-110"
               style={{ backgroundColor: '#22C55E' }}
+              title="Mark as incomplete"
             >
               <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
               </svg>
-            </div>
+            </button>
           ) : (
-            <div
-              className="w-6 h-6 rounded-full border-2 flex items-center justify-center"
-              style={{ borderColor: config.dotColor }}
-            />
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onStatusChange(document.id, 'completed');
+              }}
+              disabled={isUpdating}
+              className="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all hover:border-green-500 hover:bg-green-50"
+              style={{ borderColor: isUpdating ? '#22C55E' : config.dotColor }}
+              title="Mark as complete"
+            >
+              {isUpdating && (
+                <div className="w-3 h-3 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
+              )}
+            </button>
           )}
         </div>
 
@@ -154,7 +173,14 @@ export default function DocumentCard({
                   color: '#6B7280'
                 }}
               >
-                {document.document_description}
+                {isFillableForm ? (
+                  <span className="flex items-center gap-1.5" style={{ color: '#1E3A5F' }}>
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    {hasFormProgress ? 'Continue filling out form' : 'Fill out form online'}
+                  </span>
+                ) : document.document_description}
               </p>
             </div>
 
@@ -163,66 +189,81 @@ export default function DocumentCard({
           {/* Actions row */}
           <div className="flex items-center justify-between mt-3">
             <div className="flex items-center gap-3">
-              {/* Comment indicator */}
-              <button
-                onClick={handleCommentClick}
-                className="flex items-center gap-1 text-sm transition-colors hover:opacity-80"
+              {/* Progress indicator for fillable forms */}
+              {isFillableForm && hasFormProgress && currentStatus !== 'completed' && (
+                <div
+                  className="flex items-center gap-1.5 px-2 py-0.5 rounded-full"
+                  style={{
+                    backgroundColor: '#DBEAFE',
+                    border: '1px solid #93C5FD'
+                  }}
+                >
+                  {/* Partial circle progress icon */}
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none">
+                    <circle cx="8" cy="8" r="6" stroke="#93C5FD" strokeWidth="2" />
+                    <path
+                      d="M8 2a6 6 0 0 1 5.196 9"
+                      stroke="#2563EB"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <span
+                    className="text-xs font-medium"
+                    style={{ fontFamily: 'Soehne, sans-serif', color: '#1D4ED8' }}
+                  >
+                    In Progress
+                  </span>
+                </div>
+              )}
+
+              {/* Comment indicator - only for non-fillable forms */}
+              {!isFillableForm && (
+                <button
+                  onClick={handleCommentClick}
+                  className="flex items-center gap-1 text-sm transition-colors hover:opacity-80"
+                  style={{
+                    fontFamily: 'Soehne, sans-serif',
+                    color: commentCount > 0 ? '#1E3A5F' : '#9CA3AF'
+                  }}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                  {commentCount > 0 && <span>{commentCount}</span>}
+                </button>
+              )}
+
+              {/* Info link - only for non-fillable forms */}
+              {!isFillableForm && (
+                <span
+                  className="text-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                  style={{
+                    fontFamily: 'Soehne, sans-serif',
+                    color: '#6B7280'
+                  }}
+                >
+                  Click for details →
+                </span>
+              )}
+            </div>
+
+            {/* CTA for Form I-129F */}
+            {isFillableForm && currentStatus !== 'completed' && (
+              <span
+                className="flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium"
                 style={{
                   fontFamily: 'Soehne, sans-serif',
-                  color: commentCount > 0 ? '#1E3A5F' : '#9CA3AF'
+                  background: 'linear-gradient(135deg, #1E3A5F 0%, #2D5A87 100%)',
+                  color: 'white',
+                  boxShadow: '0 2px 8px rgba(30, 58, 95, 0.25)'
                 }}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                {commentCount > 0 && <span>{commentCount}</span>}
-              </button>
-
-              {/* Info link */}
-              <span
-                className="text-sm opacity-0 group-hover:opacity-100 transition-opacity"
-                style={{
-                  fontFamily: 'Soehne, sans-serif',
-                  color: '#6B7280'
-                }}
-              >
-                Click for details →
+                {hasFormProgress ? 'Continue' : 'Fill Out'}
               </span>
-            </div>
-
-            {/* CTA Button */}
-            {config.cta && (
-              <button
-                onClick={handleCTAClick}
-                disabled={isUpdating}
-                className="px-4 py-1.5 rounded-lg text-sm font-medium transition-all"
-                style={{
-                  fontFamily: 'Soehne, sans-serif',
-                  backgroundColor: config.ctaStyle === 'primary' ? '#1E3A5F' : '#22C55E',
-                  color: 'white',
-                  opacity: isUpdating ? 0.5 : 1,
-                  cursor: isUpdating ? 'not-allowed' : 'pointer'
-                }}
-              >
-                {isUpdating ? '...' : config.cta}
-              </button>
-            )}
-
-            {/* Completed state - subtle undo option */}
-            {currentStatus === 'completed' && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onStatusChange(document.id, 'not_started');
-                }}
-                className="text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-                style={{
-                  fontFamily: 'Soehne, sans-serif',
-                  color: '#9CA3AF'
-                }}
-              >
-                Undo
-              </button>
             )}
           </div>
         </div>

@@ -1008,6 +1008,113 @@ app.post('/k1/documents/:docId/comments', authMiddleware({ required: true }), as
   }
 });
 
+// ============================================
+// FORM DATA ROUTES (for PDF form filling)
+// ============================================
+
+// Get saved form data
+app.get('/k1/form-data/:formType', authMiddleware({ required: true }), async (c) => {
+  try {
+    const user = c.get('user');
+    const formType = c.req.param('formType');
+
+    const supabase = createClient(
+      c.env.SUPABASE_URL,
+      c.env.SUPABASE_SERVICE_KEY
+    );
+
+    // Get user's internal ID
+    const { data: dbUser, error: userError } = await supabase
+      .from('users')
+      .select('id')
+      .eq('clerk_user_id', user.clerkId)
+      .single();
+
+    if (userError || !dbUser) {
+      return c.json({ error: 'User not found' }, 404);
+    }
+
+    // Get form data
+    const { data: formData, error } = await supabase
+      .from('user_form_data')
+      .select('*')
+      .eq('user_id', dbUser.id)
+      .eq('form_type', formType)
+      .maybeSingle();
+
+    if (error) {
+      throw error;
+    }
+
+    return c.json({
+      formData: formData?.form_data || {},
+      lastPage: formData?.last_page || 1,
+      updatedAt: formData?.updated_at || null
+    });
+
+  } catch (error) {
+    console.error('Error fetching form data:', error);
+    return c.json({ error: 'Failed to fetch form data' }, 500);
+  }
+});
+
+// Save form data
+app.put('/k1/form-data/:formType', authMiddleware({ required: true }), async (c) => {
+  try {
+    const user = c.get('user');
+    const formType = c.req.param('formType');
+    const { formData, lastPage } = await c.req.json();
+
+    if (!formData || typeof formData !== 'object') {
+      return c.json({ error: 'formData is required and must be an object' }, 400);
+    }
+
+    const supabase = createClient(
+      c.env.SUPABASE_URL,
+      c.env.SUPABASE_SERVICE_KEY
+    );
+
+    // Get user's internal ID
+    const { data: dbUser, error: userError } = await supabase
+      .from('users')
+      .select('id')
+      .eq('clerk_user_id', user.clerkId)
+      .single();
+
+    if (userError || !dbUser) {
+      return c.json({ error: 'User not found' }, 404);
+    }
+
+    // Upsert form data
+    const { data, error } = await supabase
+      .from('user_form_data')
+      .upsert({
+        user_id: dbUser.id,
+        form_type: formType,
+        form_data: formData,
+        last_page: lastPage || 1,
+        updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'user_id,form_type'
+      })
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return c.json({
+      success: true,
+      updatedAt: data.updated_at
+    });
+
+  } catch (error) {
+    console.error('Error saving form data:', error);
+    return c.json({ error: 'Failed to save form data' }, 500);
+  }
+});
+
 // Get user's K-1 preferences (conditional document answers)
 app.get('/k1/preferences', authMiddleware({ required: true }), async (c) => {
   try {

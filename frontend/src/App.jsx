@@ -8,6 +8,7 @@ import AccountPage from './pages/AccountPage';
 import K1Dashboard from './pages/K1Dashboard';
 import VisaDashboard from './pages/VisaDashboard';
 import VisaPricingPage from './pages/VisaPricingPage';
+import PDFFormTestPage from './pages/PDFFormTestPage';
 import Footer from './components/shared/Footer';
 
 function App() {
@@ -104,6 +105,9 @@ function App() {
         } />
         {/* Redirect old dashboard to account */}
         <Route path="/dashboard" element={<Navigate to="/account" replace />} />
+
+        {/* PDF Form POC - for testing */}
+        <Route path="/pdf-test" element={<PDFFormTestPage />} />
       </Routes>
     </BrowserRouter>
   );
