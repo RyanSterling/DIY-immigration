@@ -123,11 +123,26 @@ app.post('/save-assessment', async (c) => {
       c.env.SUPABASE_SERVICE_KEY
     );
 
+    // If clerk_user_id provided, look up the internal user_id
+    let userId = null;
+    if (body.clerk_user_id) {
+      const { data: user } = await supabase
+        .from('users')
+        .select('id')
+        .eq('clerk_user_id', body.clerk_user_id)
+        .maybeSingle();
+
+      if (user) {
+        userId = user.id;
+      }
+    }
+
     // Insert assessment
     const { data: assessment, error: assessmentError } = await supabase
       .from('assessments')
       .insert([{
         email: body.email,
+        user_id: userId,
         session_id: body.session_id,
         country_of_citizenship: body.country_of_citizenship,
         current_country: body.current_country,

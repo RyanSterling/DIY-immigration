@@ -185,6 +185,7 @@ export default function K1QuizContainer() {
       // Prepare assessment data for K-1
       const assessmentData = {
         email: emailToUse,
+        clerk_user_id: user?.id || null,
         session_id: sessionId,
         country_of_citizenship: null, // Not collected for K-1
         current_country: 'outside_us',
