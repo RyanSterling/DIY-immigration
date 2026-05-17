@@ -1,0 +1,1 @@
+ALTER TYPE "public"."value_type" ADD VALUE 'country';

@@ -1,0 +1,11 @@
+For reference, the application source code is in `src/*`.
+
+1. Study @IMPLEMENTATION_PLAN.md (if present; it may be incorrect) and use up to 500 Sonnet subagents to study existing source code in `src/*`. Use an Opus subagent to analyze findings, prioritize tasks, and create/update @IMPLEMENTATION_PLAN.md as a bullet point list sorted in priority of items yet to be implemented. Ultrathink. Consider searching for TODO, minimal implementations, placeholders, skipped/flaky tests, and inconsistent patterns. Study @IMPLEMENTATION_PLAN.md to determine starting point for research and keep it up to date with items considered complete/incomplete using subagents.
+
+IMPORTANT: Plan only. Do NOT implement anything. Do NOT assume functionality is missing; confirm with code search first. Treat `src/lib` as the project's standard library for shared utilities and components. Prefer consolidated, idiomatic implementations there over ad-hoc copies.
+
+ULTIMATE GOAL: We want to achieve a creating multi-tenant web application for managing USCIS immigration forms with user-friendly HTML interfaces and bidirectional PDF editing. Consider missing elements and plan accordingly. If an element is missing, search first to confirm it doesn't exist, then if needed author the specification at specs/FILENAME.md. If you create a new element then document the plan to implement it in @IMPLEMENTATION_PLAN.md using a subagent.
+
+Only ever delete content from the IMPLEMENTATION_PLAN.md file if it is incorrect, or based off incomplete information. Or you are able to improve the particular item.
+
+Never install any modules or run any scripts. If this needs doing ask the user to do it.

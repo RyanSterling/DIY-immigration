@@ -43,6 +43,35 @@ export async function generateAssessment(assessmentData) {
 }
 
 /**
+ * Save assessment to database via worker API
+ */
+export async function saveAssessmentToApi(assessmentData, visaResults = null) {
+  try {
+    const response = await fetch(`${WORKER_URL}/save-assessment`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ...assessmentData,
+        visa_results: visaResults
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to save assessment');
+    }
+
+    return { data: data.data, error: null };
+  } catch (error) {
+    console.error('Error saving assessment:', error);
+    return { data: null, error };
+  }
+}
+
+/**
  * Send webhook to email provider
  */
 export async function sendWebhook(webhookData) {

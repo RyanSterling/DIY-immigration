@@ -9,8 +9,7 @@ import { K1_QUESTIONS, getVisibleK1Questions, getTotalK1QuestionCount, getQuesti
 import { calculateK1Eligibility } from '../../lib/scoring';
 import { getUtmParams } from '../../lib/utm';
 import { generateSessionId } from '../../lib/session';
-import { saveAssessment, saveVisaResults, trackQuizStart, markQuizCompleted } from '../../lib/supabase';
-import { sendWebhook } from '../../lib/api';
+import { sendWebhook, saveAssessmentToApi } from '../../lib/api';
 
 const STEPS = {
   WELCOME: 'welcome',
@@ -209,32 +208,26 @@ export default function K1QuizContainer() {
         k1_answers: JSON.stringify(answers)
       };
 
-      // Save to database (non-blocking - results still show if DB fails)
-      const { data: savedAssessment, error: saveError } = await saveAssessment(assessmentData);
+      // Prepare visa results for database
+      const visaResultsForDb = calculatedResults.map(result => ({
+        visa_type_id: result.visaCode,
+        eligibility_score: result.score,
+        likelihood_rating: result.likelihood,
+        estimated_processing_days: result.estimatedDays,
+        estimated_total_cost: result.estimatedCost,
+        key_strengths: result.strengths,
+        key_challenges: result.challenges,
+        is_recommended: true
+      }));
+
+      // Save to database via worker API (non-blocking - results still show if DB fails)
+      const { data: savedAssessment, error: saveError } = await saveAssessmentToApi(
+        assessmentData,
+        visaResultsForDb
+      );
 
       if (saveError) {
         console.warn('Database save failed, but showing results anyway:', saveError);
-      }
-
-      // Save visa results if assessment was saved
-      if (!saveError && savedAssessment && calculatedResults.length > 0) {
-        const visaResultsForDb = calculatedResults.map(result => ({
-          visa_type_id: result.visaCode,
-          eligibility_score: result.score,
-          likelihood_rating: result.likelihood,
-          estimated_processing_days: result.estimatedDays,
-          estimated_total_cost: result.estimatedCost,
-          key_strengths: result.strengths,
-          key_challenges: result.challenges,
-          is_recommended: true
-        }));
-
-        await saveVisaResults(savedAssessment.id, visaResultsForDb);
-      }
-
-      // Mark quiz as completed if we have an assessment
-      if (!saveError && savedAssessment) {
-        await markQuizCompleted(sessionId, savedAssessment.id);
       }
 
       // Send webhook

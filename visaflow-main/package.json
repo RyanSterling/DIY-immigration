@@ -1,0 +1,44 @@
+{
+  "name": "visaflow",
+  "private": true,
+  "scripts": {
+    "build:shared": "npm run build -w @visaflow/shared",
+    "build:backend": "npm run build:shared && npm run build -w backend",
+    "build:frontend": "npm run build:shared && npm run build -w frontend",
+    "build:admin": "npm run build:shared && npm run build -w admin",
+    "dev": "node scripts/dev-start.js",
+    "db:generate": "npm run db:generate -w backend",
+    "db:migrate": "npm run db:migrate -w backend",
+    "db:push": "npm run db:push -w backend",
+    "db:studio": "npm run db:studio -w backend",
+    "dev:admin": "npm run dev -w admin",
+    "dev:backend": "npm run dev:tunnel -w backend",
+    "dev:frontend": "npm run dev -w frontend",
+    "syncpack:all": "syncpack lint && syncpack list-mismatches",
+    "syncpack:fix": "syncpack fix-mismatches",
+    "syncpack:format": "syncpack format",
+    "syncpack:lint": "syncpack lint",
+    "syncpack:list": "syncpack list-mismatches",
+    "syncpack:update": "syncpack update",
+    "worktree:create": "bash scripts/worktree-create.sh",
+    "worktree:list": "bash scripts/worktree-list.sh",
+    "worktree:prune": "bash scripts/worktree-prune.sh",
+    "worktree:remove": "bash scripts/worktree-remove.sh",
+    "worktree:start": "bash scripts/worktree-start.sh"
+  },
+  "workspaces": [
+    "backend",
+    "frontend",
+    "admin",
+    "shared"
+  ],
+  "dependencies": {
+    "i18n-iso-countries": "^7.14.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "pdf-lib": "^1.17.1",
+    "pdf-parse": "^2.4.5",
+    "syncpack": "^13.0.4"
+  }
+}

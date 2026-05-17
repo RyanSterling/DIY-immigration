@@ -1,0 +1,348 @@
+name: Deploy Migrations to Staging
+
+on:
+  push:
+    branches:
+      - staging
+    paths:
+      - "backend/src/db/schema/**"
+      - "backend/drizzle/**"
+      - "backend/drizzle.config.ts"
+
+  pull_request:
+    branches:
+      - staging
+    paths:
+      - "backend/src/db/schema/**"
+      - "backend/drizzle/**"
+      - "backend/drizzle.config.ts"
+
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Force migration (skip validation)"
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  validate:
+    name: Validate Migrations
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.STAGING_DB_PASSWORD }}
+      SUPABASE_PROJECT_ID: ${{ secrets.STAGING_PROJECT_ID }}
+      DATABASE_URL: postgresql://postgres.${{ secrets.STAGING_PROJECT_ID }}:${{ secrets.STAGING_DB_PASSWORD }}@aws-1-us-west-1.pooler.supabase.com:5432/postgres
+      NODE_ENV: staging
+      PGCONNECT_TIMEOUT: "30"
+      PGTIMEOUT: "60000"
+      NODE_OPTIONS: "--max-old-space-size=4096"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check Drizzle migration files
+        run: npm run db:check
+
+      - name: Validate migration SQL
+        run: |
+          echo "Validating migration SQL files..."
+
+          # Get migration files that changed in this push/PR
+          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD -- ./drizzle/*.sql 2>/dev/null || true)
+          else
+            # Initial commit or shallow clone - check all files
+            CHANGED_FILES=$(find ./drizzle -name "*.sql" -type f)
+          fi
+
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "No migration files changed. Skipping destructive operation check."
+            exit 0
+          fi
+
+          echo "Checking changed migration files:"
+          echo "$CHANGED_FILES"
+
+          # Concatenate only changed files
+          echo "" > changed_migration_sql.txt
+          for file in $CHANGED_FILES; do
+            if [ -f "$file" ]; then
+              cat "$file" | grep -v '^--' | grep -v '^$' >> changed_migration_sql.txt
+            fi
+          done
+
+          # Check for potentially destructive operations (exclude DO blocks which are idempotent)
+          DESTRUCTIVE=$(grep -E 'DROP |ALTER TABLE .* DROP|TRUNCATE' changed_migration_sql.txt | grep -v 'DO \$\$' || true)
+          if [ ! -z "$DESTRUCTIVE" ] && [ "${{ github.event.inputs.force }}" != "true" ]; then
+            echo "⚠️ Warning: Potentially destructive operations detected in new migrations:"
+            echo "$DESTRUCTIVE"
+            echo "Review these operations carefully. Use the 'force' input parameter to bypass this check if needed."
+            exit 1
+          fi
+
+          echo "✅ No unreviewed destructive operations found in new migrations."
+
+  deploy:
+    name: Deploy Migrations
+    runs-on: ubuntu-latest
+    needs: validate
+    if: ${{ success() || github.event.inputs.force == 'true' }}
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.STAGING_DB_PASSWORD }}
+      SUPABASE_PROJECT_ID: ${{ secrets.STAGING_PROJECT_ID }}
+      DATABASE_URL: postgresql://postgres.${{ secrets.STAGING_PROJECT_ID }}:${{ secrets.STAGING_DB_PASSWORD }}@aws-1-us-west-1.pooler.supabase.com:5432/postgres
+      NODE_ENV: staging
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install global dependencies
+        run: npm install -g ts-node typescript tsx
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Create backup before migration
+        id: backup
+        working-directory: ${{ github.workspace }}
+        run: |
+          echo "Creating database backup before migration..."
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          supabase link --project-ref $SUPABASE_PROJECT_ID
+          supabase db dump -f staging_backup_$TIMESTAMP.sql
+          echo "backup_file=staging_backup_$TIMESTAMP.sql" >> $GITHUB_OUTPUT
+
+      - name: Link to Supabase project and check status
+        working-directory: ${{ github.workspace }}
+        run: |
+          # Ignore credential storage errors
+          supabase link --project-ref $SUPABASE_PROJECT_ID || true
+
+          # Check Supabase project status
+          echo "Checking Supabase project status..."
+          supabase status || true
+
+          # Fetch and display project configuration differences (informational only)
+          echo "Checking configuration differences..."
+          supabase db remote changes || true
+
+      - name: Test database connectivity
+        run: |
+          echo "Testing database connectivity before migration..."
+          cat > test_connection.js << 'EOF'
+          import postgres from 'postgres';
+
+          async function testConnection() {
+            const sql = postgres(process.env.DATABASE_URL, {
+              connect_timeout: 30,
+              idle_timeout: 60,
+            });
+
+            try {
+              console.log("Attempting to connect to database...");
+              const result = await sql`SELECT current_timestamp as now`;
+              console.log('Database connection successful:', result[0]);
+
+              await sql.end();
+              return true;
+            } catch (error) {
+              console.error('Database connection test failed:');
+              console.error(error);
+
+              const connString = process.env.DATABASE_URL || '';
+              const redactedConnString = connString.replace(/:[^:@]+@/, ':********@');
+              console.log('Using connection string (redacted):', redactedConnString);
+
+              try { await sql.end(); } catch {}
+              return false;
+            }
+          }
+
+          testConnection()
+            .then(success => process.exit(success ? 0 : 1))
+            .catch(err => {
+              console.error(err);
+              process.exit(1);
+            });
+          EOF
+
+          npx tsx test_connection.js
+
+      - name: Run database migrations
+        id: migrate
+        run: |
+          echo "Running migrations..."
+          npm run db:migrate
+          echo "migration_success=true" >> $GITHUB_OUTPUT
+        env:
+          NODE_ENV: staging
+
+      - name: Verify migration
+        run: |
+          echo "Verifying migration was successful..."
+
+          cat > verify_migration.js << 'EOF'
+          import postgres from 'postgres';
+
+          async function verifyMigration() {
+            const sql = postgres(process.env.DATABASE_URL, {
+              connect_timeout: 30,
+            });
+
+            try {
+              console.log("Checking migration status in the database...");
+
+              // Check if drizzle's migration table exists
+              const tableCheck = await sql`
+                SELECT EXISTS (
+                  SELECT FROM information_schema.tables
+                  WHERE table_schema = 'drizzle'
+                  AND table_name = '__drizzle_migrations'
+                )
+              `;
+
+              if (!tableCheck[0].exists) {
+                console.error("Migration table not found. Migrations may not have been applied correctly.");
+                await sql.end();
+                return false;
+              }
+
+              // Get the most recent migrations
+              const migrations = await sql`
+                SELECT * FROM drizzle.__drizzle_migrations
+                ORDER BY created_at DESC
+                LIMIT 5
+              `;
+
+              if (migrations.length === 0) {
+                console.error("No migrations found in the migration table.");
+                await sql.end();
+                return false;
+              }
+
+              console.log("Recent migrations:");
+              migrations.forEach(row => {
+                console.log(`- ${row.hash} at ${row.created_at}`);
+              });
+
+              console.log("✅ Migration verification complete.");
+
+              await sql.end();
+              return true;
+            } catch (error) {
+              console.error('Migration verification failed:', error);
+              try { await sql.end(); } catch {}
+              return false;
+            }
+          }
+
+          verifyMigration()
+            .then(success => process.exit(success ? 0 : 1))
+            .catch(err => {
+              console.error(err);
+              process.exit(1);
+            });
+          EOF
+
+          npx tsx verify_migration.js
+
+      - name: Test database connectivity and basic queries
+        run: |
+          echo "Testing database after migration..."
+
+          cat > test_db.js << 'EOF'
+          import postgres from 'postgres';
+
+          async function testDatabase() {
+            const sql = postgres(process.env.DATABASE_URL);
+
+            try {
+              const result = await sql`SELECT current_timestamp as now`;
+              console.log('Database connection successful:', result[0]);
+
+              await sql.end();
+              return true;
+            } catch (error) {
+              console.error('Database test failed:', error);
+              try { await sql.end(); } catch {}
+              return false;
+            }
+          }
+
+          testDatabase()
+            .then(success => process.exit(success ? 0 : 1))
+            .catch(err => {
+              console.error(err);
+              process.exit(1);
+            });
+          EOF
+
+          npx tsx test_db.js
+
+      - name: Upload backup as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: database-backup
+          path: ${{ steps.backup.outputs.backup_file }}
+          retention-days: 7
+
+  notify:
+    name: Notification
+    needs: [deploy]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send success notification
+        if: ${{ needs.deploy.result == 'success' }}
+        run: |
+          echo "Migration successful! ✅"
+          # Add your notification method here (Slack, email, etc.)
+          # Example for Slack:
+          # curl -X POST -H 'Content-type: application/json' \
+          #   --data '{"text":"✅ Staging database migration completed successfully!"}' \
+          #   ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Send failure notification
+        if: ${{ needs.deploy.result == 'failure' }}
+        run: |
+          echo "Migration failed! ❌"
+          # Add your notification method here
+          # Example for Slack:
+          # curl -X POST -H 'Content-type: application/json' \
+          #   --data '{"text":"❌ Staging database migration failed! Please check the logs."}' \
+          #   ${{ secrets.SLACK_WEBHOOK_URL }}

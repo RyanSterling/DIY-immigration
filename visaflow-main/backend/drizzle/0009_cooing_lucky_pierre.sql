@@ -1,0 +1,1 @@
+ALTER TABLE "document_extractions" ADD COLUMN "queue_bear_message_id" text;

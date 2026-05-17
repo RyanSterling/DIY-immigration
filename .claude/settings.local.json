@@ -27,7 +27,9 @@
       "Bash(cd /Users/ryansterling/Desktop/Code\\\\ Projects/immigration-diy/worker && wrangler secret list:*)",
       "Bash(npx supabase:*)",
       "Bash(DELETE FROM purchases WHERE visa_type = 'k1')",
-      "Bash(__NEW_LINE_1a82791a3551dc17__ EOF)"
+      "Bash(__NEW_LINE_1a82791a3551dc17__ EOF)",
+      "Bash(grep:*)",
+      "Bash(cd /Users/ryansterling/Desktop/Code\\\\ Projects/immigration-diy/frontend && npx netlify deploy:*)"
     ]
   }
 }

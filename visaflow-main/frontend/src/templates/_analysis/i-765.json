@@ -1,0 +1,2530 @@
+{
+  "formInfo": {
+    "id": "i-765",
+    "formNumber": "I-765",
+    "title": "Application for Employment Authorization",
+    "revision": "01/20/25",
+    "ombNumber": "1615-0040",
+    "expires": "09/30/2027",
+    "totalPages": 7
+  },
+  "structure": {
+    "sections": [
+      {
+        "id": "part-1",
+        "title": "Reason for Applying",
+        "itemRange": "Items 1.a-1.c",
+        "pageStart": 1,
+        "fields": [
+          {
+            "itemNumber": "1.a",
+            "name": "reasonInitial",
+            "type": "checkbox",
+            "label": "Initial permission to accept employment",
+            "width": "1-1"
+          },
+          {
+            "itemNumber": "1.b",
+            "name": "reasonReplacement",
+            "type": "checkbox",
+            "label": "Replacement of lost, stolen, or damaged employment authorization document, or correction of my employment authorization document NOT DUE to U.S. Citizenship and Immigration Services (USCIS) error",
+            "width": "1-1"
+          },
+          {
+            "itemNumber": "1.c",
+            "name": "reasonRenewal",
+            "type": "checkbox",
+            "label": "Renewal of my permission to accept employment",
+            "helpText": "Attach a copy of your previous employment authorization document.",
+            "width": "1-1"
+          }
+        ]
+      },
+      {
+        "id": "part-2",
+        "title": "Information About You",
+        "itemRange": "Items 1.a-31.b",
+        "pageStart": 1,
+        "subsections": [
+          {
+            "id": "part-2-legal-name",
+            "title": "Your Full Legal Name",
+            "fields": [
+              {
+                "itemNumber": "1.a",
+                "name": "familyName",
+                "type": "text",
+                "label": "Family Name (Last Name)",
+                "width": "1-3",
+                "autofillKey": "last_name"
+              },
+              {
+                "itemNumber": "1.b",
+                "name": "givenName",
+                "type": "text",
+                "label": "Given Name (First Name)",
+                "width": "1-3",
+                "autofillKey": "first_name"
+              },
+              {
+                "itemNumber": "1.c",
+                "name": "middleName",
+                "type": "text",
+                "label": "Middle Name",
+                "width": "1-3",
+                "autofillKey": "middle_name"
+              }
+            ]
+          },
+          {
+            "id": "part-2-other-names",
+            "title": "Other Names Used",
+            "helpText": "Provide all other names you have ever used, including aliases, maiden name, and nicknames. If you need extra space to complete this section, use the space provided in Part 6. Additional Information.",
+            "fields": [
+              {
+                "itemNumber": "2.a",
+                "name": "otherName1FamilyName",
+                "type": "text",
+                "label": "Family Name (Last Name)",
+                "width": "1-3"
+              },
+              {
+                "itemNumber": "2.b",
+                "name": "otherName1GivenName",
+                "type": "text",
+                "label": "Given Name (First Name)",
+                "width": "1-3"
+              },
+              {
+                "itemNumber": "2.c",
+                "name": "otherName1MiddleName",
+                "type": "text",
+                "label": "Middle Name",
+                "width": "1-3"
+              },
+              {
+                "itemNumber": "3.a",
+                "name": "otherName2FamilyName",
+                "type": "text",
+                "label": "Family Name (Last Name)",
+                "width": "1-3"
+              },
+              {
+                "itemNumber": "3.b",
+                "name": "otherName2GivenName",
+                "type": "text",
+                "label": "Given Name (First Name)",
+                "width": "1-3"
+              },
+              {
+                "itemNumber": "3.c",
+                "name": "otherName2MiddleName",
+                "type": "text",
+                "label": "Middle Name",
+                "width": "1-3"
+              },
+              {
+                "itemNumber": "4.a",
+                "name": "otherName3FamilyName",
+                "type": "text",
+                "label": "Family Name (Last Name)",
+                "width": "1-3"
+              },
+              {
+                "itemNumber": "4.b",
+                "name": "otherName3GivenName",
+                "type": "text",
+                "label": "Given Name (First Name)",
+                "width": "1-3"
+              },
+              {
+                "itemNumber": "4.c",
+                "name": "otherName3MiddleName",
+                "type": "text",
+                "label": "Middle Name",
+                "width": "1-3"
+              }
+            ]
+          },
+          {
+            "id": "part-2-mailing-address",
+            "title": "Your U.S. Mailing Address",
+            "fields": [
+              {
+                "itemNumber": "5.a",
+                "name": "mailingInCareOf",
+                "type": "text",
+                "label": "In Care Of Name (if any)",
+                "width": "1-1"
+              },
+              {
+                "itemNumber": "5.b",
+                "name": "mailingStreet",
+                "type": "text",
+                "label": "Street Number and Name",
+                "width": "1-1"
+              },
+              {
+                "itemNumber": "5.c",
+                "name": "mailingAptSteFlr",
+                "type": "radio",
+                "label": "Unit Type",
+                "options": [
+                  { "value": "apt", "label": "Apt." },
+                  { "value": "ste", "label": "Ste." },
+                  { "value": "flr", "label": "Flr." }
+                ],
+                "width": "1-3"
+              },
+              {
+                "itemNumber": "5.c",
+                "name": "mailingAptSteFlrNumber",
+                "type": "text",
+                "label": "Unit Number",
+                "width": "1-3"
+              },
+              {
+                "itemNumber": "5.d",
+                "name": "mailingCity",
+                "type": "text",
+                "label": "City or Town",
+                "width": "1-2"
+              },
+              {
+                "itemNumber": "5.e",
+                "name": "mailingState",
+                "type": "select",
+                "label": "State",
+                "width": "1-4"
+              },
+              {
+                "itemNumber": "5.f",
+                "name": "mailingZipCode",
+                "type": "text",
+                "label": "ZIP Code",
+                "width": "1-4"
+              }
+            ]
+          },
+          {
+            "id": "part-2-same-address",
+            "title": "Address Confirmation",
+            "fields": [
+              {
+                "itemNumber": "6",
+                "name": "mailingAddressSameAsPhysical",
+                "type": "radio",
+                "label": "Is your current mailing address the same as your physical address?",
+                "options": [
+                  { "value": "yes", "label": "Yes" },
+                  { "value": "no", "label": "No" }
+                ],
+                "width": "1-1"
+              }
+            ]
+          },
+          {
+            "id": "part-2-physical-address",
+            "title": "U.S. Physical Address",
+            "helpText": "If you answered 'No' to Item Number 6., provide your physical address below.",
+            "fields": [
+              {
+                "itemNumber": "7.a",
+                "name": "physicalStreet",
+                "type": "text",
+                "label": "Street Number and Name",
+                "width": "1-1",
+                "showWhen": [
+                  {
+                    "field": "mailingAddressSameAsPhysical",
+                    "operator": "equals",
+                    "value": "no"
+                  }
+                ]
+              },
+              {
+                "itemNumber": "7.b",
+                "name": "physicalAptSteFlr",
+                "type": "radio",
+                "label": "Unit Type",
+                "options": [
+                  { "value": "apt", "label": "Apt." },
+                  { "value": "ste", "label": "Ste." },
+                  { "value": "flr", "label": "Flr." }
+                ],
+                "width": "1-3",
+                "showWhen": [
+                  {
+                    "field": "mailingAddressSameAsPhysical",
+                    "operator": "equals",
+                    "value": "no"
+                  }
+                ]
+              },
+              {
+                "itemNumber": "7.b",
+                "name": "physicalAptSteFlrNumber",
+                "type": "text",
+                "label": "Unit Number",
+                "width": "1-3",
+                "showWhen": [
+                  {
+                    "field": "mailingAddressSameAsPhysical",
+                    "operator": "equals",
+                    "value": "no"
+                  }
+                ]
+              },
+              {
+                "itemNumber": "7.c",
+                "name": "physicalCity",
+                "type": "text",
+                "label": "City or Town",
+                "width": "1-2",
+                "showWhen": [
+                  {
+                    "field": "mailingAddressSameAsPhysical",
+                    "operator": "equals",
+                    "value": "no"
+                  }
+                ]
+              },
+              {
+                "itemNumber": "7.d",
+                "name": "physicalState",
+                "type": "select",
+                "label": "State",
+                "width": "1-4",
+                "showWhen": [
+                  {
+                    "field": "mailingAddressSameAsPhysical",
+                    "operator": "equals",
+                    "value": "no"
+                  }
+                ]
+              },
+              {
+                "itemNumber": "7.e",
+                "name": "physicalZipCode",
+                "type": "text",
+                "label": "ZIP Code",
+                "width": "1-4",
+                "showWhen": [
+                  {
+                    "field": "mailingAddressSameAsPhysical",
+                    "operator": "equals",
+                    "value": "no"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "part-2-other-info",
+            "title": "Other Information",
+            "fields": [
+              {
+                "itemNumber": "8",
+                "name": "alienNumber",
+                "type": "text",
+                "label": "Alien Registration Number (A-Number) (if any)",
+                "helpText": "A-",
+                "width": "1-2",
+                "autofillKey": "a_number"
+              },
+              {
+                "itemNumber": "9",
+                "name": "uscisOnlineAccountNumber",
+                "type": "text",
+                "label": "USCIS Online Account Number (if any)",
+                "width": "1-2",
+                "autofillKey": "uscis_account_number"
+              },
+              {
+                "itemNumber": "10",
+                "name": "sex",
+                "type": "radio",
+                "label": "Sex",
+                "options": [
+                  { "value": "male", "label": "Male" },
+                  { "value": "female", "label": "Female" }
+                ],
+                "width": "1-2",
+                "autofillKey": "gender"
+              },
+              {
+                "itemNumber": "11",
+                "name": "maritalStatus",
+                "type": "radio",
+                "label": "Marital Status",
+                "options": [
+                  { "value": "single", "label": "Single" },
+                  { "value": "married", "label": "Married" },
+                  { "value": "divorced", "label": "Divorced" },
+                  { "value": "widowed", "label": "Widowed" }
+                ],
+                "width": "1-1"
+              },
+              {
+                "itemNumber": "12",
+                "name": "previouslyFiledI765",
+                "type": "radio",
+                "label": "Have you previously filed Form I-765?",
+                "options": [
+                  { "value": "yes", "label": "Yes" },
+                  { "value": "no", "label": "No" }
+                ],
+                "width": "1-1"
+              }
+            ]
+          },
+          {
+            "id": "part-2-ssn",
+            "title": "Social Security Information",
+            "fields": [
+              {
+                "itemNumber": "13.a",
+                "name": "ssaIssuedCard",
+                "type": "radio",
+                "label": "Has the Social Security Administration (SSA) ever officially issued a Social Security card to you?",
+                "options": [
+                  { "value": "yes", "label": "Yes" },
+                  { "value": "no", "label": "No" }
+                ],
+                "width": "1-1"
+              },
+              {
+                "itemNumber": "13.b",
+                "name": "ssn",
+                "type": "text",
+                "label": "Provide your Social Security number (SSN) (if known)",
+                "width": "1-2",
+                "autofillKey": "ssn",
+                "showWhen": [
+                  {
+                    "field": "ssaIssuedCard",
+                    "operator": "equals",
+                    "value": "yes"
+                  }
+                ]
+              },
+              {
+                "itemNumber": "14",
+                "name": "wantSsnCard",
+                "type": "radio",
+                "label": "Do you want the SSA to issue you a Social Security card?",
+                "helpText": "You must also answer 'Yes' to Item Number 15., Consent for Disclosure, to receive a card.",
+                "options": [
+                  { "value": "yes", "label": "Yes" },
+                  { "value": "no", "label": "No" }
+                ],
+                "width": "1-1"
+              },
+              {
+                "itemNumber": "15",
+                "name": "consentForDisclosure",
+                "type": "radio",
+                "label": "Consent for Disclosure: I authorize disclosure of information from this application to the SSA as required for the purpose of assigning me an SSN and issuing me a Social Security card.",
+                "options": [
+                  { "value": "yes", "label": "Yes" },
+                  { "value": "no", "label": "No" }
+                ],
+                "width": "1-1",
+                "showWhen": [
+                  {
+                    "field": "wantSsnCard",
+                    "operator": "equals",
+                    "value": "yes"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "part-2-parents",
+            "title": "Parent Information",
+            "helpText": "If you answered 'Yes' to Item Numbers 14. - 15., provide the information requested in Item Numbers 16.a. - 17.b.",
+            "fields": [
+              {
+                "itemNumber": "16.a",
+                "name": "fatherFamilyName",
+                "type": "text",
+                "label": "Father's Family Name (Last Name)",
+                "helpText": "Provide your father's birth name.",
+                "width": "1-2",
+                "showWhen": [
+                  {
+                    "field": "wantSsnCard",
+                    "operator": "equals",
+                    "value": "yes"
+                  },
+                  {
+                    "field": "consentForDisclosure",
+                    "operator": "equals",
+                    "value": "yes"
+                  }
+                ]
+              },
+              {
+                "itemNumber": "16.b",
+                "name": "fatherGivenName",
+                "type": "text",
+                "label": "Father's Given Name (First Name)",
+                "width": "1-2",
+                "showWhen": [
+                  {
+                    "field": "wantSsnCard",
+                    "operator": "equals",
+                    "value": "yes"
+                  },
+                  {
+                    "field": "consentForDisclosure",
+                    "operator": "equals",
+                    "value": "yes"
+                  }
+                ]
+              },
+              {
+                "itemNumber": "17.a",
+                "name": "motherFamilyName",
+                "type": "text",
+                "label": "Mother's Family Name (Last Name)",
+                "helpText": "Provide your mother's birth name.",
+                "width": "1-2",
+                "showWhen": [
+                  {
+                    "field": "wantSsnCard",
+                    "operator": "equals",
+                    "value": "yes"
+                  },
+                  {
+                    "field": "consentForDisclosure",
+                    "operator": "equals",
+                    "value": "yes"
+                  }
+                ]
+              },
+              {
+                "itemNumber": "17.b",
+                "name": "motherGivenName",
+                "type": "text",
+                "label": "Mother's Given Name (First Name)",
+                "width": "1-2",
+                "showWhen": [
+                  {
+                    "field": "wantSsnCard",
+                    "operator": "equals",
+                    "value": "yes"
+                  },
+                  {
+                    "field": "consentForDisclosure",
+                    "operator": "equals",
+                    "value": "yes"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "part-2-citizenship",
+            "title": "Your Country or Countries of Citizenship or Nationality",
+            "helpText": "List all countries where you are currently a citizen or national. If you need extra space to complete this item, use the space provided in Part 6. Additional Information.",
+            "fields": [
+              {
+                "itemNumber": "18.a",
+                "name": "citizenshipCountry1",
+                "type": "text",
+                "label": "Country",
+                "width": "1-2",
+                "autofillKey": "nationality"
+              },
+              {
+                "itemNumber": "18.b",
+                "name": "citizenshipCountry2",
+                "type": "text",
+                "label": "Country",
+                "width": "1-2"
+              }
+            ]
+          },
+          {
+            "id": "part-2-birth",
+            "title": "Place of Birth",
+            "helpText": "List the city/town/village, state/province, and country where you were born.",
+            "fields": [
+              {
+                "itemNumber": "19.a",
+                "name": "birthCity",
+                "type": "text",
+                "label": "City/Town/Village of Birth",
+                "width": "1-2",
+                "autofillKey": "place_of_birth"
+              },
+              {
+                "itemNumber": "19.b",
+                "name": "birthState",
+                "type": "text",
+                "label": "State/Province of Birth",
+                "width": "1-2"
+              },
+              {
+                "itemNumber": "19.c",
+                "name": "birthCountry",
+                "type": "text",
+                "label": "Country of Birth",
+                "width": "1-2",
+                "autofillKey": "country_of_birth"
+              },
+              {
+                "itemNumber": "20",
+                "name": "dateOfBirth",
+                "type": "date",
+                "label": "Date of Birth (mm/dd/yyyy)",
+                "width": "1-2",
+                "autofillKey": "date_of_birth"
+              }
+            ]
+          },
+          {
+            "id": "part-2-arrival",
+            "title": "Information About Your Last Arrival in the United States",
+            "fields": [
+              {
+                "itemNumber": "21.a",
+                "name": "i94Number",
+                "type": "text",
+                "label": "Form I-94 Arrival-Departure Record Number (if any)",
+                "width": "1-1",
+                "autofillKey": "i94_number"
+              },
+              {
+                "itemNumber": "21.b",
+                "name": "passportNumber",
+                "type": "text",
+                "label": "Passport Number of Your Most Recently Issued Passport",
+                "width": "1-2",
+                "autofillKey": "passport_number"
+              },
+              {
+                "itemNumber": "21.c",
+                "name": "travelDocumentNumber",
+                "type": "text",
+                "label": "Travel Document Number (if any)",
+                "width": "1-2",
+                "autofillKey": "travel_document_number"
+              },
+              {
+                "itemNumber": "21.d",
+                "name": "passportCountry",
+                "type": "text",
+                "label": "Country That Issued Your Passport or Travel Document",
+                "width": "1-2",
+                "autofillKey": "passport_issuing_country"
+              },
+              {
+                "itemNumber": "21.e",
+                "name": "passportExpiration",
+                "type": "date",
+                "label": "Expiration Date for Passport or Travel Document (mm/dd/yyyy)",
+                "width": "1-2",
+                "autofillKey": "passport_expiry_date"
+              },
+              {
+                "itemNumber": "22",
+                "name": "dateOfLastArrival",
+                "type": "date",
+                "label": "Date of Your Last Arrival Into the United States, On or About (mm/dd/yyyy)",
+                "width": "1-2",
+                "autofillKey": "i94_admission_date"
+              },
+              {
+                "itemNumber": "23",
+                "name": "placeOfLastArrival",
+                "type": "text",
+                "label": "Place of Your Last Arrival Into the United States",
+                "width": "1-2"
+              },
+              {
+                "itemNumber": "24",
+                "name": "immigrationStatusAtArrival",
+                "type": "text",
+                "label": "Immigration Status at Your Last Arrival (for example, B-2 visitor, F-1 student, or no status)",
+                "width": "1-1",
+                "autofillKey": "i94_class_of_admission"
+              },
+              {
+                "itemNumber": "25",
+                "name": "currentImmigrationStatus",
+                "type": "text",
+                "label": "Your Current Immigration Status or Category (for example, B-2 visitor, F-1 student, parolee, deferred action, or no status or category)",
+                "width": "1-1"
+              },
+              {
+                "itemNumber": "26",
+                "name": "sevisNumber",
+                "type": "text",
+                "label": "Student and Exchange Visitor Information System (SEVIS) Number (if any)",
+                "helpText": "N-",
+                "width": "1-2"
+              }
+            ]
+          },
+          {
+            "id": "part-2-eligibility",
+            "title": "Information About Your Eligibility Category",
+            "fields": [
+              {
+                "itemNumber": "27",
+                "name": "eligibilityCategory",
+                "type": "text",
+                "label": "Eligibility Category",
+                "helpText": "Refer to the Who May File Form I-765 section of the Form I-765 Instructions to determine the appropriate eligibility category for this application. Enter the appropriate letter and number for your eligibility category below (for example, (a)(8), (c)(17)(iii)).",
+                "width": "1-1"
+              }
+            ]
+          },
+          {
+            "id": "part-2-stem-opt",
+            "title": "(c)(3)(C) STEM OPT Eligibility Category",
+            "helpText": "If you entered the eligibility category (c)(3)(C) in Item Number 27., provide the information requested in Item Numbers 28.a - 28.c.",
+            "fields": [
+              {
+                "itemNumber": "28.a",
+                "name": "stemOptDegree",
+                "type": "text",
+                "label": "Degree",
+                "width": "1-1",
+                "showWhen": [
+                  {
+                    "field": "eligibilityCategory",
+                    "operator": "equals",
+                    "value": "(c)(3)(C)"
+                  }
+                ]
+              },
+              {
+                "itemNumber": "28.b",
+                "name": "stemOptEmployerName",
+                "type": "text",
+                "label": "Employer's Name as Listed in E-Verify",
+                "width": "1-1",
+                "showWhen": [
+                  {
+                    "field": "eligibilityCategory",
+                    "operator": "equals",
+                    "value": "(c)(3)(C)"
+                  }
+                ]
+              },
+              {
+                "itemNumber": "28.c",
+                "name": "stemOptEVerifyNumber",
+                "type": "text",
+                "label": "Employer's E-Verify Company Identification Number or a Valid E-Verify Client Company Identification Number",
+                "width": "1-1",
+                "showWhen": [
+                  {
+                    "field": "eligibilityCategory",
+                    "operator": "equals",
+                    "value": "(c)(3)(C)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "part-2-c26",
+            "title": "(c)(26) Eligibility Category",
+            "helpText": "If you entered the eligibility category (c)(26) in Item Number 27., provide the receipt number of your H-1B spouse's most recent Form I-797 Notice for Form I-129, Petition for a Nonimmigrant Worker.",
+            "fields": [
+              {
+                "itemNumber": "29",
+                "name": "c26ReceiptNumber",
+                "type": "text",
+                "label": "Receipt Number",
+                "width": "1-1",
+                "showWhen": [
+                  {
+                    "field": "eligibilityCategory",
+                    "operator": "equals",
+                    "value": "(c)(26)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "part-2-c8",
+            "title": "(c)(8) Eligibility Category",
+            "helpText": "If you entered the eligibility category (c)(8) in Item Number 27.",
+            "fields": [
+              {
+                "itemNumber": "30",
+                "name": "c8ArrestedConvicted",
+                "type": "radio",
+                "label": "Have you EVER been arrested for and/or convicted of any crime?",
+                "options": [
+                  { "value": "yes", "label": "Yes" },
+                  { "value": "no", "label": "No" }
+                ],
+                "width": "1-1",
+                "showWhen": [
+                  {
+                    "field": "eligibilityCategory",
+                    "operator": "equals",
+                    "value": "(c)(8)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "part-2-c35-c36",
+            "title": "(c)(35) and (c)(36) Eligibility Category",
+            "helpText": "If you entered the eligibility category (c)(35) in Item Number 27., please provide the receipt number of your Form I-797 Notice for Form I-140, Immigrant Petition for Alien Worker. If you entered the eligibility category (c)(36) in Item Number 27., please provide the receipt number of your spouse's or parent's Form I-797 Notice for Form I-140.",
+            "fields": [
+              {
+                "itemNumber": "31.a",
+                "name": "c35c36ReceiptNumber",
+                "type": "text",
+                "label": "Receipt Number",
+                "width": "1-1",
+                "showWhen": [
+                  {
+                    "field": "eligibilityCategory",
+                    "operator": "contains",
+                    "value": "(c)(35)"
+                  },
+                  {
+                    "field": "eligibilityCategory",
+                    "operator": "contains",
+                    "value": "(c)(36)"
+                  }
+                ]
+              },
+              {
+                "itemNumber": "31.b",
+                "name": "c35c36ArrestedConvicted",
+                "type": "radio",
+                "label": "If you entered the eligibility category (c)(35) or (c)(36) in Item Number 27., have you EVER been arrested for and/or convicted of any crime?",
+                "options": [
+                  { "value": "yes", "label": "Yes" },
+                  { "value": "no", "label": "No" }
+                ],
+                "width": "1-1",
+                "showWhen": [
+                  {
+                    "field": "eligibilityCategory",
+                    "operator": "contains",
+                    "value": "(c)(35)"
+                  },
+                  {
+                    "field": "eligibilityCategory",
+                    "operator": "contains",
+                    "value": "(c)(36)"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "part-3",
+        "title": "Applicant's Statement, Contact Information, Declaration, Certification, and Signature",
+        "itemRange": "Items 1.a-7.b",
+        "pageStart": 4,
+        "subsections": [
+          {
+            "id": "part-3-statement",
+            "title": "Applicant's Statement",
+            "helpText": "Select the box for either Item Number 1.a. or 1.b. If applicable, select the box for Item Number 2.",
+            "fields": [
+              {
+                "itemNumber": "1.a",
+                "name": "applicantCanReadEnglish",
+                "type": "checkbox",
+                "label": "I can read and understand English, and I have read and understand every question and instruction on this application and my answer to every question.",
+                "width": "1-1"
+              },
+              {
+                "itemNumber": "1.b",
+                "name": "applicantUsedInterpreter",
+                "type": "checkbox",
+                "label": "The interpreter named in Part 4. read to me every question and instruction on this application and my answer to every question in",
+                "width": "1-1"
+              },
+              {
+                "itemNumber": "1.b",
+                "name": "interpreterLanguage",
+                "type": "text",
+                "label": "Language",
+                "helpText": "a language in which I am fluent, and I understood everything.",
+                "width": "1-2",
+                "showWhen": [
+                  {
+                    "field": "applicantUsedInterpreter",
+                    "operator": "equals",
+                    "value": true
+                  }
+                ]
+              },
+              {
+                "itemNumber": "2",
+                "name": "applicantUsedPreparer",
+                "type": "checkbox",
+                "label": "At my request, the preparer named in Part 5., prepared this application for me based only upon information I provided or authorized.",
+                "width": "1-1"
+              }
+            ]
+          },
+          {
+            "id": "part-3-contact",
+            "title": "Applicant's Contact Information",
+            "fields": [
+              {
+                "itemNumber": "3",
+                "name": "applicantDaytimePhone",
+                "type": "text",
+                "label": "Applicant's Daytime Telephone Number",
+                "width": "1-2"
+              },
+              {
+                "itemNumber": "4",
+                "name": "applicantMobilePhone",
+                "type": "text",
+                "label": "Applicant's Mobile Telephone Number (if any)",
+                "width": "1-2"
+              },
+              {
+                "itemNumber": "5",
+                "name": "applicantEmail",
+                "type": "text",
+                "label": "Applicant's Email Address (if any)",
+                "width": "1-1"
+              },
+              {
+                "itemNumber": "6",
+                "name": "abcSettlementEligible",
+                "type": "checkbox",
+                "label": "Select this box if you are a Salvadoran or Guatemalan national eligible for benefits under the ABC settlement agreement.",
+                "width": "1-1"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "part-4",
+        "title": "Interpreter's Contact Information, Certification, and Signature",
+        "itemRange": "Items 1.a-7.b",
+        "pageStart": 4,
+        "helpText": "Provide the following information about the interpreter.",
+        "subsections": [
+          {
+            "id": "part-4-name",
+            "title": "Interpreter's Full Name",
+            "fields": [
+              {
+                "itemNumber": "1.a",
+                "name": "interpreterFamilyName",
+                "type": "text",
+                "label": "Interpreter's Family Name (Last Name)",
+                "width": "1-2"
+              },
+              {
+                "itemNumber": "1.b",
+                "name": "interpreterGivenName",
+                "type": "text",
+                "label": "Interpreter's Given Name (First Name)",
+                "width": "1-2"
+              },
+              {
+                "itemNumber": "2",
+                "name": "interpreterBusinessName",
+                "type": "text",
+                "label": "Interpreter's Business or Organization Name (if any)",
+                "width": "1-1"
+              }
+            ]
+          },
+          {
+            "id": "part-4-address",
+            "title": "Interpreter's Mailing Address",
+            "fields": [
+              {
+                "itemNumber": "3.a",
+                "name": "interpreterStreet",
+                "type": "text",
+                "label": "Street Number and Name",
+                "width": "1-1"
+              },
+              {
+                "itemNumber": "3.b",
+                "name": "interpreterAptSteFlr",
+                "type": "radio",
+                "label": "Unit Type",
+                "options": [
+                  { "value": "apt", "label": "Apt." },
+                  { "value": "ste", "label": "Ste." },
+                  { "value": "flr", "label": "Flr." }
+                ],
+                "width": "1-3"
+              },
+              {
+                "itemNumber": "3.b",
+                "name": "interpreterAptSteFlrNumber",
+                "type": "text",
+                "label": "Unit Number",
+                "width": "1-3"
+              },
+              {
+                "itemNumber": "3.c",
+                "name": "interpreterCity",
+                "type": "text",
+                "label": "City or Town",
+                "width": "1-2"
+              },
+              {
+                "itemNumber": "3.d",
+                "name": "interpreterState",
+                "type": "select",
+                "label": "State",
+                "width": "1-4"
+              },
+              {
+                "itemNumber": "3.e",
+                "name": "interpreterZipCode",
+                "type": "text",
+                "label": "ZIP Code",
+                "width": "1-4"
+              },
+              {
+                "itemNumber": "3.f",
+                "name": "interpreterProvince",
+                "type": "text",
+                "label": "Province",
+                "width": "1-3"
+              },
+              {
+                "itemNumber": "3.g",
+                "name": "interpreterPostalCode",
+                "type": "text",
+                "label": "Postal Code",
+                "width": "1-3"
+              },
+              {
+                "itemNumber": "3.h",
+                "name": "interpreterCountry",
+                "type": "text",
+                "label": "Country",
+                "width": "1-3"
+              }
+            ]
+          },
+          {
+            "id": "part-4-contact",
+            "title": "Interpreter's Contact Information",
+            "fields": [
+              {
+                "itemNumber": "4",
+                "name": "interpreterDaytimePhone",
+                "type": "text",
+                "label": "Interpreter's Daytime Telephone Number",
+                "width": "1-2"
+              },
+              {
+                "itemNumber": "5",
+                "name": "interpreterMobilePhone",
+                "type": "text",
+                "label": "Interpreter's Mobile Telephone Number (if any)",
+                "width": "1-2"
+              },
+              {
+                "itemNumber": "6",
+                "name": "interpreterEmail",
+                "type": "text",
+                "label": "Interpreter's Email Address (if any)",
+                "width": "1-1"
+              }
+            ]
+          },
+          {
+            "id": "part-4-certification",
+            "title": "Interpreter's Certification",
+            "fields": [
+              {
+                "itemNumber": "cert",
+                "name": "interpreterFluentLanguage",
+                "type": "text",
+                "label": "I am fluent in English and",
+                "helpText": "which is the same language specified in Part 3., Item Number 1.b.",
+                "width": "1-1"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "part-5",
+        "title": "Contact Information, Declaration, and Signature of the Person Preparing this Application, If Other Than the Applicant",
+        "itemRange": "Items 1.a-8.b",
+        "pageStart": 5,
+        "helpText": "Provide the following information about the preparer.",
+        "subsections": [
+          {
+            "id": "part-5-name",
+            "title": "Preparer's Full Name",
+            "fields": [
+              {
+                "itemNumber": "1.a",
+                "name": "preparerFamilyName",
+                "type": "text",
+                "label": "Preparer's Family Name (Last Name)",
+                "width": "1-2"
+              },
+              {
+                "itemNumber": "1.b",
+                "name": "preparerGivenName",
+                "type": "text",
+                "label": "Preparer's Given Name (First Name)",
+                "width": "1-2"
+              },
+              {
+                "itemNumber": "2",
+                "name": "preparerBusinessName",
+                "type": "text",
+                "label": "Preparer's Business or Organization Name (if any)",
+                "width": "1-1"
+              }
+            ]
+          },
+          {
+            "id": "part-5-address",
+            "title": "Preparer's Mailing Address",
+            "fields": [
+              {
+                "itemNumber": "3.a",
+                "name": "preparerStreet",
+                "type": "text",
+                "label": "Street Number and Name",
+                "width": "1-1"
+              },
+              {
+                "itemNumber": "3.b",
+                "name": "preparerAptSteFlr",
+                "type": "radio",
+                "label": "Unit Type",
+                "options": [
+                  { "value": "apt", "label": "Apt." },
+                  { "value": "ste", "label": "Ste." },
+                  { "value": "flr", "label": "Flr." }
+                ],
+                "width": "1-3"
+              },
+              {
+                "itemNumber": "3.b",
+                "name": "preparerAptSteFlrNumber",
+                "type": "text",
+                "label": "Unit Number",
+                "width": "1-3"
+              },
+              {
+                "itemNumber": "3.c",
+                "name": "preparerCity",
+                "type": "text",
+                "label": "City or Town",
+                "width": "1-2"
+              },
+              {
+                "itemNumber": "3.d",
+                "name": "preparerState",
+                "type": "select",
+                "label": "State",
+                "width": "1-4"
+              },
+              {
+                "itemNumber": "3.e",
+                "name": "preparerZipCode",
+                "type": "text",
+                "label": "ZIP Code",
+                "width": "1-4"
+              },
+              {
+                "itemNumber": "3.f",
+                "name": "preparerProvince",
+                "type": "text",
+                "label": "Province",
+                "width": "1-3"
+              },
+              {
+                "itemNumber": "3.g",
+                "name": "preparerPostalCode",
+                "type": "text",
+                "label": "Postal Code",
+                "width": "1-3"
+              },
+              {
+                "itemNumber": "3.h",
+                "name": "preparerCountry",
+                "type": "text",
+                "label": "Country",
+                "width": "1-3"
+              }
+            ]
+          },
+          {
+            "id": "part-5-contact",
+            "title": "Preparer's Contact Information",
+            "fields": [
+              {
+                "itemNumber": "4",
+                "name": "preparerDaytimePhone",
+                "type": "text",
+                "label": "Preparer's Daytime Telephone Number",
+                "width": "1-2"
+              },
+              {
+                "itemNumber": "5",
+                "name": "preparerMobilePhone",
+                "type": "text",
+                "label": "Preparer's Mobile Telephone Number (if any)",
+                "width": "1-2"
+              },
+              {
+                "itemNumber": "6",
+                "name": "preparerEmail",
+                "type": "text",
+                "label": "Preparer's Email Address (if any)",
+                "width": "1-1"
+              }
+            ]
+          },
+          {
+            "id": "part-5-statement",
+            "title": "Preparer's Statement",
+            "fields": [
+              {
+                "itemNumber": "7.a",
+                "name": "preparerNotAttorney",
+                "type": "checkbox",
+                "label": "I am not an attorney or accredited representative but have prepared this application on behalf of the applicant and with the applicant's consent.",
+                "width": "1-1"
+              },
+              {
+                "itemNumber": "7.b",
+                "name": "preparerIsAttorney",
+                "type": "checkbox",
+                "label": "I am an attorney or accredited representative and my representation of the applicant in this case",
+                "width": "1-1"
+              },
+              {
+                "itemNumber": "7.b",
+                "name": "preparerRepresentationExtends",
+                "type": "checkbox",
+                "label": "extends beyond the preparation of this application",
+                "width": "1-2",
+                "showWhen": [
+                  {
+                    "field": "preparerIsAttorney",
+                    "operator": "equals",
+                    "value": true
+                  }
+                ]
+              },
+              {
+                "itemNumber": "7.b",
+                "name": "preparerRepresentationDoesNotExtend",
+                "type": "checkbox",
+                "label": "does not extend beyond the preparation of this application",
+                "width": "1-2",
+                "showWhen": [
+                  {
+                    "field": "preparerIsAttorney",
+                    "operator": "equals",
+                    "value": true
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "part-6",
+        "title": "Additional Information",
+        "itemRange": "Items 1.a-7.d",
+        "pageStart": 7,
+        "helpText": "If you need extra space to provide any additional information within this application, use the space below.",
+        "fields": [
+          {
+            "itemNumber": "1.a",
+            "name": "additionalFamilyName",
+            "type": "text",
+            "label": "Family Name (Last Name)",
+            "width": "1-3"
+          },
+          {
+            "itemNumber": "1.b",
+            "name": "additionalGivenName",
+            "type": "text",
+            "label": "Given Name (First Name)",
+            "width": "1-3"
+          },
+          {
+            "itemNumber": "1.c",
+            "name": "additionalMiddleName",
+            "type": "text",
+            "label": "Middle Name",
+            "width": "1-3"
+          },
+          {
+            "itemNumber": "2",
+            "name": "additionalANumber",
+            "type": "text",
+            "label": "A-Number (if any)",
+            "helpText": "A-",
+            "width": "1-2"
+          },
+          {
+            "itemNumber": "3.a",
+            "name": "additional1PageNumber",
+            "type": "text",
+            "label": "Page Number",
+            "width": "1-4"
+          },
+          {
+            "itemNumber": "3.b",
+            "name": "additional1PartNumber",
+            "type": "text",
+            "label": "Part Number",
+            "width": "1-4"
+          },
+          {
+            "itemNumber": "3.c",
+            "name": "additional1ItemNumber",
+            "type": "text",
+            "label": "Item Number",
+            "width": "1-4"
+          },
+          {
+            "itemNumber": "3.d",
+            "name": "additional1Response",
+            "type": "textarea",
+            "label": "Additional Response",
+            "rows": 6,
+            "width": "1-1"
+          },
+          {
+            "itemNumber": "4.a",
+            "name": "additional2PageNumber",
+            "type": "text",
+            "label": "Page Number",
+            "width": "1-4"
+          },
+          {
+            "itemNumber": "4.b",
+            "name": "additional2PartNumber",
+            "type": "text",
+            "label": "Part Number",
+            "width": "1-4"
+          },
+          {
+            "itemNumber": "4.c",
+            "name": "additional2ItemNumber",
+            "type": "text",
+            "label": "Item Number",
+            "width": "1-4"
+          },
+          {
+            "itemNumber": "4.d",
+            "name": "additional2Response",
+            "type": "textarea",
+            "label": "Additional Response",
+            "rows": 6,
+            "width": "1-1"
+          },
+          {
+            "itemNumber": "5.a",
+            "name": "additional3PageNumber",
+            "type": "text",
+            "label": "Page Number",
+            "width": "1-4"
+          },
+          {
+            "itemNumber": "5.b",
+            "name": "additional3PartNumber",
+            "type": "text",
+            "label": "Part Number",
+            "width": "1-4"
+          },
+          {
+            "itemNumber": "5.c",
+            "name": "additional3ItemNumber",
+            "type": "text",
+            "label": "Item Number",
+            "width": "1-4"
+          },
+          {
+            "itemNumber": "5.d",
+            "name": "additional3Response",
+            "type": "textarea",
+            "label": "Additional Response",
+            "rows": 6,
+            "width": "1-1"
+          },
+          {
+            "itemNumber": "6.a",
+            "name": "additional4PageNumber",
+            "type": "text",
+            "label": "Page Number",
+            "width": "1-4"
+          },
+          {
+            "itemNumber": "6.b",
+            "name": "additional4PartNumber",
+            "type": "text",
+            "label": "Part Number",
+            "width": "1-4"
+          },
+          {
+            "itemNumber": "6.c",
+            "name": "additional4ItemNumber",
+            "type": "text",
+            "label": "Item Number",
+            "width": "1-4"
+          },
+          {
+            "itemNumber": "6.d",
+            "name": "additional4Response",
+            "type": "textarea",
+            "label": "Additional Response",
+            "rows": 6,
+            "width": "1-1"
+          },
+          {
+            "itemNumber": "7.a",
+            "name": "additional5PageNumber",
+            "type": "text",
+            "label": "Page Number",
+            "width": "1-4"
+          },
+          {
+            "itemNumber": "7.b",
+            "name": "additional5PartNumber",
+            "type": "text",
+            "label": "Part Number",
+            "width": "1-4"
+          },
+          {
+            "itemNumber": "7.c",
+            "name": "additional5ItemNumber",
+            "type": "text",
+            "label": "Item Number",
+            "width": "1-4"
+          },
+          {
+            "itemNumber": "7.d",
+            "name": "additional5Response",
+            "type": "textarea",
+            "label": "Additional Response",
+            "rows": 6,
+            "width": "1-1"
+          }
+        ]
+      }
+    ]
+  },
+  "conditionals": [
+    {
+      "id": "cond-1",
+      "location": "Page 2, Item 6",
+      "originalText": "If you answered 'No' to Item Number 6., provide your physical address below.",
+      "triggerField": "mailingAddressSameAsPhysical",
+      "triggerItemNumber": "6",
+      "triggerOperator": "equals",
+      "triggerValue": "no",
+      "affectedItems": ["7.a", "7.b", "7.c", "7.d", "7.e"],
+      "action": "show"
+    },
+    {
+      "id": "cond-2",
+      "location": "Page 2, Item 13.a",
+      "originalText": "If you answered 'No' to Item Number 13.a., skip to Item Number 14. If you answered 'Yes' to Item Number 13.a., provide the information requested in Item Number 13.b.",
+      "triggerField": "ssaIssuedCard",
+      "triggerItemNumber": "13.a",
+      "triggerOperator": "equals",
+      "triggerValue": "yes",
+      "affectedItems": ["13.b"],
+      "action": "show"
+    },
+    {
+      "id": "cond-3",
+      "location": "Page 2, Item 14",
+      "originalText": "If you answered 'No' to Item Number 14., skip to Part 2., Item Number 18.a. If you answered 'Yes' to Item Number 14., you must also answer 'Yes' to Item Number 15.",
+      "triggerField": "wantSsnCard",
+      "triggerItemNumber": "14",
+      "triggerOperator": "equals",
+      "triggerValue": "yes",
+      "affectedItems": ["15"],
+      "action": "show"
+    },
+    {
+      "id": "cond-4",
+      "location": "Page 2, Items 14-15",
+      "originalText": "If you answered 'Yes' to Item Numbers 14. - 15., provide the information requested in Item Numbers 16.a. - 17.b.",
+      "triggerField": "wantSsnCard",
+      "triggerItemNumber": "14",
+      "triggerOperator": "equals",
+      "triggerValue": "yes",
+      "secondaryTrigger": {
+        "field": "consentForDisclosure",
+        "operator": "equals",
+        "value": "yes"
+      },
+      "affectedItems": ["16.a", "16.b", "17.a", "17.b"],
+      "action": "show"
+    },
+    {
+      "id": "cond-5",
+      "location": "Page 3, Item 28",
+      "originalText": "If you entered the eligibility category (c)(3)(C) in Item Number 27., provide the information requested in Item Numbers 28.a - 28.c.",
+      "triggerField": "eligibilityCategory",
+      "triggerItemNumber": "27",
+      "triggerOperator": "equals",
+      "triggerValue": "(c)(3)(C)",
+      "affectedItems": ["28.a", "28.b", "28.c"],
+      "action": "show"
+    },
+    {
+      "id": "cond-6",
+      "location": "Page 3, Item 29",
+      "originalText": "If you entered the eligibility category (c)(26) in Item Number 27., provide the receipt number of your H-1B spouse's most recent Form I-797 Notice for Form I-129, Petition for a Nonimmigrant Worker.",
+      "triggerField": "eligibilityCategory",
+      "triggerItemNumber": "27",
+      "triggerOperator": "equals",
+      "triggerValue": "(c)(26)",
+      "affectedItems": ["29"],
+      "action": "show"
+    },
+    {
+      "id": "cond-7",
+      "location": "Page 3, Item 30",
+      "originalText": "If you entered the eligibility category (c)(8) in Item Number 27., have you EVER been arrested for and/or convicted of any crime?",
+      "triggerField": "eligibilityCategory",
+      "triggerItemNumber": "27",
+      "triggerOperator": "equals",
+      "triggerValue": "(c)(8)",
+      "affectedItems": ["30"],
+      "action": "show"
+    },
+    {
+      "id": "cond-8",
+      "location": "Page 3, Item 31.a",
+      "originalText": "If you entered the eligibility category (c)(35) in Item Number 27., please provide the receipt number of your Form I-797 Notice for Form I-140, Immigrant Petition for Alien Worker. If you entered the eligibility category (c)(36) in Item Number 27., please provide the receipt number of your spouse's or parent's Form I-797 Notice for Form I-140.",
+      "triggerField": "eligibilityCategory",
+      "triggerItemNumber": "27",
+      "triggerOperator": "contains",
+      "triggerValue": "(c)(35)",
+      "alternativeTriggerValue": "(c)(36)",
+      "affectedItems": ["31.a", "31.b"],
+      "action": "show"
+    },
+    {
+      "id": "cond-9",
+      "location": "Page 4, Item 1.b",
+      "originalText": "The interpreter named in Part 4. read to me every question and instruction on this application...",
+      "triggerField": "applicantUsedInterpreter",
+      "triggerItemNumber": "1.b",
+      "triggerOperator": "equals",
+      "triggerValue": true,
+      "affectedItems": ["interpreterLanguage"],
+      "action": "show"
+    },
+    {
+      "id": "cond-10",
+      "location": "Page 6, Item 7.b",
+      "originalText": "I am an attorney or accredited representative and my representation of the applicant in this case extends/does not extend beyond the preparation of this application.",
+      "triggerField": "preparerIsAttorney",
+      "triggerItemNumber": "7.b",
+      "triggerOperator": "equals",
+      "triggerValue": true,
+      "affectedItems": [
+        "preparerRepresentationExtends",
+        "preparerRepresentationDoesNotExtend"
+      ],
+      "action": "show"
+    }
+  ],
+  "pdfFieldMappings": [
+    {
+      "itemNumber": "P1-1.a",
+      "fieldLabel": "Initial permission",
+      "pdfFieldName": "form1[0].Page1[0].Part1[0].Line1a_Checkbox[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P1-1.b",
+      "fieldLabel": "Replacement",
+      "pdfFieldName": "form1[0].Page1[0].Part1[0].Line1b_Checkbox[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P1-1.c",
+      "fieldLabel": "Renewal",
+      "pdfFieldName": "form1[0].Page1[0].Part1[0].Line1c_Checkbox[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-1.a",
+      "fieldLabel": "Family Name (Last Name)",
+      "pdfFieldName": "form1[0].Page1[0].Part2[0].Line1a_FamilyName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-1.b",
+      "fieldLabel": "Given Name (First Name)",
+      "pdfFieldName": "form1[0].Page1[0].Part2[0].Line1b_GivenName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-1.c",
+      "fieldLabel": "Middle Name",
+      "pdfFieldName": "form1[0].Page1[0].Part2[0].Line1c_MiddleName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-2.a",
+      "fieldLabel": "Other Name 1 - Family Name",
+      "pdfFieldName": "form1[0].Page1[0].Part2[0].Line2a_FamilyName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-2.b",
+      "fieldLabel": "Other Name 1 - Given Name",
+      "pdfFieldName": "form1[0].Page1[0].Part2[0].Line2b_GivenName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-2.c",
+      "fieldLabel": "Other Name 1 - Middle Name",
+      "pdfFieldName": "form1[0].Page1[0].Part2[0].Line2c_MiddleName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-3.a",
+      "fieldLabel": "Other Name 2 - Family Name",
+      "pdfFieldName": "form1[0].Page1[0].Part2[0].Line3a_FamilyName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-3.b",
+      "fieldLabel": "Other Name 2 - Given Name",
+      "pdfFieldName": "form1[0].Page1[0].Part2[0].Line3b_GivenName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-3.c",
+      "fieldLabel": "Other Name 2 - Middle Name",
+      "pdfFieldName": "form1[0].Page1[0].Part2[0].Line3c_MiddleName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-4.a",
+      "fieldLabel": "Other Name 3 - Family Name",
+      "pdfFieldName": "form1[0].Page1[0].Part2[0].Line4a_FamilyName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-4.b",
+      "fieldLabel": "Other Name 3 - Given Name",
+      "pdfFieldName": "form1[0].Page1[0].Part2[0].Line4b_GivenName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-4.c",
+      "fieldLabel": "Other Name 3 - Middle Name",
+      "pdfFieldName": "form1[0].Page1[0].Part2[0].Line4c_MiddleName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-5.a",
+      "fieldLabel": "In Care Of Name",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line5a_InCareOf[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-5.b",
+      "fieldLabel": "Street Number and Name",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line5b_StreetNumberName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-5.c-apt",
+      "fieldLabel": "Apt Checkbox",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line5c_Apt[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-5.c-ste",
+      "fieldLabel": "Ste Checkbox",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line5c_Ste[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-5.c-flr",
+      "fieldLabel": "Flr Checkbox",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line5c_Flr[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-5.c-number",
+      "fieldLabel": "Unit Number",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line5c_AptSteFlrNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-5.d",
+      "fieldLabel": "City or Town",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line5d_CityOrTown[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-5.e",
+      "fieldLabel": "State",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line5e_State[0]",
+      "fieldType": "dropdown"
+    },
+    {
+      "itemNumber": "P2-5.f",
+      "fieldLabel": "ZIP Code",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line5f_ZipCode[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-6-yes",
+      "fieldLabel": "Same Address - Yes",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line6_Yes[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-6-no",
+      "fieldLabel": "Same Address - No",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line6_No[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-7.a",
+      "fieldLabel": "Physical Street",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line7a_StreetNumberName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-7.b-apt",
+      "fieldLabel": "Physical Apt Checkbox",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line7b_Apt[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-7.b-ste",
+      "fieldLabel": "Physical Ste Checkbox",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line7b_Ste[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-7.b-flr",
+      "fieldLabel": "Physical Flr Checkbox",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line7b_Flr[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-7.b-number",
+      "fieldLabel": "Physical Unit Number",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line7b_AptSteFlrNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-7.c",
+      "fieldLabel": "Physical City",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line7c_CityOrTown[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-7.d",
+      "fieldLabel": "Physical State",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line7d_State[0]",
+      "fieldType": "dropdown"
+    },
+    {
+      "itemNumber": "P2-7.e",
+      "fieldLabel": "Physical ZIP Code",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line7e_ZipCode[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-8",
+      "fieldLabel": "A-Number",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line8_AlienNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-9",
+      "fieldLabel": "USCIS Online Account Number",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line9_USCISOnlineAccountNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-10-male",
+      "fieldLabel": "Sex - Male",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line10_Male[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-10-female",
+      "fieldLabel": "Sex - Female",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line10_Female[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-11-single",
+      "fieldLabel": "Marital Status - Single",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line11_Single[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-11-married",
+      "fieldLabel": "Marital Status - Married",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line11_Married[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-11-divorced",
+      "fieldLabel": "Marital Status - Divorced",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line11_Divorced[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-11-widowed",
+      "fieldLabel": "Marital Status - Widowed",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line11_Widowed[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-12-yes",
+      "fieldLabel": "Previously Filed I-765 - Yes",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line12_Yes[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-12-no",
+      "fieldLabel": "Previously Filed I-765 - No",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line12_No[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-13.a-yes",
+      "fieldLabel": "SSA Issued Card - Yes",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line13a_Yes[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-13.a-no",
+      "fieldLabel": "SSA Issued Card - No",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line13a_No[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-13.b",
+      "fieldLabel": "SSN",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line13b_SSN[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-14-yes",
+      "fieldLabel": "Want SSN Card - Yes",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line14_Yes[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-14-no",
+      "fieldLabel": "Want SSN Card - No",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line14_No[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-15-yes",
+      "fieldLabel": "Consent - Yes",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line15_Yes[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-15-no",
+      "fieldLabel": "Consent - No",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line15_No[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-16.a",
+      "fieldLabel": "Father's Family Name",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line16a_FatherFamilyName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-16.b",
+      "fieldLabel": "Father's Given Name",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line16b_FatherGivenName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-17.a",
+      "fieldLabel": "Mother's Family Name",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line17a_MotherFamilyName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-17.b",
+      "fieldLabel": "Mother's Given Name",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line17b_MotherGivenName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-18.a",
+      "fieldLabel": "Country of Citizenship 1",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line18a_Country[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-18.b",
+      "fieldLabel": "Country of Citizenship 2",
+      "pdfFieldName": "form1[0].Page2[0].Part2[0].Line18b_Country[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-19.a",
+      "fieldLabel": "City/Town/Village of Birth",
+      "pdfFieldName": "form1[0].Page3[0].Part2[0].Line19a_CityTownVillage[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-19.b",
+      "fieldLabel": "State/Province of Birth",
+      "pdfFieldName": "form1[0].Page3[0].Part2[0].Line19b_StateProvince[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-19.c",
+      "fieldLabel": "Country of Birth",
+      "pdfFieldName": "form1[0].Page3[0].Part2[0].Line19c_Country[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-20",
+      "fieldLabel": "Date of Birth",
+      "pdfFieldName": "form1[0].Page3[0].Part2[0].Line20_DateOfBirth[0]",
+      "fieldType": "date"
+    },
+    {
+      "itemNumber": "P2-21.a",
+      "fieldLabel": "I-94 Number",
+      "pdfFieldName": "form1[0].Page3[0].Part2[0].Line21a_I94Number[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-21.b",
+      "fieldLabel": "Passport Number",
+      "pdfFieldName": "form1[0].Page3[0].Part2[0].Line21b_PassportNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-21.c",
+      "fieldLabel": "Travel Document Number",
+      "pdfFieldName": "form1[0].Page3[0].Part2[0].Line21c_TravelDocNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-21.d",
+      "fieldLabel": "Passport Country",
+      "pdfFieldName": "form1[0].Page3[0].Part2[0].Line21d_PassportCountry[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-21.e",
+      "fieldLabel": "Passport Expiration Date",
+      "pdfFieldName": "form1[0].Page3[0].Part2[0].Line21e_PassportExpDate[0]",
+      "fieldType": "date"
+    },
+    {
+      "itemNumber": "P2-22",
+      "fieldLabel": "Date of Last Arrival",
+      "pdfFieldName": "form1[0].Page3[0].Part2[0].Line22_DateOfLastArrival[0]",
+      "fieldType": "date"
+    },
+    {
+      "itemNumber": "P2-23",
+      "fieldLabel": "Place of Last Arrival",
+      "pdfFieldName": "form1[0].Page3[0].Part2[0].Line23_PlaceOfLastArrival[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-24",
+      "fieldLabel": "Immigration Status at Arrival",
+      "pdfFieldName": "form1[0].Page3[0].Part2[0].Line24_ImmigrationStatusAtArrival[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-25",
+      "fieldLabel": "Current Immigration Status",
+      "pdfFieldName": "form1[0].Page3[0].Part2[0].Line25_CurrentImmigrationStatus[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-26",
+      "fieldLabel": "SEVIS Number",
+      "pdfFieldName": "form1[0].Page3[0].Part2[0].Line26_SEVISNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-27",
+      "fieldLabel": "Eligibility Category",
+      "pdfFieldName": "form1[0].Page3[0].Part2[0].Line27_EligibilityCategory[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-28.a",
+      "fieldLabel": "STEM OPT Degree",
+      "pdfFieldName": "form1[0].Page3[0].Part2[0].Line28a_Degree[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-28.b",
+      "fieldLabel": "STEM OPT Employer Name",
+      "pdfFieldName": "form1[0].Page3[0].Part2[0].Line28b_EmployerName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-28.c",
+      "fieldLabel": "STEM OPT E-Verify Number",
+      "pdfFieldName": "form1[0].Page3[0].Part2[0].Line28c_EVerifyNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-29",
+      "fieldLabel": "(c)(26) Receipt Number",
+      "pdfFieldName": "form1[0].Page3[0].Part2[0].Line29_ReceiptNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-30-yes",
+      "fieldLabel": "(c)(8) Arrested/Convicted - Yes",
+      "pdfFieldName": "form1[0].Page3[0].Part2[0].Line30_Yes[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-30-no",
+      "fieldLabel": "(c)(8) Arrested/Convicted - No",
+      "pdfFieldName": "form1[0].Page3[0].Part2[0].Line30_No[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-31.a",
+      "fieldLabel": "(c)(35)/(c)(36) Receipt Number",
+      "pdfFieldName": "form1[0].Page3[0].Part2[0].Line31a_ReceiptNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P2-31.b-yes",
+      "fieldLabel": "(c)(35)/(c)(36) Arrested/Convicted - Yes",
+      "pdfFieldName": "form1[0].Page3[0].Part2[0].Line31b_Yes[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P2-31.b-no",
+      "fieldLabel": "(c)(35)/(c)(36) Arrested/Convicted - No",
+      "pdfFieldName": "form1[0].Page3[0].Part2[0].Line31b_No[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P3-1.a",
+      "fieldLabel": "Can Read English",
+      "pdfFieldName": "form1[0].Page4[0].Part3[0].Line1a_Checkbox[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P3-1.b",
+      "fieldLabel": "Used Interpreter",
+      "pdfFieldName": "form1[0].Page4[0].Part3[0].Line1b_Checkbox[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P3-1.b-lang",
+      "fieldLabel": "Interpreter Language",
+      "pdfFieldName": "form1[0].Page4[0].Part3[0].Line1b_Language[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P3-2",
+      "fieldLabel": "Used Preparer",
+      "pdfFieldName": "form1[0].Page4[0].Part3[0].Line2_Checkbox[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P3-2-name",
+      "fieldLabel": "Preparer Name",
+      "pdfFieldName": "form1[0].Page4[0].Part3[0].Line2_PreparerName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P3-3",
+      "fieldLabel": "Applicant Daytime Phone",
+      "pdfFieldName": "form1[0].Page4[0].Part3[0].Line3_DaytimePhone[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P3-4",
+      "fieldLabel": "Applicant Mobile Phone",
+      "pdfFieldName": "form1[0].Page4[0].Part3[0].Line4_MobilePhone[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P3-5",
+      "fieldLabel": "Applicant Email",
+      "pdfFieldName": "form1[0].Page4[0].Part3[0].Line5_Email[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P3-6",
+      "fieldLabel": "ABC Settlement Checkbox",
+      "pdfFieldName": "form1[0].Page4[0].Part3[0].Line6_Checkbox[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P4-1.a",
+      "fieldLabel": "Interpreter Family Name",
+      "pdfFieldName": "form1[0].Page4[0].Part4[0].Line1a_FamilyName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P4-1.b",
+      "fieldLabel": "Interpreter Given Name",
+      "pdfFieldName": "form1[0].Page4[0].Part4[0].Line1b_GivenName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P4-2",
+      "fieldLabel": "Interpreter Business Name",
+      "pdfFieldName": "form1[0].Page4[0].Part4[0].Line2_BusinessName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P4-3.a",
+      "fieldLabel": "Interpreter Street",
+      "pdfFieldName": "form1[0].Page5[0].Part4[0].Line3a_StreetNumberName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P4-3.b-apt",
+      "fieldLabel": "Interpreter Apt",
+      "pdfFieldName": "form1[0].Page5[0].Part4[0].Line3b_Apt[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P4-3.b-ste",
+      "fieldLabel": "Interpreter Ste",
+      "pdfFieldName": "form1[0].Page5[0].Part4[0].Line3b_Ste[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P4-3.b-flr",
+      "fieldLabel": "Interpreter Flr",
+      "pdfFieldName": "form1[0].Page5[0].Part4[0].Line3b_Flr[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P4-3.b-number",
+      "fieldLabel": "Interpreter Unit Number",
+      "pdfFieldName": "form1[0].Page5[0].Part4[0].Line3b_Number[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P4-3.c",
+      "fieldLabel": "Interpreter City",
+      "pdfFieldName": "form1[0].Page5[0].Part4[0].Line3c_CityOrTown[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P4-3.d",
+      "fieldLabel": "Interpreter State",
+      "pdfFieldName": "form1[0].Page5[0].Part4[0].Line3d_State[0]",
+      "fieldType": "dropdown"
+    },
+    {
+      "itemNumber": "P4-3.e",
+      "fieldLabel": "Interpreter ZIP Code",
+      "pdfFieldName": "form1[0].Page5[0].Part4[0].Line3e_ZipCode[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P4-3.f",
+      "fieldLabel": "Interpreter Province",
+      "pdfFieldName": "form1[0].Page5[0].Part4[0].Line3f_Province[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P4-3.g",
+      "fieldLabel": "Interpreter Postal Code",
+      "pdfFieldName": "form1[0].Page5[0].Part4[0].Line3g_PostalCode[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P4-3.h",
+      "fieldLabel": "Interpreter Country",
+      "pdfFieldName": "form1[0].Page5[0].Part4[0].Line3h_Country[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P4-4",
+      "fieldLabel": "Interpreter Daytime Phone",
+      "pdfFieldName": "form1[0].Page5[0].Part4[0].Line4_DaytimePhone[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P4-5",
+      "fieldLabel": "Interpreter Mobile Phone",
+      "pdfFieldName": "form1[0].Page5[0].Part4[0].Line5_MobilePhone[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P4-6",
+      "fieldLabel": "Interpreter Email",
+      "pdfFieldName": "form1[0].Page5[0].Part4[0].Line6_Email[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P4-cert-lang",
+      "fieldLabel": "Interpreter Fluent Language",
+      "pdfFieldName": "form1[0].Page5[0].Part4[0].Cert_Language[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P5-1.a",
+      "fieldLabel": "Preparer Family Name",
+      "pdfFieldName": "form1[0].Page5[0].Part5[0].Line1a_FamilyName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P5-1.b",
+      "fieldLabel": "Preparer Given Name",
+      "pdfFieldName": "form1[0].Page5[0].Part5[0].Line1b_GivenName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P5-2",
+      "fieldLabel": "Preparer Business Name",
+      "pdfFieldName": "form1[0].Page5[0].Part5[0].Line2_BusinessName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P5-3.a",
+      "fieldLabel": "Preparer Street",
+      "pdfFieldName": "form1[0].Page5[0].Part5[0].Line3a_StreetNumberName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P5-3.b-apt",
+      "fieldLabel": "Preparer Apt",
+      "pdfFieldName": "form1[0].Page5[0].Part5[0].Line3b_Apt[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P5-3.b-ste",
+      "fieldLabel": "Preparer Ste",
+      "pdfFieldName": "form1[0].Page5[0].Part5[0].Line3b_Ste[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P5-3.b-flr",
+      "fieldLabel": "Preparer Flr",
+      "pdfFieldName": "form1[0].Page5[0].Part5[0].Line3b_Flr[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P5-3.b-number",
+      "fieldLabel": "Preparer Unit Number",
+      "pdfFieldName": "form1[0].Page5[0].Part5[0].Line3b_Number[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P5-3.c",
+      "fieldLabel": "Preparer City",
+      "pdfFieldName": "form1[0].Page5[0].Part5[0].Line3c_CityOrTown[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P5-3.d",
+      "fieldLabel": "Preparer State",
+      "pdfFieldName": "form1[0].Page5[0].Part5[0].Line3d_State[0]",
+      "fieldType": "dropdown"
+    },
+    {
+      "itemNumber": "P5-3.e",
+      "fieldLabel": "Preparer ZIP Code",
+      "pdfFieldName": "form1[0].Page5[0].Part5[0].Line3e_ZipCode[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P5-3.f",
+      "fieldLabel": "Preparer Province",
+      "pdfFieldName": "form1[0].Page5[0].Part5[0].Line3f_Province[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P5-3.g",
+      "fieldLabel": "Preparer Postal Code",
+      "pdfFieldName": "form1[0].Page5[0].Part5[0].Line3g_PostalCode[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P5-3.h",
+      "fieldLabel": "Preparer Country",
+      "pdfFieldName": "form1[0].Page5[0].Part5[0].Line3h_Country[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P5-4",
+      "fieldLabel": "Preparer Daytime Phone",
+      "pdfFieldName": "form1[0].Page5[0].Part5[0].Line4_DaytimePhone[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P5-5",
+      "fieldLabel": "Preparer Mobile Phone",
+      "pdfFieldName": "form1[0].Page5[0].Part5[0].Line5_MobilePhone[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P5-6",
+      "fieldLabel": "Preparer Email",
+      "pdfFieldName": "form1[0].Page5[0].Part5[0].Line6_Email[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P5-7.a",
+      "fieldLabel": "Preparer Not Attorney",
+      "pdfFieldName": "form1[0].Page6[0].Part5[0].Line7a_Checkbox[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P5-7.b",
+      "fieldLabel": "Preparer Is Attorney",
+      "pdfFieldName": "form1[0].Page6[0].Part5[0].Line7b_Checkbox[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P5-7.b-extends",
+      "fieldLabel": "Representation Extends",
+      "pdfFieldName": "form1[0].Page6[0].Part5[0].Line7b_Extends[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P5-7.b-notextends",
+      "fieldLabel": "Representation Does Not Extend",
+      "pdfFieldName": "form1[0].Page6[0].Part5[0].Line7b_DoesNotExtend[0]",
+      "fieldType": "checkbox"
+    },
+    {
+      "itemNumber": "P6-1.a",
+      "fieldLabel": "Additional Family Name",
+      "pdfFieldName": "form1[0].Page7[0].Part6[0].Line1a_FamilyName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P6-1.b",
+      "fieldLabel": "Additional Given Name",
+      "pdfFieldName": "form1[0].Page7[0].Part6[0].Line1b_GivenName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P6-1.c",
+      "fieldLabel": "Additional Middle Name",
+      "pdfFieldName": "form1[0].Page7[0].Part6[0].Line1c_MiddleName[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P6-2",
+      "fieldLabel": "Additional A-Number",
+      "pdfFieldName": "form1[0].Page7[0].Part6[0].Line2_ANumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P6-3.a",
+      "fieldLabel": "Additional 1 - Page Number",
+      "pdfFieldName": "form1[0].Page7[0].Part6[0].Line3a_PageNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P6-3.b",
+      "fieldLabel": "Additional 1 - Part Number",
+      "pdfFieldName": "form1[0].Page7[0].Part6[0].Line3b_PartNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P6-3.c",
+      "fieldLabel": "Additional 1 - Item Number",
+      "pdfFieldName": "form1[0].Page7[0].Part6[0].Line3c_ItemNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P6-3.d",
+      "fieldLabel": "Additional 1 - Response",
+      "pdfFieldName": "form1[0].Page7[0].Part6[0].Line3d_Response[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P6-4.a",
+      "fieldLabel": "Additional 2 - Page Number",
+      "pdfFieldName": "form1[0].Page7[0].Part6[0].Line4a_PageNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P6-4.b",
+      "fieldLabel": "Additional 2 - Part Number",
+      "pdfFieldName": "form1[0].Page7[0].Part6[0].Line4b_PartNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P6-4.c",
+      "fieldLabel": "Additional 2 - Item Number",
+      "pdfFieldName": "form1[0].Page7[0].Part6[0].Line4c_ItemNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P6-4.d",
+      "fieldLabel": "Additional 2 - Response",
+      "pdfFieldName": "form1[0].Page7[0].Part6[0].Line4d_Response[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P6-5.a",
+      "fieldLabel": "Additional 3 - Page Number",
+      "pdfFieldName": "form1[0].Page7[0].Part6[0].Line5a_PageNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P6-5.b",
+      "fieldLabel": "Additional 3 - Part Number",
+      "pdfFieldName": "form1[0].Page7[0].Part6[0].Line5b_PartNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P6-5.c",
+      "fieldLabel": "Additional 3 - Item Number",
+      "pdfFieldName": "form1[0].Page7[0].Part6[0].Line5c_ItemNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P6-5.d",
+      "fieldLabel": "Additional 3 - Response",
+      "pdfFieldName": "form1[0].Page7[0].Part6[0].Line5d_Response[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P6-6.a",
+      "fieldLabel": "Additional 4 - Page Number",
+      "pdfFieldName": "form1[0].Page7[0].Part6[0].Line6a_PageNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P6-6.b",
+      "fieldLabel": "Additional 4 - Part Number",
+      "pdfFieldName": "form1[0].Page7[0].Part6[0].Line6b_PartNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P6-6.c",
+      "fieldLabel": "Additional 4 - Item Number",
+      "pdfFieldName": "form1[0].Page7[0].Part6[0].Line6c_ItemNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P6-6.d",
+      "fieldLabel": "Additional 4 - Response",
+      "pdfFieldName": "form1[0].Page7[0].Part6[0].Line6d_Response[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P6-7.a",
+      "fieldLabel": "Additional 5 - Page Number",
+      "pdfFieldName": "form1[0].Page7[0].Part6[0].Line7a_PageNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P6-7.b",
+      "fieldLabel": "Additional 5 - Part Number",
+      "pdfFieldName": "form1[0].Page7[0].Part6[0].Line7b_PartNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P6-7.c",
+      "fieldLabel": "Additional 5 - Item Number",
+      "pdfFieldName": "form1[0].Page7[0].Part6[0].Line7c_ItemNumber[0]",
+      "fieldType": "text"
+    },
+    {
+      "itemNumber": "P6-7.d",
+      "fieldLabel": "Additional 5 - Response",
+      "pdfFieldName": "form1[0].Page7[0].Part6[0].Line7d_Response[0]",
+      "fieldType": "text"
+    }
+  ],
+  "autofillMappings": [
+    { "formField": "familyName", "canonicalKey": "last_name" },
+    { "formField": "givenName", "canonicalKey": "first_name" },
+    { "formField": "middleName", "canonicalKey": "middle_name" },
+    { "formField": "alienNumber", "canonicalKey": "a_number" },
+    {
+      "formField": "uscisOnlineAccountNumber",
+      "canonicalKey": "uscis_account_number"
+    },
+    { "formField": "sex", "canonicalKey": "gender" },
+    { "formField": "ssn", "canonicalKey": "ssn" },
+    { "formField": "citizenshipCountry1", "canonicalKey": "nationality" },
+    { "formField": "birthCity", "canonicalKey": "place_of_birth" },
+    { "formField": "birthCountry", "canonicalKey": "country_of_birth" },
+    { "formField": "dateOfBirth", "canonicalKey": "date_of_birth" },
+    { "formField": "i94Number", "canonicalKey": "i94_number" },
+    { "formField": "passportNumber", "canonicalKey": "passport_number" },
+    {
+      "formField": "travelDocumentNumber",
+      "canonicalKey": "travel_document_number"
+    },
+    {
+      "formField": "passportCountry",
+      "canonicalKey": "passport_issuing_country"
+    },
+    {
+      "formField": "passportExpiration",
+      "canonicalKey": "passport_expiry_date"
+    },
+    { "formField": "dateOfLastArrival", "canonicalKey": "i94_admission_date" },
+    {
+      "formField": "immigrationStatusAtArrival",
+      "canonicalKey": "i94_class_of_admission"
+    }
+  ],
+  "metadata": {
+    "analyzedAt": "2025-12-30T00:00:00Z",
+    "sourceFile": "test_files/forms/i-765.pdf",
+    "pdfInfo": {
+      "hasFormFields": true,
+      "totalFieldsEstimate": 140,
+      "fieldNamePattern": "form1[0].Page{N}[0].Part{M}[0].{FieldDesc}[0]",
+      "notes": "PDF has encryption - field names are estimated based on USCIS standard naming conventions"
+    },
+    "statistics": {
+      "totalSections": 6,
+      "totalFields": 105,
+      "totalConditionals": 10,
+      "totalPdfMappings": 140
+    }
+  }
+}

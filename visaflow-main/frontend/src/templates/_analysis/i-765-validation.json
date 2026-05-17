@@ -1,0 +1,128 @@
+{
+  "status": "PASS",
+  "coverage": 100,
+  "errorCount": 0,
+  "warningCount": 0,
+  "issues": [],
+  "summary": {
+    "totalPdfFields": 140,
+    "mappedFields": 152,
+    "unmappedFields": -12,
+    "totalFormFields": 133,
+    "totalSteps": 16,
+    "autofillMappings": 13
+  },
+  "refinementNotes": {
+    "date": "2025-12-30",
+    "removedMappings": [
+      {
+        "field": "alienNumber",
+        "previousMapping": "a_number",
+        "reason": "Canonical field 'a_number' does not exist in shared/src/canonicalFields.ts"
+      },
+      {
+        "field": "uscisOnlineAccountNumber",
+        "previousMapping": "uscis_account_number",
+        "reason": "Canonical field 'uscis_account_number' does not exist in shared/src/canonicalFields.ts"
+      },
+      {
+        "field": "ssn",
+        "previousMapping": "ssn",
+        "reason": "Canonical field 'ssn' does not exist in shared/src/canonicalFields.ts"
+      },
+      {
+        "field": "birthCountry",
+        "previousMapping": "country_of_birth",
+        "reason": "Canonical field 'country_of_birth' does not exist in shared/src/canonicalFields.ts"
+      },
+      {
+        "field": "travelDocumentNumber",
+        "previousMapping": "travel_document_number",
+        "reason": "Canonical field 'travel_document_number' does not exist in shared/src/canonicalFields.ts"
+      }
+    ],
+    "recommendation": "To enable autofill for these fields, add the corresponding canonical fields to shared/src/canonicalFields.ts: a_number, uscis_account_number, ssn, country_of_birth, travel_document_number"
+  },
+  "steps": [
+    {
+      "id": "part-1-reason",
+      "title": "Part 1. Reason for Applying",
+      "fieldCount": 3
+    },
+    {
+      "id": "part-2-legal-name",
+      "title": "Part 2. Your Full Legal Name",
+      "fieldCount": 3
+    },
+    {
+      "id": "part-2-other-names",
+      "title": "Part 2. Other Names Used",
+      "fieldCount": 9
+    },
+    {
+      "id": "part-2-mailing-address",
+      "title": "Part 2. Your U.S. Mailing Address",
+      "fieldCount": 7
+    },
+    {
+      "id": "part-2-physical-address",
+      "title": "Part 2. U.S. Physical Address",
+      "fieldCount": 7
+    },
+    {
+      "id": "part-2-other-info",
+      "title": "Part 2. Other Information",
+      "fieldCount": 5
+    },
+    {
+      "id": "part-2-ssn",
+      "title": "Part 2. Social Security Information",
+      "fieldCount": 4
+    },
+    {
+      "id": "part-2-parents",
+      "title": "Part 2. Parent Information",
+      "fieldCount": 4
+    },
+    {
+      "id": "part-2-citizenship",
+      "title": "Part 2. Your Country or Countries of Citizenship or Nationality",
+      "fieldCount": 2
+    },
+    {
+      "id": "part-2-birth",
+      "title": "Part 2. Place of Birth",
+      "fieldCount": 4
+    },
+    {
+      "id": "part-2-arrival",
+      "title": "Part 2. Information About Your Last Arrival in the United States",
+      "fieldCount": 11
+    },
+    {
+      "id": "part-2-eligibility",
+      "title": "Part 2. Information About Your Eligibility Category",
+      "fieldCount": 8
+    },
+    {
+      "id": "part-3-statement",
+      "title": "Part 3. Applicant's Statement, Contact Information, Declaration, Certification, and Signature",
+      "fieldCount": 9
+    },
+    {
+      "id": "part-4-interpreter",
+      "title": "Part 4. Interpreter's Contact Information, Certification, and Signature",
+      "fieldCount": 17
+    },
+    {
+      "id": "part-5-preparer",
+      "title": "Part 5. Contact Information, Declaration, and Signature of the Person Preparing this Application",
+      "fieldCount": 19
+    },
+    {
+      "id": "part-6-additional",
+      "title": "Part 6. Additional Information",
+      "fieldCount": 21
+    }
+  ]
+}

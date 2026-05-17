@@ -113,6 +113,72 @@ app.post('/webhook', async (c) => {
   }
 });
 
+// Save assessment to database (public endpoint - no auth required for quiz completion)
+app.post('/save-assessment', async (c) => {
+  try {
+    const body = await c.req.json();
+
+    const supabase = createClient(
+      c.env.SUPABASE_URL,
+      c.env.SUPABASE_SERVICE_KEY
+    );
+
+    // Insert assessment
+    const { data: assessment, error: assessmentError } = await supabase
+      .from('assessments')
+      .insert([{
+        email: body.email,
+        session_id: body.session_id,
+        country_of_citizenship: body.country_of_citizenship,
+        current_country: body.current_country,
+        current_visa_status: body.current_visa_status,
+        highest_degree: body.highest_degree,
+        degree_field: body.degree_field,
+        years_experience: body.years_experience,
+        current_occupation: body.current_occupation,
+        has_job_offer: body.has_job_offer,
+        employer_type: body.employer_type,
+        has_extraordinary_ability: body.has_extraordinary_ability,
+        additional_context: body.additional_context,
+        utm_source: body.utm_source,
+        utm_campaign: body.utm_campaign,
+        utm_content: body.utm_content,
+        utm_term: body.utm_term,
+        k1_answers: body.k1_answers,
+        ai_assessment: body.ai_assessment
+      }])
+      .select()
+      .single();
+
+    if (assessmentError) {
+      console.error('Error saving assessment:', assessmentError);
+      return c.json({ error: 'Failed to save assessment' }, 500);
+    }
+
+    // Save visa results if provided
+    if (body.visa_results && body.visa_results.length > 0) {
+      const resultsWithId = body.visa_results.map(r => ({
+        ...r,
+        assessment_id: assessment.id
+      }));
+
+      const { error: resultsError } = await supabase
+        .from('visa_eligibility_results')
+        .insert(resultsWithId);
+
+      if (resultsError) {
+        console.error('Error saving visa results:', resultsError);
+      }
+    }
+
+    return c.json({ data: assessment });
+
+  } catch (error) {
+    console.error('Error in save-assessment:', error);
+    return c.json({ error: 'Internal server error' }, 500);
+  }
+});
+
 // Analyze responses using AI (for admin dashboard)
 app.post('/analyze-responses', async (c) => {
   try {
