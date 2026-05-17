@@ -12,6 +12,14 @@ const VISA_CATEGORIES = [
         shortDesc: 'For fiancé(e)s of US citizens',
         hasDedicatedAssessment: true,
         route: '/assessment/k1'
+      },
+      {
+        code: 'marriage',
+        name: 'Marriage Green Card',
+        shortDesc: 'Already married to a US citizen? Get your green card.',
+        hasDedicatedAssessment: false,
+        hasDiyGuide: true,
+        route: '/marriage'
       }
     ]
   },
@@ -152,6 +160,19 @@ export default function VisaSelector() {
                           fontWeight: '500'
                         }}>
                           DEDICATED
+                        </span>
+                      )}
+                      {visa.hasDiyGuide && (
+                        <span style={{
+                          backgroundColor: '#059669',
+                          color: 'white',
+                          fontSize: '0.625rem',
+                          fontFamily: 'Soehne, sans-serif',
+                          padding: '0.125rem 0.5rem',
+                          borderRadius: '9999px',
+                          fontWeight: '500'
+                        }}>
+                          DIY GUIDE
                         </span>
                       )}
                     </div>

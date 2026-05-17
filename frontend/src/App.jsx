@@ -3,6 +3,7 @@ import { Show, RedirectToSignIn } from '@clerk/react';
 import QuizContainer from './components/quiz/QuizContainer';
 import K1QuizContainer from './components/quiz/K1QuizContainer';
 import LandingPage from './pages/LandingPage';
+import MarriageLandingPage from './pages/MarriageLandingPage';
 import Privacy from './pages/Privacy';
 import AccountPage from './pages/AccountPage';
 import K1Dashboard from './pages/K1Dashboard';
@@ -31,6 +32,8 @@ function App() {
         } />
         {/* Backward compatibility redirect */}
         <Route path="/k1" element={<Navigate to="/assessment/k1" replace />} />
+        {/* Marriage-based green card landing page */}
+        <Route path="/marriage" element={<MarriageLandingPage />} />
         <Route path="/privacy" element={
           <>
             <Privacy />

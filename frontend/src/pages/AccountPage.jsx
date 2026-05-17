@@ -229,7 +229,7 @@ export default function AccountPage() {
                 Find out which visa options you may qualify for.
               </p>
 
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <button
                   onClick={() => navigate('/assessment/k1')}
                   className="p-8 rounded-lg text-left transition-all hover:shadow-lg"
@@ -251,6 +251,30 @@ export default function AccountPage() {
                   </p>
                   <span style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.875rem', color: '#1E3A5F', fontWeight: '500' }}>
                     Start Assessment →
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => navigate('/visa/marriage/pricing')}
+                  className="p-8 rounded-lg text-left transition-all hover:shadow-lg"
+                  style={{ backgroundColor: 'white', border: '1px solid #E6E4E1' }}
+                >
+                  <div
+                    className="w-12 h-12 rounded-full flex items-center justify-center mb-4"
+                    style={{ backgroundColor: '#D1FAE5' }}
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="#065F46" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                  </div>
+                  <h3 style={{ fontFamily: 'Libre Baskerville, serif', fontSize: '1.25rem', color: '#1E1F1C', marginBottom: '0.5rem' }}>
+                    Marriage Green Card
+                  </h3>
+                  <p style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.875rem', color: '#77716E', marginBottom: '1rem' }}>
+                    Already married to a US citizen? Apply for permanent residence while in the US.
+                  </p>
+                  <span style={{ fontFamily: 'Soehne, sans-serif', fontSize: '0.875rem', color: '#1E3A5F', fontWeight: '500' }}>
+                    Get Started · $499 →
                   </span>
                 </button>
 
