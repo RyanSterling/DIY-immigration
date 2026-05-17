@@ -475,6 +475,7 @@ export default function K1MainContent({
   onOpenFormFiller,
   formProgress = {}
 }) {
+  console.log('K1MainContent received onOpenFormFiller:', !!onOpenFormFiller);
   // Get phase config
   const phaseConfig = useMemo(() => {
     if (activePhase === 'overview' || activePhase === 'timeline') return null;
