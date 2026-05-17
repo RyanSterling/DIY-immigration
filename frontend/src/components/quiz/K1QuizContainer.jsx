@@ -116,15 +116,12 @@ export default function K1QuizContainer() {
   const currentQuestion = visibleQuestions[currentQuestionIndex];
   const totalQuestions = getTotalK1QuestionCount(answers);
 
-  const handleStart = async () => {
+  const handleStart = () => {
     const session = generateSessionId();
     const utm = getUtmParams();
 
     setSessionId(session);
     setUtmParams(utm);
-
-    await trackQuizStart(session, utm);
-
     setCurrentStep(STEPS.QUESTIONS);
   };
 
