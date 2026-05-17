@@ -45,8 +45,8 @@ export default {
 
   // Special phase configuration
   mailingPhase: 6,  // Which phase number is the mailing phase
-  filingFee: '$535',
-  filingFeePayableTo: 'U.S. Department of Homeland Security',
+  filingFee: '$675',
+  filingFeePaymentMethod: 'Form G-1450 (credit card) or G-1650 (bank transfer)',
 
   // Mailing addresses
   mailingAddresses: {
@@ -63,6 +63,7 @@ export default {
   // Documents required for mailing (Phase 6 checklist)
   mailingDocs: [
     { name: 'Form I-129F', required: true, note: 'Signed by both petitioner and beneficiary' },
+    { name: 'Payment Authorization Form', required: true, note: 'G-1450 (credit card) or G-1650 (bank transfer) - $675 fee' },
     { name: 'Passport Photos', required: true, note: '2 of petitioner, 2 of beneficiary (2x2 inch)' },
     { name: 'Proof of US Citizenship', required: true, note: 'Passport copy, birth certificate, or naturalization cert' },
     { name: 'Proof of In-Person Meeting', required: true, note: 'Photos, passport stamps, travel receipts' },
@@ -72,7 +73,7 @@ export default {
     { name: 'Beneficiary Passport', required: true, note: 'Copy of bio page and all stamped pages' },
     { name: 'Divorce Decree', required: false, conditional: true, note: 'If either party was previously married' },
     { name: 'Death Certificate', required: false, conditional: true, note: 'If former spouse is deceased' },
-    { name: 'Engagement Evidence', required: false, optional: true, note: 'Ring receipt, wedding planning docs' },
+    { name: 'Engagement Evidence', required: false, optional: true, note: 'Statement of Intent to Marry (both sign), ring receipt, wedding planning docs' },
     { name: 'Petitioner Employment Letter', required: false, optional: true, note: 'Shows financial stability' },
     { name: 'Petitioner Pay Stubs', required: false, optional: true, note: 'Recent pay stubs (last 3-6 months)' },
   ]

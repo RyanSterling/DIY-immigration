@@ -394,6 +394,8 @@ export default function VisaDashboardLayout({
               // Form filler props
               onOpenFormFiller={handleOpenFormFiller}
               formProgress={formProgress}
+              // Video props
+              onOpenVideo={handleOpenVideo}
             />
           </div>
         </main>

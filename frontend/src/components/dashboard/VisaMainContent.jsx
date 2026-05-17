@@ -8,6 +8,72 @@ import { useMemo, useState } from 'react';
 import DocumentCard from './DocumentCard';
 import TimelineView from './TimelineView';
 
+// Phase Video Card Component
+function PhaseVideoCard({ video, onOpenVideo }) {
+  if (!video) return null;
+
+  const hasVideo = video.youtubeId || video.vimeoId || video.url;
+
+  return (
+    <button
+      onClick={() => onOpenVideo(video)}
+      className="w-full rounded-xl overflow-hidden text-left transition-transform hover:scale-[1.02]"
+      style={{ backgroundColor: '#1E3A5F' }}
+    >
+      <div className="relative aspect-video flex items-center justify-center">
+        <div
+          className="w-16 h-16 rounded-full flex items-center justify-center"
+          style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}
+        >
+          <svg className="w-8 h-8 ml-1" fill="white" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        </div>
+        {video.duration && (
+          <div
+            className="absolute bottom-3 right-3 px-2 py-1 rounded text-xs"
+            style={{
+              backgroundColor: 'rgba(0,0,0,0.6)',
+              color: 'white',
+              fontFamily: 'Soehne, sans-serif'
+            }}
+          >
+            {video.duration}
+          </div>
+        )}
+        {!hasVideo && (
+          <div
+            className="absolute top-3 right-3 px-2 py-1 rounded text-xs"
+            style={{
+              backgroundColor: 'rgba(255,255,255,0.2)',
+              color: 'white',
+              fontFamily: 'Soehne, sans-serif'
+            }}
+          >
+            Coming soon
+          </div>
+        )}
+      </div>
+      <div className="p-4">
+        <p
+          className="text-sm font-medium text-white"
+          style={{ fontFamily: 'Soehne, sans-serif' }}
+        >
+          {video.title || 'Watch video guide'}
+        </p>
+        {video.description && (
+          <p
+            className="text-sm mt-1"
+            style={{ fontFamily: 'Soehne, sans-serif', color: 'rgba(255,255,255,0.7)' }}
+          >
+            {video.description}
+          </p>
+        )}
+      </div>
+    </button>
+  );
+}
+
 // Mailing Checklist Component for mailing phases
 function MailingChecklist({
   documents,
@@ -15,7 +81,9 @@ function MailingChecklist({
   mailingDocs,
   mailingAddresses,
   filingFee,
-  filingFeePayableTo
+  filingFeePaymentMethod,
+  phaseVideo,
+  onOpenVideo
 }) {
   // Track which items have been placed in the packet
   const [inPacket, setInPacket] = useState({});
@@ -130,36 +198,10 @@ function MailingChecklist({
 
   return (
     <div className="space-y-6">
-      {/* Video placeholder */}
-      <div
-        className="rounded-xl overflow-hidden"
-        style={{ backgroundColor: '#1E3A5F' }}
-      >
-        <div className="relative aspect-video flex items-center justify-center">
-          <div
-            className="w-16 h-16 rounded-full flex items-center justify-center"
-            style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}
-          >
-            <svg className="w-8 h-8 ml-1" fill="white" viewBox="0 0 24 24">
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          </div>
-        </div>
-        <div className="p-4">
-          <p
-            className="text-sm font-medium text-white"
-            style={{ fontFamily: 'Soehne, sans-serif' }}
-          >
-            How to organize and mail your petition
-          </p>
-          <p
-            className="text-sm mt-1"
-            style={{ fontFamily: 'Soehne, sans-serif', color: 'rgba(255,255,255,0.7)' }}
-          >
-            Step-by-step guide to assembling your petition package
-          </p>
-        </div>
-      </div>
+      {/* Phase video guide */}
+      {phaseVideo && (
+        <PhaseVideoCard video={phaseVideo} onOpenVideo={onOpenVideo} />
+      )}
 
       {/* Progress summary */}
       <div
@@ -212,8 +254,18 @@ function MailingChecklist({
               Don't forget the {filingFee} filing fee!
             </p>
             <p className="text-sm" style={{ fontFamily: 'Soehne, sans-serif', color: '#991B1B' }}>
-              Include a check or money order payable to "{filingFeePayableTo || 'U.S. Department of Homeland Security'}"
+              Use {filingFeePaymentMethod || 'Form G-1450 (credit card) or G-1650 (bank transfer)'} - checks and money orders are no longer accepted
             </p>
+            <div className="mt-2 flex gap-4 text-sm">
+              <a href="https://www.uscis.gov/g-1450" target="_blank" rel="noopener noreferrer"
+                 className="underline font-medium" style={{ color: '#991B1B' }}>
+                Download G-1450 (Credit Card)
+              </a>
+              <a href="https://www.uscis.gov/g-1650" target="_blank" rel="noopener noreferrer"
+                 className="underline font-medium" style={{ color: '#991B1B' }}>
+                Download G-1650 (Bank Transfer)
+              </a>
+            </div>
           </div>
         </div>
       )}
@@ -358,7 +410,7 @@ function MailingChecklist({
             <li>• Make copies of EVERYTHING</li>
             <li>• Send via USPS Priority Mail with tracking</li>
             <li>• Keep your tracking number safe</li>
-            <li>• Do NOT send original documents (except check)</li>
+            <li>• Do NOT send original documents</li>
           </ul>
         </div>
       </div>
@@ -478,7 +530,9 @@ export default function VisaMainContent({
   mailingAddresses,
   // Form filler props
   onOpenFormFiller,
-  formProgress = {}
+  formProgress = {},
+  // Video props
+  onOpenVideo
 }) {
   // Phase 1 contains the long lead-time documents (priority)
   const PHASE_1_DOCS = timeline[0]?.docsNeeded || [];
@@ -823,7 +877,9 @@ export default function VisaMainContent({
           mailingDocs={mailingDocs}
           mailingAddresses={mailingAddresses}
           filingFee={filingFee}
-          filingFeePayableTo={visaConfig?.filingFeePayableTo}
+          filingFeePaymentMethod={visaConfig?.filingFeePaymentMethod}
+          phaseVideo={phaseConfig.video}
+          onOpenVideo={onOpenVideo}
         />
       </div>
     );
@@ -919,6 +975,11 @@ export default function VisaMainContent({
             </div>
           )}
         </div>
+
+        {/* Phase video guide */}
+        {phaseConfig.video && (
+          <PhaseVideoCard video={phaseConfig.video} onOpenVideo={onOpenVideo} />
+        )}
 
         {/* Document list */}
         <div className="space-y-3">

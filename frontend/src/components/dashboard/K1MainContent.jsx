@@ -15,6 +15,7 @@ const PHASE_1_DOCS = K1_TIMELINE[0]?.docsNeeded || [];
 const MAILING_DOCS = [
   // Required docs in mailing order
   { name: 'Form I-129F', required: true, note: 'Signed by both petitioner and beneficiary' },
+  { name: 'Payment Authorization Form', required: true, note: 'G-1450 (credit card) or G-1650 (bank transfer) - $675 fee' },
   { name: 'Passport Photos', required: true, note: '2 of petitioner, 2 of beneficiary (2x2 inch)' },
   { name: 'Proof of US Citizenship', required: true, note: 'Passport copy, birth certificate, or naturalization cert' },
   { name: 'Proof of In-Person Meeting', required: true, note: 'Photos, passport stamps, travel receipts' },
@@ -26,7 +27,7 @@ const MAILING_DOCS = [
   { name: 'Divorce Decree', required: false, conditional: true, note: 'If either party was previously married' },
   { name: 'Death Certificate', required: false, conditional: true, note: 'If former spouse is deceased' },
   // Optional docs that strengthen the case
-  { name: 'Engagement Evidence', required: false, optional: true, note: 'Ring receipt, wedding planning docs' },
+  { name: 'Engagement Evidence', required: false, optional: true, note: 'Statement of Intent to Marry (both sign), ring receipt, wedding planning docs' },
   { name: 'Petitioner Employment Letter', required: false, optional: true, note: 'Shows financial stability' },
   { name: 'Petitioner Pay Stubs', required: false, optional: true, note: 'Recent pay stubs (last 3-6 months)' },
 ];
@@ -224,11 +225,21 @@ function MailingChecklist({ documents, onOpenPanel }) {
         </svg>
         <div>
           <p style={{ fontFamily: 'Soehne, sans-serif', fontWeight: '600', color: '#991B1B' }}>
-            Don't forget the $535 filing fee!
+            Don't forget the $675 filing fee!
           </p>
           <p className="text-sm" style={{ fontFamily: 'Soehne, sans-serif', color: '#991B1B' }}>
-            Include a check or money order payable to "U.S. Department of Homeland Security"
+            Use Form G-1450 (credit card) or G-1650 (bank transfer) - checks and money orders are no longer accepted
           </p>
+          <div className="mt-2 flex gap-4 text-sm">
+            <a href="https://www.uscis.gov/g-1450" target="_blank" rel="noopener noreferrer"
+               className="underline font-medium" style={{ color: '#991B1B' }}>
+              Download G-1450 (Credit Card)
+            </a>
+            <a href="https://www.uscis.gov/g-1650" target="_blank" rel="noopener noreferrer"
+               className="underline font-medium" style={{ color: '#991B1B' }}>
+              Download G-1650 (Bank Transfer)
+            </a>
+          </div>
         </div>
       </div>
 
@@ -364,7 +375,7 @@ function MailingChecklist({ documents, onOpenPanel }) {
             <li>• Make copies of EVERYTHING</li>
             <li>• Send via USPS Priority Mail with tracking</li>
             <li>• Keep your tracking number safe</li>
-            <li>• Do NOT send original documents (except check)</li>
+            <li>• Do NOT send original documents</li>
           </ul>
         </div>
       </div>

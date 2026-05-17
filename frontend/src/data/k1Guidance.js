@@ -10,16 +10,37 @@ export const K1_GUIDANCE = {
       'Beneficiary (foreign fiancé(e)) completes their sections',
       'Both petitioner and beneficiary must sign and date the form',
       'Make a copy for your records before mailing',
-      'Include the $535 filing fee (check or money order payable to "U.S. Department of Homeland Security")'
+      'Include the $675 filing fee using Form G-1450 (credit card) or G-1650 (bank transfer) - checks and money orders are no longer accepted'
     ],
     tips: 'Double-check all dates and spelling of names. Any inconsistency with other documents can cause delays. Use N/A for questions that do not apply rather than leaving blank. Print clearly or type the form.',
     links: [
       { label: 'Download Form I-129F', url: 'https://www.uscis.gov/i-129f' },
       { label: 'Form Instructions (PDF)', url: 'https://www.uscis.gov/sites/default/files/document/forms/i-129finstr.pdf' },
-      { label: 'Filing Fee Information', url: 'https://www.uscis.gov/forms/filing-fees' }
+      { label: 'Filing Fee Information', url: 'https://www.uscis.gov/g-1055?form=i-129f' },
+      { label: 'Form G-1450 (Credit Card Payment)', url: 'https://www.uscis.gov/g-1450' },
+      { label: 'Form G-1650 (Bank Transfer Payment)', url: 'https://www.uscis.gov/g-1650' }
     ],
     estimatedTime: '2-4 hours',
     difficulty: 'moderate'
+  },
+
+  'Payment Authorization Form': {
+    description: 'USCIS no longer accepts checks or money orders. You must include a payment authorization form with your petition to pay the $675 filing fee.',
+    steps: [
+      'Choose your payment method: credit/debit card (G-1450) or bank transfer (G-1650)',
+      'Download the appropriate form from USCIS.gov',
+      'Fill out the form completely - include card number or bank account details',
+      'Sign and date the form',
+      'Include the completed form with your I-129F petition package'
+    ],
+    tips: 'Most applicants use G-1450 (credit card) as it\'s simpler. Make sure to fill in all fields clearly. USCIS will charge your card/account when they process your petition. Keep a copy for your records.',
+    links: [
+      { label: 'Form G-1450 (Credit Card Payment)', url: 'https://www.uscis.gov/g-1450' },
+      { label: 'Form G-1650 (Bank Transfer Payment)', url: 'https://www.uscis.gov/g-1650' },
+      { label: 'Current Filing Fee', url: 'https://www.uscis.gov/g-1055?form=i-129f' }
+    ],
+    estimatedTime: '5 minutes',
+    difficulty: 'easy'
   },
 
   'Proof of US Citizenship': {
@@ -94,19 +115,20 @@ export const K1_GUIDANCE = {
   },
 
   'Engagement Evidence': {
-    description: 'While not strictly required, evidence of engagement strengthens your case by demonstrating genuine intent to marry within 90 days of entry.',
+    description: 'Evidence of engagement and intent to marry strengthens your case by demonstrating genuine intent to marry within 90 days of entry.',
     steps: [
+      'Write and sign a Statement of Intent to Marry (BOTH petitioner and beneficiary must sign)',
       'Include engagement ring receipt or photo of ring',
       'Gather engagement party photos or celebration images',
       'Collect wedding planning documents (venue deposits, save-the-dates, vendor contracts)',
       'Include cards or messages of congratulations from family/friends',
       'Document any engagement announcements (newspaper, social media)'
     ],
-    tips: 'A simple affidavit stating your intent to marry within 90 days is sufficient if you don\'t have formal engagement evidence. The engagement ring doesn\'t need to be expensive - a receipt for any ring shows intent.',
+    tips: 'The signed Statement of Intent is important: "Submit evidence that you and your fiancé(e) intend to marry within 90 days of entry as a K-1 nonimmigrant. Evidence may include statements of intent signed by both you and your fiancé(e), or any other evidence that establishes your mutual intention." This goes hand-in-hand with the in-person meeting requirement.',
     links: [],
     estimatedTime: '30 minutes to gather',
     difficulty: 'easy',
-    strengthening_reason: 'Demonstrates genuine intent to marry and shows commitment to the relationship. Wedding planning evidence is particularly compelling.'
+    strengthening_reason: 'Demonstrates genuine intent to marry and shows commitment to the relationship. The signed statement from both parties is particularly important.'
   },
 
   'Form I-134': {
@@ -235,7 +257,9 @@ export const K1_GUIDANCE = {
       'Some countries require apostille or authentication'
     ],
     tips: 'Some countries issue birth certificates that expire or must be recently issued. Check your country\'s requirements. If the birth was never registered, obtain a letter from the civil registry explaining this situation.',
-    links: [],
+    links: [
+      { label: 'DOS Reciprocity Schedule - How to obtain birth certificates by country', url: 'https://travel.state.gov/content/travel/en/us-visas/Visa-Reciprocity-and-Civil-Documents-by-Country.html' }
+    ],
     estimatedTime: '1-4 weeks',
     difficulty: 'moderate'
   },
@@ -250,7 +274,9 @@ export const K1_GUIDANCE = {
       'Ensure name matches all other documents exactly'
     ],
     tips: 'The K-1 visa will be placed in this passport. If your name has changed since the passport was issued, get it updated before the visa interview. Some countries require additional processing time for passport renewals.',
-    links: [],
+    links: [
+      { label: 'DOS Reciprocity Schedule - Passport requirements by country', url: 'https://travel.state.gov/content/travel/en/us-visas/Visa-Reciprocity-and-Civil-Documents-by-Country.html' }
+    ],
     estimatedTime: '2-8 weeks if renewal needed',
     difficulty: 'easy'
   },
@@ -283,7 +309,12 @@ export const K1_TIMELINE = [
     description: 'These documents have long lead times - they take weeks or months to obtain. Start gathering them immediately to avoid delays later in the process.',
     duration: '1-6 months depending on countries',
     tips: 'Police certificates often take the longest. Birth certificates may need apostille or translation. Check passport expiration now.',
-    docsNeeded: ['Police Certificates', 'Birth Certificate', 'Beneficiary Passport']
+    docsNeeded: ['Police Certificates', 'Birth Certificate', 'Beneficiary Passport'],
+    // Video guide for this phase (add youtubeId, vimeoId, or url when available)
+    video: {
+      title: 'Getting Started: Documents with Long Lead Times',
+      description: 'Learn which documents to start gathering first and why timing matters.'
+    }
   },
   {
     phase: 2,
@@ -291,7 +322,11 @@ export const K1_TIMELINE = [
     description: 'Documents proving the US citizen petitioner\'s identity and legal status. If previously married, include proof of divorce or spouse\'s death.',
     duration: '1-4 weeks if ordering documents',
     tips: 'A US passport is the strongest proof of citizenship. If using a birth certificate, ensure it\'s a certified copy with a raised seal.',
-    docsNeeded: ['Proof of US Citizenship', 'Divorce Decree', 'Death Certificate']
+    docsNeeded: ['Proof of US Citizenship', 'Divorce Decree', 'Death Certificate'],
+    video: {
+      title: 'Proving US Citizenship',
+      description: 'What documents prove citizenship and how to get certified copies.'
+    }
   },
   {
     phase: 3,
@@ -299,7 +334,11 @@ export const K1_TIMELINE = [
     description: 'Proof of your genuine, ongoing relationship and that you have met in person within the past 2 years.',
     duration: '2-4 hours to compile',
     tips: 'Quality over quantity. Show your relationship developed over time with photos, messages, and travel records.',
-    docsNeeded: ['Proof of In-Person Meeting', 'Proof of Relationship']
+    docsNeeded: ['Proof of In-Person Meeting', 'Proof of Relationship'],
+    video: {
+      title: 'Building Strong Relationship Evidence',
+      description: 'How to document your relationship and prove you\'ve met in person.'
+    }
   },
   {
     phase: 4,
@@ -307,7 +346,11 @@ export const K1_TIMELINE = [
     description: 'Fill out Form I-129F (Petition for Alien Fiancé(e)) and get passport photos. Do NOT mail yet - that\'s the next step.',
     duration: '2-4 hours',
     tips: 'Double-check all dates and spelling. Use N/A for questions that don\'t apply. Print clearly or type the form.',
-    docsNeeded: ['Form I-129F', 'Passport Photos']
+    docsNeeded: ['Form I-129F', 'Passport Photos'],
+    video: {
+      title: 'Form I-129F Walkthrough',
+      description: 'Step-by-step guide to filling out the fiancé visa petition form.'
+    }
   },
   {
     phase: 5,
@@ -316,7 +359,11 @@ export const K1_TIMELINE = [
     duration: '1-2 hours to gather',
     tips: 'Financial documents show you can support your fiancé(e). Engagement evidence demonstrates genuine intent to marry.',
     docsNeeded: ['Engagement Evidence', 'Petitioner Employment Letter', 'Petitioner Pay Stubs'],
-    isOptional: true
+    isOptional: true,
+    video: {
+      title: 'Optional Documents That Strengthen Your Case',
+      description: 'Learn which extra documents can help avoid delays and RFEs.'
+    }
   },
   {
     phase: 6,
@@ -325,7 +372,11 @@ export const K1_TIMELINE = [
     duration: '1-2 hours to organize and mail',
     tips: 'Send via USPS Priority Mail with tracking. Make copies of EVERYTHING before mailing. Keep your tracking number safe.',
     docsNeeded: [], // Uses custom MailingChecklist component
-    isMailingPhase: true
+    isMailingPhase: true,
+    video: {
+      title: 'How to Assemble and Mail Your Petition',
+      description: 'Organizing your documents and sending your petition package to USCIS.'
+    }
   },
   {
     phase: 7,
@@ -333,7 +384,11 @@ export const K1_TIMELINE = [
     description: 'USCIS reviews your petition. You\'ll receive NOA1 (receipt notice) within 2-3 weeks, then wait for NOA2 (approval). After approval, your case transfers to the National Visa Center (NVC), then to the embassy.',
     duration: '6-10 months (varies)',
     tips: 'You don\'t need to do anything during this time except respond to any RFEs (Requests for Evidence). Track your case online with your receipt number.',
-    docsNeeded: []
+    docsNeeded: [],
+    video: {
+      title: 'What Happens During USCIS Processing',
+      description: 'Understanding the timeline, tracking your case, and responding to RFEs.'
+    }
   },
   {
     phase: 8,
@@ -341,7 +396,11 @@ export const K1_TIMELINE = [
     description: 'Prepare these documents for the visa interview. The National Visa Center (NVC) will schedule your interview and notify you by email - you do NOT schedule it yourself.',
     duration: '1-2 weeks to prepare, plus medical exam',
     tips: 'The NVC schedules your interview after processing your case (typically 2-4 weeks after receiving your file). You\'ll get an interview appointment letter with the date.',
-    docsNeeded: ['Form I-134', 'Petitioner Tax Returns', 'Medical Exam Results']
+    docsNeeded: ['Form I-134', 'Petitioner Tax Returns', 'Medical Exam Results'],
+    video: {
+      title: 'Preparing for the Visa Interview',
+      description: 'What documents to bring and how to prepare your fiancé(e) for success.'
+    }
   },
   {
     phase: 9,
@@ -349,7 +408,11 @@ export const K1_TIMELINE = [
     description: 'The beneficiary attends the interview at the US Embassy or Consulate with all required documents. The petitioner does NOT need to attend.',
     duration: 'Usually 1 day',
     tips: 'Bring ORIGINALS and copies of all documents. The medical exam results stay in the sealed envelope - do NOT open it. Dress professionally and answer questions honestly.',
-    docsNeeded: []
+    docsNeeded: [],
+    video: {
+      title: 'The Visa Interview: What to Expect',
+      description: 'Common questions, what to wear, and tips for a successful interview.'
+    }
   },
   {
     phase: 10,
@@ -357,7 +420,11 @@ export const K1_TIMELINE = [
     description: 'After visa approval, travel to the US and marry within 90 days. Then file Form I-485 to adjust status to permanent resident.',
     duration: 'Marriage within 90 days, AOS takes 8-18 months',
     tips: 'Research marriage requirements in your state. File I-485 as soon as possible after marriage for work authorization.',
-    docsNeeded: []
+    docsNeeded: [],
+    video: {
+      title: 'After Approval: Entry, Marriage & Adjustment of Status',
+      description: 'Next steps after visa approval, including the 90-day marriage requirement.'
+    }
   }
 ];
 
