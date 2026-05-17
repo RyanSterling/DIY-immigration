@@ -4,7 +4,8 @@
  * Accepts visa config as prop instead of importing K-1 specific data.
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import VisaSidebar from './VisaSidebar';
 import VisaMainContent from './VisaMainContent';
 import DocumentPanel from './DocumentPanel';
@@ -23,7 +24,11 @@ export default function VisaDashboardLayout({
   onLoadComments,
   getToken
 }) {
-  const [activePhase, setActivePhase] = useState('phase-1');
+  // URL-synced state for phase and form
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activePhase = searchParams.get('phase') || 'phase-1';
+  const urlFormType = searchParams.get('form');
+
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Panel states
@@ -39,11 +44,35 @@ export default function VisaDashboardLayout({
   const [activeVideo, setActiveVideo] = useState(null);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
-  // Form filler state
-  const [showFormFiller, setShowFormFiller] = useState(false);
-  const [activeFormType, setActiveFormType] = useState(null);
+  // Form filler state - derived from URL
+  const showFormFiller = !!urlFormType;
+  const [activeFormType, setActiveFormType] = useState(urlFormType);
   const [activeFormName, setActiveFormName] = useState(null);
   const [formProgress, setFormProgress] = useState({});
+
+  // Sync form type from URL
+  useEffect(() => {
+    if (urlFormType) {
+      setActiveFormType(urlFormType);
+      const formConfig = Object.values(FILLABLE_FORMS).find(f => f.formType === urlFormType);
+      if (formConfig) {
+        setActiveFormName(formConfig.displayName);
+      }
+    } else {
+      setActiveFormType(null);
+      setActiveFormName(null);
+    }
+  }, [urlFormType]);
+
+  // Handle phase change - also closes form filler
+  const handlePhaseChange = useCallback((newPhase) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set('phase', newPhase);
+      next.delete('form');
+      return next;
+    });
+  }, [setSearchParams]);
 
   // Check if user has existing form progress for all fillable forms
   useEffect(() => {
@@ -121,9 +150,14 @@ export default function VisaDashboardLayout({
 
   // Form filler handlers
   const handleOpenFormFiller = (formType, formName) => {
-    setActiveFormType(formType);
     setActiveFormName(formName);
-    setShowFormFiller(true);
+    // Add form to URL while preserving phase
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set('phase', activePhase);
+      next.set('form', formType);
+      return next;
+    });
     // Close any open panels
     handleClosePanel();
     handleCloseComments();
@@ -131,9 +165,12 @@ export default function VisaDashboardLayout({
 
   const handleCloseFormFiller = async () => {
     const closedFormType = activeFormType;
-    setShowFormFiller(false);
-    setActiveFormType(null);
-    setActiveFormName(null);
+    // Remove form from URL, keep phase
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.delete('form');
+      return next;
+    });
 
     // Refresh progress data for the form that was just closed
     if (getToken && closedFormType) {
@@ -157,7 +194,7 @@ export default function VisaDashboardLayout({
       {/* Sidebar */}
       <VisaSidebar
         activePhase={activePhase}
-        onPhaseChange={setActivePhase}
+        onPhaseChange={handlePhaseChange}
         documents={documents}
         timeline={visaConfig.timeline}
         progressTitle={visaConfig.progressTitle}
