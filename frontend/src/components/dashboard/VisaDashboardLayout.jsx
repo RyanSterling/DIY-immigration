@@ -4,12 +4,14 @@
  * Accepts visa config as prop instead of importing K-1 specific data.
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import VisaSidebar from './VisaSidebar';
 import VisaMainContent from './VisaMainContent';
 import DocumentPanel from './DocumentPanel';
 import CommentThread from './CommentThread';
 import VideoModal from './VideoModal';
+import FormFillerView, { FILLABLE_FORMS } from './FormFillerView';
+import { fetchFormData } from '../../lib/k1Api';
 
 export default function VisaDashboardLayout({
   visaConfig,
@@ -18,7 +20,8 @@ export default function VisaDashboardLayout({
   comments = {},
   onStatusChange,
   onAddComment,
-  onLoadComments
+  onLoadComments,
+  getToken
 }) {
   const [activePhase, setActivePhase] = useState('phase-1');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -35,6 +38,34 @@ export default function VisaDashboardLayout({
   // Video modal state
   const [activeVideo, setActiveVideo] = useState(null);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+
+  // Form filler state
+  const [showFormFiller, setShowFormFiller] = useState(false);
+  const [activeFormType, setActiveFormType] = useState(null);
+  const [activeFormName, setActiveFormName] = useState(null);
+  const [formProgress, setFormProgress] = useState({});
+
+  // Check if user has existing form progress for all fillable forms
+  useEffect(() => {
+    const checkAllFormProgress = async () => {
+      if (!getToken) return;
+
+      const token = await getToken();
+      if (!token) return;
+
+      const progress = {};
+      for (const [, config] of Object.entries(FILLABLE_FORMS)) {
+        try {
+          const result = await fetchFormData(token, config.formType);
+          progress[config.formType] = !!(result.formData && Object.keys(result.formData).length > 0);
+        } catch (err) {
+          progress[config.formType] = false;
+        }
+      }
+      setFormProgress(progress);
+    };
+    checkAllFormProgress();
+  }, [getToken]);
 
   // Count comments per document
   const commentCounts = Object.keys(comments).reduce((acc, docId) => {
@@ -88,6 +119,39 @@ export default function VisaDashboardLayout({
     }
   };
 
+  // Form filler handlers
+  const handleOpenFormFiller = (formType, formName) => {
+    setActiveFormType(formType);
+    setActiveFormName(formName);
+    setShowFormFiller(true);
+    // Close any open panels
+    handleClosePanel();
+    handleCloseComments();
+  };
+
+  const handleCloseFormFiller = async () => {
+    const closedFormType = activeFormType;
+    setShowFormFiller(false);
+    setActiveFormType(null);
+    setActiveFormName(null);
+
+    // Refresh progress data for the form that was just closed
+    if (getToken && closedFormType) {
+      try {
+        const token = await getToken();
+        if (!token) return;
+        const result = await fetchFormData(token, closedFormType);
+        const hasProgress = !!(result.formData && Object.keys(result.formData).length > 0);
+        setFormProgress(prev => ({
+          ...prev,
+          [closedFormType]: hasProgress
+        }));
+      } catch (err) {
+        // Ignore errors
+      }
+    }
+  };
+
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
@@ -107,25 +171,37 @@ export default function VisaDashboardLayout({
         style={{ backgroundColor: '#EEEEEF' }}
       >
         <div className="max-w-3xl mx-auto">
-          <VisaMainContent
-            activePhase={activePhase}
-            documents={documents}
-            commentCounts={commentCounts}
-            onOpenPanel={handleOpenPanel}
-            onStatusChange={onStatusChange}
-            onOpenComments={handleOpenComments}
-            dashboardData={dashboardData}
-            // Pass visa config data as props
-            visaConfig={visaConfig}
-            timeline={visaConfig.timeline}
-            guidance={visaConfig.guidance}
-            optionalDocs={visaConfig.optionalDocs}
-            conditionalDocs={visaConfig.conditionalDocs}
-            mailingPhase={visaConfig.mailingPhase}
-            filingFee={visaConfig.filingFee}
-            mailingDocs={visaConfig.mailingDocs}
-            mailingAddresses={visaConfig.mailingAddresses}
-          />
+          {showFormFiller ? (
+            <FormFillerView
+              getToken={getToken}
+              onBack={handleCloseFormFiller}
+              formType={activeFormType}
+              formName={activeFormName}
+            />
+          ) : (
+            <VisaMainContent
+              activePhase={activePhase}
+              documents={documents}
+              commentCounts={commentCounts}
+              onOpenPanel={handleOpenPanel}
+              onStatusChange={onStatusChange}
+              onOpenComments={handleOpenComments}
+              dashboardData={dashboardData}
+              // Pass visa config data as props
+              visaConfig={visaConfig}
+              timeline={visaConfig.timeline}
+              guidance={visaConfig.guidance}
+              optionalDocs={visaConfig.optionalDocs}
+              conditionalDocs={visaConfig.conditionalDocs}
+              mailingPhase={visaConfig.mailingPhase}
+              filingFee={visaConfig.filingFee}
+              mailingDocs={visaConfig.mailingDocs}
+              mailingAddresses={visaConfig.mailingAddresses}
+              // Form filler props
+              onOpenFormFiller={handleOpenFormFiller}
+              formProgress={formProgress}
+            />
+          )}
         </div>
       </main>
 

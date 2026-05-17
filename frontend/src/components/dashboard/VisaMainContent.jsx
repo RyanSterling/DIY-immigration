@@ -367,7 +367,7 @@ function MailingChecklist({
 }
 
 // Optional Evidence Section Component
-function OptionalEvidenceSection({ documents, commentCounts, onOpenPanel, onStatusChange, onOpenComments, guidance }) {
+function OptionalEvidenceSection({ documents, commentCounts, onOpenPanel, onStatusChange, onOpenComments, guidance, onOpenFormFiller, formProgress }) {
   const [isExpanded, setIsExpanded] = useState(true);
 
   return (
@@ -433,6 +433,8 @@ function OptionalEvidenceSection({ documents, commentCounts, onOpenPanel, onStat
                   onOpenPanel={onOpenPanel}
                   onStatusChange={onStatusChange}
                   onOpenComments={onOpenComments}
+                  onOpenFormFiller={onOpenFormFiller}
+                  formProgress={formProgress}
                   isOptional
                 />
                 {docGuidance?.strengthening_reason && (
@@ -473,7 +475,10 @@ export default function VisaMainContent({
   mailingPhase,
   filingFee,
   mailingDocs,
-  mailingAddresses
+  mailingAddresses,
+  // Form filler props
+  onOpenFormFiller,
+  formProgress = {}
 }) {
   // Phase 1 contains the long lead-time documents (priority)
   const PHASE_1_DOCS = timeline[0]?.docsNeeded || [];
@@ -627,6 +632,8 @@ export default function VisaMainContent({
                   onOpenPanel={onOpenPanel}
                   onStatusChange={onStatusChange}
                   onOpenComments={onOpenComments}
+                  onOpenFormFiller={onOpenFormFiller}
+                  formProgress={formProgress}
                 />
               ))}
             </div>
@@ -674,6 +681,8 @@ export default function VisaMainContent({
                   onOpenPanel={onOpenPanel}
                   onStatusChange={onStatusChange}
                   onOpenComments={onOpenComments}
+                  onOpenFormFiller={onOpenFormFiller}
+                  formProgress={formProgress}
                   isLongLeadTime
                 />
               ))}
@@ -706,6 +715,8 @@ export default function VisaMainContent({
                   onOpenPanel={onOpenPanel}
                   onStatusChange={onStatusChange}
                   onOpenComments={onOpenComments}
+                  onOpenFormFiller={onOpenFormFiller}
+                  formProgress={formProgress}
                 />
               ))}
             </div>
@@ -740,6 +751,8 @@ export default function VisaMainContent({
                   onOpenPanel={onOpenPanel}
                   onStatusChange={onStatusChange}
                   onOpenComments={onOpenComments}
+                  onOpenFormFiller={onOpenFormFiller}
+                  formProgress={formProgress}
                 />
               ))}
             </div>
@@ -755,6 +768,8 @@ export default function VisaMainContent({
             onStatusChange={onStatusChange}
             onOpenComments={onOpenComments}
             guidance={guidance}
+            onOpenFormFiller={onOpenFormFiller}
+            formProgress={formProgress}
           />
         )}
       </div>
@@ -915,6 +930,8 @@ export default function VisaMainContent({
               onOpenPanel={onOpenPanel}
               onStatusChange={onStatusChange}
               onOpenComments={onOpenComments}
+              onOpenFormFiller={onOpenFormFiller}
+              formProgress={formProgress}
               isLongLeadTime={PHASE_1_DOCS.includes(doc.document_name)}
             />
           ))}

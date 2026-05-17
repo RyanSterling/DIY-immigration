@@ -377,6 +377,7 @@ export default function VisaDashboard() {
           onStatusChange={handleStatusChange}
           onAddComment={handleAddComment}
           onLoadComments={handleLoadComments}
+          getToken={getToken}
         />
       )}
 
