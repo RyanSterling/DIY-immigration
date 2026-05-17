@@ -7,6 +7,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 import { fetchFormData, saveFormData, fillPdf } from '../../lib/k1Api';
+import { getFormGuidance } from '../../data/formGuidance';
 
 // Set worker source from the installed package
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -34,6 +35,10 @@ export default function FormFillerView({ getToken, onBack, formType = 'i-129f', 
     pdfFile: `/assets/forms/${formType}.pdf`,
     displayName: formName
   };
+
+  // Get form guidance for tips panel
+  const guidance = getFormGuidance(formType);
+
   const containerRef = useRef(null);
   const [pdfDoc, setPdfDoc] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -49,6 +54,8 @@ export default function FormFillerView({ getToken, onBack, formType = 'i-129f', 
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [showTipsDrawer, setShowTipsDrawer] = useState(false);
+  const [activeTipSection, setActiveTipSection] = useState('overview');
   const canvasRef = useRef(null);
   const annotationLayerRef = useRef(null);
   const autoSaveTimeoutRef = useRef(null);
@@ -402,6 +409,170 @@ export default function FormFillerView({ getToken, onBack, formType = 'i-129f', 
     );
   }
 
+  // Tips Panel Content Component
+  const TipsPanelContent = ({ inDrawer = false }) => (
+    <div className={`flex flex-col ${inDrawer ? 'h-full' : ''}`}>
+      {/* Section tabs */}
+      <div className="flex gap-1 p-3 border-b border-gray-200 overflow-x-auto">
+        {[
+          { id: 'overview', label: 'Overview' },
+          { id: 'sections', label: 'Sections' },
+          { id: 'mistakes', label: 'Common Mistakes' },
+          { id: 'tips', label: 'Pro Tips' },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTipSection(tab.id)}
+            className={`px-3 py-1.5 rounded-full text-sm whitespace-nowrap transition-colors ${
+              activeTipSection === tab.id
+                ? 'bg-[#1E3A5F] text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+            style={{ fontFamily: 'Soehne, sans-serif' }}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {activeTipSection === 'overview' && guidance && (
+          <>
+            <div>
+              <h3
+                className="text-lg font-semibold mb-1"
+                style={{ fontFamily: 'Libre Baskerville, serif', color: '#1E1F1C' }}
+              >
+                {guidance.displayName}
+              </h3>
+              <p
+                className="text-sm text-gray-500 mb-3"
+                style={{ fontFamily: 'Soehne, sans-serif' }}
+              >
+                {guidance.subtitle}
+              </p>
+              <p
+                className="text-sm leading-relaxed"
+                style={{ fontFamily: 'Soehne, sans-serif', color: '#4B5563' }}
+              >
+                {guidance.overview}
+              </p>
+            </div>
+            {guidance.estimatedTime && (
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span style={{ fontFamily: 'Soehne, sans-serif' }}>Est. {guidance.estimatedTime}</span>
+              </div>
+            )}
+            {guidance.links && guidance.links.length > 0 && (
+              <div className="pt-2">
+                <h4 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2" style={{ fontFamily: 'Soehne, sans-serif' }}>
+                  Helpful Links
+                </h4>
+                <div className="space-y-2">
+                  {guidance.links.map((link, i) => (
+                    <a
+                      key={i}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm text-[#1E3A5F] hover:underline"
+                      style={{ fontFamily: 'Soehne, sans-serif' }}
+                    >
+                      <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {activeTipSection === 'sections' && guidance?.sections && (
+          <div className="space-y-4">
+            {guidance.sections.map((section, i) => (
+              <div key={i} className="bg-gray-50 rounded-lg p-3">
+                <h4
+                  className="font-medium text-sm mb-2"
+                  style={{ fontFamily: 'Soehne, sans-serif', color: '#1E1F1C' }}
+                >
+                  {section.title}
+                </h4>
+                <ul className="space-y-1.5">
+                  {section.tips.map((tip, j) => (
+                    <li key={j} className="flex gap-2 text-sm" style={{ fontFamily: 'Soehne, sans-serif', color: '#4B5563' }}>
+                      <span className="text-[#1E3A5F] flex-shrink-0">•</span>
+                      <span>{tip}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {activeTipSection === 'mistakes' && guidance?.commonMistakes && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-amber-600 mb-2">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              <span className="font-medium text-sm" style={{ fontFamily: 'Soehne, sans-serif' }}>Avoid These Mistakes</span>
+            </div>
+            {guidance.commonMistakes.map((mistake, i) => (
+              <div
+                key={i}
+                className="flex gap-2 text-sm bg-amber-50 border border-amber-100 rounded-lg p-3"
+                style={{ fontFamily: 'Soehne, sans-serif', color: '#92400E' }}
+              >
+                <span className="flex-shrink-0 font-medium">{i + 1}.</span>
+                <span>{mistake}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {activeTipSection === 'tips' && guidance?.proTips && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-green-600 mb-2">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span className="font-medium text-sm" style={{ fontFamily: 'Soehne, sans-serif' }}>Pro Tips</span>
+            </div>
+            {guidance.proTips.map((tip, i) => (
+              <div
+                key={i}
+                className="flex gap-2 text-sm bg-green-50 border border-green-100 rounded-lg p-3"
+                style={{ fontFamily: 'Soehne, sans-serif', color: '#065F46' }}
+              >
+                <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <span>{tip}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {!guidance && (
+          <div className="text-center py-8 text-gray-500">
+            <svg className="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <p style={{ fontFamily: 'Soehne, sans-serif' }}>No tips available for this form yet.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <div className="flex flex-col h-[calc(100vh-120px)]">
       {/* Download Modal */}
@@ -429,6 +600,34 @@ export default function FormFillerView({ getToken, onBack, formType = 'i-129f', 
             </p>
           </div>
         </div>
+      )}
+
+      {/* Mobile Tips Drawer */}
+      {showTipsDrawer && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/30 z-40 lg:hidden"
+            onClick={() => setShowTipsDrawer(false)}
+          />
+          <div className="fixed inset-x-0 bottom-0 z-50 bg-white rounded-t-2xl shadow-2xl lg:hidden max-h-[70vh] flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="font-semibold" style={{ fontFamily: 'Libre Baskerville, serif', color: '#1E1F1C' }}>
+                Form Tips & Guidance
+              </h3>
+              <button
+                onClick={() => setShowTipsDrawer(false)}
+                className="p-1 rounded-lg hover:bg-gray-100"
+              >
+                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="flex-1 overflow-hidden">
+              <TipsPanelContent inDrawer />
+            </div>
+          </div>
+        </>
       )}
 
       {/* Compact header bar */}
@@ -604,20 +803,59 @@ export default function FormFillerView({ getToken, onBack, formType = 'i-129f', 
         </div>
       )}
 
-      {/* PDF Viewer - maximized */}
-      <div
-        ref={containerRef}
-        className="flex-1 overflow-auto rounded-b-xl"
-        style={{ backgroundColor: '#525659' }}
-      >
-        <div className="flex justify-center p-4 min-h-full">
-          <div className="relative bg-white shadow-2xl">
-            <canvas ref={canvasRef} />
-            <div
-              ref={annotationLayerRef}
-              className="absolute top-0 left-0 annotation-layer"
-            />
+      {/* Mobile tip bar - shown only on smaller screens */}
+      {guidance && (
+        <button
+          onClick={() => setShowTipsDrawer(true)}
+          className="flex items-center justify-between px-4 py-2.5 lg:hidden"
+          style={{ backgroundColor: '#F0F9FF', borderBottom: '1px solid #BAE6FD' }}
+        >
+          <div className="flex items-center gap-2">
+            <svg className="w-4 h-4 text-[#0369A1]" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+            </svg>
+            <span className="text-sm font-medium" style={{ fontFamily: 'Soehne, sans-serif', color: '#0369A1' }}>
+              View tips & guidance for this form
+            </span>
           </div>
+          <svg className="w-4 h-4 text-[#0369A1]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      )}
+
+      {/* Main content area with side panel on desktop */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* PDF Viewer */}
+        <div
+          ref={containerRef}
+          className="flex-1 overflow-auto rounded-b-xl lg:rounded-br-none"
+          style={{ backgroundColor: '#525659' }}
+        >
+          <div className="flex justify-center p-4 min-h-full">
+            <div className="relative bg-white shadow-2xl">
+              <canvas ref={canvasRef} />
+              <div
+                ref={annotationLayerRef}
+                className="absolute top-0 left-0 annotation-layer"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop Tips Panel - hidden on mobile */}
+        <div
+          className="hidden lg:flex lg:flex-col lg:w-80 xl:w-96 bg-white border-l border-gray-200 rounded-br-xl overflow-hidden"
+        >
+          <div className="p-4 border-b border-gray-200">
+            <h3 className="font-semibold" style={{ fontFamily: 'Libre Baskerville, serif', color: '#1E1F1C' }}>
+              Tips & Guidance
+            </h3>
+            <p className="text-xs text-gray-500 mt-0.5" style={{ fontFamily: 'Soehne, sans-serif' }}>
+              Helpful info as you fill out your form
+            </p>
+          </div>
+          <TipsPanelContent />
         </div>
       </div>
 
