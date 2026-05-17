@@ -606,10 +606,10 @@ export default function FormFillerView({ getToken, onBack, formType = 'i-129f', 
       {showTipsDrawer && (
         <>
           <div
-            className="fixed inset-0 bg-black/30 z-40 lg:hidden"
+            className="fixed inset-0 bg-black/30 z-40 xl:hidden"
             onClick={() => setShowTipsDrawer(false)}
           />
-          <div className="fixed inset-x-0 bottom-0 z-50 bg-white rounded-t-2xl shadow-2xl lg:hidden max-h-[70vh] flex flex-col">
+          <div className="fixed inset-x-0 bottom-0 z-50 bg-white rounded-t-2xl shadow-2xl xl:hidden max-h-[70vh] flex flex-col">
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
               <h3 className="font-semibold" style={{ fontFamily: 'Libre Baskerville, serif', color: '#1E1F1C' }}>
                 Form Tips & Guidance
@@ -803,11 +803,11 @@ export default function FormFillerView({ getToken, onBack, formType = 'i-129f', 
         </div>
       )}
 
-      {/* Mobile tip bar - shown only on smaller screens */}
+      {/* Mobile tip bar - shown only on screens smaller than xl (where layout panel appears) */}
       {guidance && (
         <button
           onClick={() => setShowTipsDrawer(true)}
-          className="flex items-center justify-between px-4 py-2.5 lg:hidden"
+          className="flex items-center justify-between px-4 py-2.5 xl:hidden"
           style={{ backgroundColor: '#F0F9FF', borderBottom: '1px solid #BAE6FD' }}
         >
           <div className="flex items-center gap-2">
@@ -824,38 +824,20 @@ export default function FormFillerView({ getToken, onBack, formType = 'i-129f', 
         </button>
       )}
 
-      {/* Main content area with side panel on desktop */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* PDF Viewer */}
-        <div
-          ref={containerRef}
-          className="flex-1 overflow-auto rounded-b-xl lg:rounded-br-none"
-          style={{ backgroundColor: '#525659' }}
-        >
-          <div className="flex justify-center p-4 min-h-full">
-            <div className="relative bg-white shadow-2xl">
-              <canvas ref={canvasRef} />
-              <div
-                ref={annotationLayerRef}
-                className="absolute top-0 left-0 annotation-layer"
-              />
-            </div>
+      {/* PDF Viewer */}
+      <div
+        ref={containerRef}
+        className="flex-1 overflow-auto rounded-b-xl"
+        style={{ backgroundColor: '#525659' }}
+      >
+        <div className="flex justify-center p-4 min-h-full">
+          <div className="relative bg-white shadow-2xl">
+            <canvas ref={canvasRef} />
+            <div
+              ref={annotationLayerRef}
+              className="absolute top-0 left-0 annotation-layer"
+            />
           </div>
-        </div>
-
-        {/* Desktop Tips Panel - hidden on mobile */}
-        <div
-          className="hidden lg:flex lg:flex-col lg:w-80 xl:w-96 bg-white border-l border-gray-200 rounded-br-xl overflow-hidden"
-        >
-          <div className="p-4 border-b border-gray-200">
-            <h3 className="font-semibold" style={{ fontFamily: 'Libre Baskerville, serif', color: '#1E1F1C' }}>
-              Tips & Guidance
-            </h3>
-            <p className="text-xs text-gray-500 mt-0.5" style={{ fontFamily: 'Soehne, sans-serif' }}>
-              Helpful info as you fill out your form
-            </p>
-          </div>
-          <TipsPanelContent />
         </div>
       </div>
 
