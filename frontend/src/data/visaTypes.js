@@ -317,6 +317,38 @@ export const VISA_TYPES = {
       display: '$400',
       stripePriceId: null // Set after creating in Stripe dashboard
     }
+  },
+
+  marriage: {
+    code: 'marriage',
+    name: 'Marriage-Based Green Card (Adjustment of Status)',
+    category: 'family',
+    description: 'For spouses of US citizens to obtain permanent residence while in the US',
+    requirements: {
+      minDegree: null,
+      jobOffer: false,
+      uscitizenPetitioner: true,
+      married: true,
+      lawfulEntry: true,
+      incomeRequirement: true
+    },
+    timeline: {
+      standard: 365,
+      premium: null
+    },
+    costs: {
+      governmentFees: 2115,
+      attorneyFeeLow: 3000,
+      attorneyFeeHigh: 8000
+    },
+    diyDifficulty: 'intermediate',
+    annualCap: null,
+    notes: 'Immediate relatives not subject to numerical limits. Can file I-130 and I-485 concurrently. 40%+ of new green cards are marriage-based.',
+    pricing: {
+      amountCents: 49900,
+      display: '$499',
+      stripePriceId: null // Set after creating in Stripe dashboard
+    }
   }
 };
 

@@ -7,6 +7,7 @@
 // Lazy-load visa configs to avoid bundling all at once
 const visaConfigLoaders = {
   k1: () => import('./k1'),
+  marriage: () => import('./marriage'),
   // Add more visa types as needed:
   // h1b: () => import('./h1b'),
   // eb1a: () => import('./eb1a'),

@@ -29,7 +29,19 @@
       "Bash(DELETE FROM purchases WHERE visa_type = 'k1')",
       "Bash(__NEW_LINE_1a82791a3551dc17__ EOF)",
       "Bash(grep:*)",
-      "Bash(cd /Users/ryansterling/Desktop/Code\\\\ Projects/immigration-diy/frontend && npx netlify deploy:*)"
+      "Bash(cd /Users/ryansterling/Desktop/Code\\\\ Projects/immigration-diy/frontend && npx netlify deploy:*)",
+      "Bash(node scripts/pdf-spike.mjs:*)",
+      "Bash(npm init:*)",
+      "Bash(node scripts/pdf-spike-pdfjs.mjs:*)",
+      "Bash(brew install:*)",
+      "Bash(pdftk:*)",
+      "Bash(node scripts/verify-filled.mjs:*)",
+      "Bash(find:*)",
+      "Bash(chmod:*)",
+      "Bash(pkill:*)",
+      "WebFetch(domain:start.simplecitizen.com)",
+      "Bash(pgrep:*)",
+      "Bash(npx wrangler deploy:*)"
     ]
   }
 }

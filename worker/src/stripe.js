@@ -12,6 +12,11 @@ export const VISA_PRICING = {
     amountCents: 40000, // $400
     name: 'K-1 Fiancé Visa Application Guide',
     description: 'Complete step-by-step K-1 visa application guidance'
+  },
+  marriage: {
+    amountCents: 49900, // $499
+    name: 'Marriage-Based Green Card DIY Guide',
+    description: 'Complete adjustment of status application guidance for spouses of US citizens'
   }
   // Add more visa types as needed
 };

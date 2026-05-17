@@ -372,7 +372,7 @@ export default function VisaDashboardLayout({
           className="flex-1 overflow-y-auto p-6 lg:p-8"
           style={{ backgroundColor: '#EEEEEF' }}
         >
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-6xl mx-auto">
             <VisaMainContent
               activePhase={activePhase}
               documents={documents}
