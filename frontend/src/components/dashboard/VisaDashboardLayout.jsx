@@ -45,6 +45,14 @@ export default function VisaDashboardLayout({
   const [activeFormName, setActiveFormName] = useState(null);
   const [formProgress, setFormProgress] = useState({});
 
+  // Handle phase change - also closes form filler
+  const handlePhaseChange = (newPhase) => {
+    setActivePhase(newPhase);
+    setShowFormFiller(false);
+    setActiveFormType(null);
+    setActiveFormName(null);
+  };
+
   // Check if user has existing form progress for all fillable forms
   useEffect(() => {
     const checkAllFormProgress = async () => {
@@ -157,7 +165,7 @@ export default function VisaDashboardLayout({
       {/* Sidebar */}
       <VisaSidebar
         activePhase={activePhase}
-        onPhaseChange={setActivePhase}
+        onPhaseChange={handlePhaseChange}
         documents={documents}
         timeline={visaConfig.timeline}
         progressTitle={visaConfig.progressTitle}
