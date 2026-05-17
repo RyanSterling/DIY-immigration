@@ -1,6 +1,7 @@
 // K-1 Dashboard API Functions
 
 const WORKER_URL = import.meta.env.VITE_WORKER_URL || 'http://localhost:8787';
+const PDF_SERVICE_URL = import.meta.env.VITE_PDF_SERVICE_URL || 'http://localhost:3001';
 
 /**
  * Fetch K-1 dashboard summary including progress stats and latest assessment
@@ -143,4 +144,68 @@ export async function saveK1Preferences(token, preferences) {
   }
 
   return response.json();
+}
+
+/**
+ * Fetch saved form data (PDF form field values)
+ */
+export async function fetchFormData(token, formType) {
+  const response = await fetch(`${WORKER_URL}/k1/form-data/${formType}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      return { formData: {}, lastPage: 1, updatedAt: null };
+    }
+    const error = await response.json().catch(() => ({ error: 'Failed to fetch form data' }));
+    throw new Error(error.error || 'Failed to fetch form data');
+  }
+
+  return response.json();
+}
+
+/**
+ * Save form data (PDF form field values)
+ */
+export async function saveFormData(token, formType, formData, lastPage = 1) {
+  const response = await fetch(`${WORKER_URL}/k1/form-data/${formType}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ formData, lastPage })
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'Failed to save form data' }));
+    throw new Error(error.error || 'Failed to save form data');
+  }
+
+  return response.json();
+}
+
+/**
+ * Fill a PDF form using the PDFtk microservice
+ * Returns a Blob of the filled PDF
+ */
+export async function fillPdf(formType, formData) {
+  const response = await fetch(`${PDF_SERVICE_URL}/fill-pdf`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ formType, formData })
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'Failed to fill PDF' }));
+    throw new Error(error.error || 'Failed to fill PDF');
+  }
+
+  return response.blob();
 }
