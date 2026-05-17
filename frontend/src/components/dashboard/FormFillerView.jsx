@@ -602,14 +602,14 @@ export default function FormFillerView({ getToken, onBack, formType = 'i-129f', 
         </div>
       )}
 
-      {/* Mobile Tips Drawer */}
+      {/* Mobile Tips Panel - slides in from right */}
       {showTipsDrawer && (
         <>
           <div
             className="fixed inset-0 bg-black/30 z-40 xl:hidden"
             onClick={() => setShowTipsDrawer(false)}
           />
-          <div className="fixed inset-x-0 bottom-0 z-50 bg-white rounded-t-2xl shadow-2xl xl:hidden max-h-[70vh] flex flex-col">
+          <div className="fixed inset-y-0 right-0 z-50 bg-white shadow-2xl xl:hidden w-full max-w-sm flex flex-col">
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
               <h3 className="font-semibold" style={{ fontFamily: 'Libre Baskerville, serif', color: '#1E1F1C' }}>
                 Form Tips & Guidance
