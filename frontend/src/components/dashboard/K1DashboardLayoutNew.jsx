@@ -3,7 +3,8 @@
  * Sidebar-based layout for the redesigned K-1 DIY Dashboard
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import K1Sidebar from './K1Sidebar';
 import K1MainContent from './K1MainContent';
 import DocumentPanel from './DocumentPanel';
@@ -21,7 +22,11 @@ export default function K1DashboardLayoutNew({
   onLoadComments,
   getToken
 }) {
-  const [activePhase, setActivePhase] = useState('phase-1');
+  // URL-synced state for phase and form
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activePhase = searchParams.get('phase') || 'phase-1';
+  const urlFormType = searchParams.get('form');
+
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Panel states
@@ -37,11 +42,31 @@ export default function K1DashboardLayoutNew({
   const [activeVideo, setActiveVideo] = useState(null);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
-  // Form filler state
-  const [showFormFiller, setShowFormFiller] = useState(false);
-  const [activeFormType, setActiveFormType] = useState(null);
+  // Form filler state - derived from URL
+  const showFormFiller = !!urlFormType;
+  const [activeFormType, setActiveFormType] = useState(urlFormType);
   const [activeFormName, setActiveFormName] = useState(null);
   const [formProgress, setFormProgress] = useState({}); // { 'i-129f': true, 'i-134': false, ... }
+
+  // Sync form type from URL
+  useEffect(() => {
+    if (urlFormType) {
+      setActiveFormType(urlFormType);
+      // Find the form name from FILLABLE_FORMS
+      const formConfig = Object.values(FILLABLE_FORMS).find(f => f.formType === urlFormType);
+      if (formConfig) {
+        setActiveFormName(formConfig.displayName);
+      }
+    } else {
+      setActiveFormType(null);
+      setActiveFormName(null);
+    }
+  }, [urlFormType]);
+
+  // Handle phase change - also closes form filler
+  const handlePhaseChange = useCallback((newPhase) => {
+    setSearchParams({ phase: newPhase });
+  }, [setSearchParams]);
 
   // Check if user has existing form progress for all fillable forms
   useEffect(() => {
@@ -119,9 +144,9 @@ export default function K1DashboardLayoutNew({
 
   // Form filler handlers
   const handleOpenFormFiller = (formType, formName) => {
-    setActiveFormType(formType);
     setActiveFormName(formName);
-    setShowFormFiller(true);
+    // Add form to URL while preserving phase
+    setSearchParams({ phase: activePhase, form: formType });
     // Close any open panels
     handleClosePanel();
     handleCloseComments();
@@ -129,9 +154,8 @@ export default function K1DashboardLayoutNew({
 
   const handleCloseFormFiller = async () => {
     const closedFormType = activeFormType;
-    setShowFormFiller(false);
-    setActiveFormType(null);
-    setActiveFormName(null);
+    // Remove form from URL, keep phase
+    setSearchParams({ phase: activePhase });
 
     // Refresh progress data for the form that was just closed
     if (getToken && closedFormType) {
@@ -155,7 +179,7 @@ export default function K1DashboardLayoutNew({
       {/* Sidebar */}
       <K1Sidebar
         activePhase={activePhase}
-        onPhaseChange={setActivePhase}
+        onPhaseChange={handlePhaseChange}
         documents={documents}
         isCollapsed={isSidebarCollapsed}
         onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
