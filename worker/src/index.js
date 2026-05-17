@@ -249,6 +249,12 @@ app.post('/sync-user', authMiddleware({ required: true }), async (c) => {
     const firstName = body.firstName || null;
     const lastName = body.lastName || null;
 
+    // Validate required env vars
+    if (!c.env.SUPABASE_URL || !c.env.SUPABASE_SERVICE_KEY) {
+      console.error('Missing Supabase configuration');
+      return c.json({ error: 'Server configuration error' }, 500);
+    }
+
     const supabase = createClient(
       c.env.SUPABASE_URL,
       c.env.SUPABASE_SERVICE_KEY
@@ -270,14 +276,15 @@ app.post('/sync-user', authMiddleware({ required: true }), async (c) => {
       .single();
 
     if (error) {
-      throw error;
+      console.error('Supabase upsert error:', error);
+      return c.json({ error: 'Database error', details: error.message }, 500);
     }
 
     return c.json({ user: data });
 
   } catch (error) {
     console.error('Error syncing user:', error);
-    return c.json({ error: 'Failed to sync user' }, 500);
+    return c.json({ error: 'Failed to sync user', details: error.message }, 500);
   }
 });
 
@@ -305,15 +312,32 @@ app.post('/stripe/create-checkout', authMiddleware({ required: true }), async (c
       c.env.SUPABASE_SERVICE_KEY
     );
 
-    // Get user's internal ID
-    const { data: dbUser, error: userError } = await supabase
+    // Get user's internal ID - try to find existing user first
+    let { data: dbUser } = await supabase
       .from('users')
       .select('id')
       .eq('clerk_user_id', user.clerkId)
-      .single();
+      .maybeSingle();
 
-    if (userError || !dbUser) {
-      return c.json({ error: 'User not found' }, 404);
+    // If user doesn't exist, create them (fallback for sync failures)
+    if (!dbUser) {
+      console.log('User not found, creating user for checkout:', user.clerkId);
+      const { data: newUser, error: createError } = await supabase
+        .from('users')
+        .insert({
+          clerk_user_id: user.clerkId,
+          email: user.email,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .select('id')
+        .single();
+
+      if (createError) {
+        console.error('Failed to create user for checkout:', createError);
+        return c.json({ error: 'Failed to create user account' }, 500);
+      }
+      dbUser = newUser;
     }
 
     // Check if user already has a completed purchase for this visa

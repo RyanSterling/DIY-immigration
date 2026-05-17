@@ -1,7 +1,7 @@
 import { useState } from 'react';
+import { useAuth, useUser } from '@clerk/react';
 import Question from './Question';
 import ProgressBar from './ProgressBar';
-import FreeTextInput from './FreeTextInput';
 import EmailCapture from './EmailCapture';
 import LoadingScreen from './LoadingScreen';
 import Results from './Results';
@@ -10,12 +10,11 @@ import { calculateK1Eligibility } from '../../lib/scoring';
 import { getUtmParams } from '../../lib/utm';
 import { generateSessionId } from '../../lib/session';
 import { saveAssessment, saveVisaResults, trackQuizStart, markQuizCompleted } from '../../lib/supabase';
-import { generateAssessment, sendWebhook } from '../../lib/api';
+import { sendWebhook } from '../../lib/api';
 
 const STEPS = {
   WELCOME: 'welcome',
   QUESTIONS: 'questions',
-  FREE_TEXT: 'free_text',
   EMAIL: 'email',
   LOADING: 'loading',
   RESULTS: 'results'
@@ -96,17 +95,18 @@ function K1Welcome({ onStart }) {
 }
 
 export default function K1QuizContainer() {
+  const { isSignedIn } = useAuth();
+  const { user } = useUser();
+
   const [currentStep, setCurrentStep] = useState(STEPS.WELCOME);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
-  const [freeText, setFreeText] = useState('');
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Results data
   const [visaResults, setVisaResults] = useState(null);
-  const [aiContent, setAiContent] = useState(null);
 
   // UTM and session tracking
   const [utmParams, setUtmParams] = useState({});
@@ -151,7 +151,14 @@ export default function K1QuizContainer() {
       if (nextIndex < updatedVisibleQuestions.length) {
         setCurrentQuestionIndex(nextIndex);
       } else {
-        setCurrentStep(STEPS.FREE_TEXT);
+        // If logged in, skip email and go straight to submit
+        if (isSignedIn && user?.primaryEmailAddress?.emailAddress) {
+          setEmail(user.primaryEmailAddress.emailAddress);
+          // Small delay then submit
+          setTimeout(() => handleSubmit(user.primaryEmailAddress.emailAddress), 100);
+        } else {
+          setCurrentStep(STEPS.EMAIL);
+        }
       }
 
       setTimeout(() => {
@@ -162,8 +169,6 @@ export default function K1QuizContainer() {
 
   const handleBack = () => {
     if (currentStep === STEPS.EMAIL) {
-      setCurrentStep(STEPS.FREE_TEXT);
-    } else if (currentStep === STEPS.FREE_TEXT) {
       setCurrentStep(STEPS.QUESTIONS);
       setCurrentQuestionIndex(visibleQuestions.length - 1);
     } else if (currentQuestionIndex > 0) {
@@ -171,11 +176,8 @@ export default function K1QuizContainer() {
     }
   };
 
-  const handleFreeTextNext = () => {
-    setCurrentStep(STEPS.EMAIL);
-  };
-
-  const handleSubmit = async () => {
+  const handleSubmit = async (emailOverride) => {
+    const emailToUse = emailOverride || email;
     setIsSubmitting(true);
     setCurrentStep(STEPS.LOADING);
 
@@ -186,7 +188,7 @@ export default function K1QuizContainer() {
 
       // Prepare assessment data for K-1
       const assessmentData = {
-        email,
+        email: emailToUse,
         session_id: sessionId,
         country_of_citizenship: null, // Not collected for K-1
         current_country: 'outside_us',
@@ -198,7 +200,7 @@ export default function K1QuizContainer() {
         has_job_offer: false,
         employer_type: null,
         has_extraordinary_ability: false,
-        additional_context: freeText || null,
+        additional_context: null,
         utm_source: utmParams?.utm_source || null,
         utm_campaign: utmParams?.utm_campaign || null,
         utm_content: utmParams?.utm_content || null,
@@ -207,27 +209,7 @@ export default function K1QuizContainer() {
         k1_answers: JSON.stringify(answers)
       };
 
-      // Try to generate AI content
-      let aiResult = null;
-      if (freeText && freeText.trim().length > 0) {
-        try {
-          aiResult = await generateAssessment({
-            email,
-            answers,
-            freeText,
-            visaResults: calculatedResults
-          });
-
-          if (!aiResult.rateLimited && aiResult.recommendations) {
-            setAiContent(aiResult);
-          }
-        } catch (error) {
-          console.error('AI assessment failed:', error);
-        }
-      }
-
       // Save to database (non-blocking - results still show if DB fails)
-      assessmentData.ai_assessment = aiResult ? JSON.stringify(aiResult) : null;
       const { data: savedAssessment, error: saveError } = await saveAssessment(assessmentData);
 
       if (saveError) {
@@ -258,7 +240,7 @@ export default function K1QuizContainer() {
       // Send webhook
       if (calculatedResults.length > 0) {
         await sendWebhook({
-          email,
+          email: emailToUse,
           topVisa: 'k1',
           visaCount: 1,
           utmSource: utmParams.utm_source,
@@ -289,10 +271,13 @@ export default function K1QuizContainer() {
       text: getQuestionText(currentQuestion, answers)
     };
 
+    // If logged in, we skip email step so total is just questions
+    const progressTotal = isSignedIn ? totalQuestions : totalQuestions + 1;
+
     return (
       <div className="min-h-screen" style={{ backgroundColor: '#EFEDEC' }}>
         <div className={`transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
-          <ProgressBar current={currentQuestionIndex + 1} total={totalQuestions + 2} />
+          <ProgressBar current={currentQuestionIndex + 1} total={progressTotal} />
           <Question
             question={questionWithDynamicText}
             value={answers[currentQuestion.id]}
@@ -310,29 +295,14 @@ export default function K1QuizContainer() {
     );
   }
 
-  if (currentStep === STEPS.FREE_TEXT) {
-    return (
-      <>
-        <ProgressBar current={totalQuestions + 1} total={totalQuestions + 2} />
-        <FreeTextInput
-          value={freeText}
-          onChange={setFreeText}
-          onNext={handleFreeTextNext}
-          onBack={handleBack}
-          placeholder="Tell us more about your relationship, how you met, any concerns about the process, or questions you have..."
-        />
-      </>
-    );
-  }
-
   if (currentStep === STEPS.EMAIL) {
     return (
       <>
-        <ProgressBar current={totalQuestions + 2} total={totalQuestions + 2} />
+        <ProgressBar current={totalQuestions + 1} total={totalQuestions + 1} />
         <EmailCapture
           value={email}
           onChange={setEmail}
-          onSubmit={handleSubmit}
+          onSubmit={() => handleSubmit()}
           onBack={handleBack}
           isSubmitting={isSubmitting}
         />
@@ -348,7 +318,7 @@ export default function K1QuizContainer() {
     return (
       <Results
         visaResults={visaResults}
-        aiContent={aiContent}
+        aiContent={null}
         isK1={true}
       />
     );
