@@ -11,7 +11,7 @@ import DocumentPanel from './DocumentPanel';
 import CommentThread from './CommentThread';
 import VideoModal from './VideoModal';
 import FormFillerView, { FILLABLE_FORMS } from './FormFillerView';
-import { fetchFormData } from '../../lib/k1Api';
+import { fetchFormData } from '../../lib/visaApi';
 
 export default function K1DashboardLayoutNew({
   documents,
@@ -83,8 +83,10 @@ export default function K1DashboardLayoutNew({
 
       const progress = {};
       for (const [, config] of Object.entries(FILLABLE_FORMS)) {
+        // Only check forms that belong to K-1 visa type
+        if (!config.visaTypes || !config.visaTypes.includes('k1')) continue;
         try {
-          const result = await fetchFormData(token, config.formType);
+          const result = await fetchFormData(token, 'k1', config.formType);
           progress[config.formType] = !!(result.formData && Object.keys(result.formData).length > 0);
         } catch (err) {
           progress[config.formType] = false;
@@ -176,7 +178,7 @@ export default function K1DashboardLayoutNew({
       try {
         const token = await getToken();
         if (!token) return;
-        const result = await fetchFormData(token, closedFormType);
+        const result = await fetchFormData(token, 'k1', closedFormType);
         const hasProgress = !!(result.formData && Object.keys(result.formData).length > 0);
         setFormProgress(prev => ({
           ...prev,
@@ -211,6 +213,7 @@ export default function K1DashboardLayoutNew({
               onBack={handleCloseFormFiller}
               formType={activeFormType}
               formName={activeFormName}
+              visaType="k1"
             />
           ) : (
             <K1MainContent

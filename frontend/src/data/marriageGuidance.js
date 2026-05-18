@@ -152,26 +152,6 @@ export const MARRIAGE_GUIDANCE = {
     difficulty: 'easy'
   },
 
-  'Form I-693': {
-    description: 'Report of Medical Examination and Vaccination Record - completed by a USCIS-designated civil surgeon. Required for the green card interview.',
-    steps: [
-      'Find a designated civil surgeon using USCIS\'s online tool',
-      'Schedule an appointment (book early as it can take weeks)',
-      'Bring: passport, vaccination records, I-693 form (partially filled)',
-      'Complete the medical exam including required vaccinations',
-      'Doctor seals results in envelope - DO NOT OPEN',
-      'Submit at your interview (or earlier if requested)'
-    ],
-    tips: 'Results are valid for 2 years from the civil surgeon\'s signature (or 4 years from exam date if submitted within 60 days of exam). Schedule this closer to your interview date to ensure validity.',
-    links: [
-      { label: 'Download Form I-693', url: 'https://www.uscis.gov/i-693' },
-      { label: 'Find Civil Surgeon', url: 'https://my.uscis.gov/findadoctor' },
-      { label: 'Required Vaccinations', url: 'https://www.cdc.gov/immigrantrefugeehealth/panel-physicians/vaccinations.html' }
-    ],
-    estimatedTime: '2-4 hours for appointment',
-    difficulty: 'moderate'
-  },
-
   'Payment Authorization Form': {
     description: 'USCIS no longer accepts checks or money orders. You must include a payment authorization form to pay filing fees.',
     steps: [
@@ -575,10 +555,10 @@ export const MARRIAGE_TIMELINE = [
   {
     phase: 11,
     title: 'Interview Preparation',
-    description: 'Complete your medical exam and prepare for the USCIS interview.',
+    description: 'Schedule your medical exam with a USCIS-designated civil surgeon and prepare for the interview. The doctor completes Form I-693 for you.',
     duration: '2-4 weeks before interview',
-    tips: 'Schedule medical exam when interview is approaching. Bring updated relationship evidence if months have passed.',
-    docsNeeded: ['Form I-693'],
+    tips: 'Find a civil surgeon at my.uscis.gov/findadoctor. Bring your passport, vaccination records, and I-693 form to the appointment. The doctor seals the results - DO NOT OPEN the envelope.',
+    docsNeeded: [],
     video: {
       title: 'Medical Exam and Interview Prep',
       description: 'What to expect at the civil surgeon and how to prepare for your interview.'

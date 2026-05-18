@@ -11,7 +11,7 @@ import DocumentPanel from './DocumentPanel';
 import CommentThread from './CommentThread';
 import VideoModal from './VideoModal';
 import FormFillerView, { FILLABLE_FORMS } from './FormFillerView';
-import { fetchFormData } from '../../lib/k1Api';
+import { fetchFormData } from '../../lib/visaApi';
 import { getFormGuidance } from '../../data/formGuidance';
 
 export default function VisaDashboardLayout({
@@ -68,8 +68,10 @@ export default function VisaDashboardLayout({
 
       const progress = {};
       for (const [, config] of Object.entries(FILLABLE_FORMS)) {
+        // Only check forms that belong to this visa type
+        if (!config.visaTypes || !config.visaTypes.includes(visaConfig.code)) continue;
         try {
-          const result = await fetchFormData(token, config.formType);
+          const result = await fetchFormData(token, visaConfig.code, config.formType);
           progress[config.formType] = !!(result.formData && Object.keys(result.formData).length > 0);
         } catch (err) {
           progress[config.formType] = false;
@@ -78,7 +80,7 @@ export default function VisaDashboardLayout({
       setFormProgress(progress);
     };
     checkAllFormProgress();
-  }, [getToken]);
+  }, [getToken, visaConfig.code]);
 
   // Count comments per document
   const commentCounts = Object.keys(comments).reduce((acc, docId) => {
@@ -153,7 +155,7 @@ export default function VisaDashboardLayout({
       try {
         const token = await getToken();
         if (!token) return;
-        const result = await fetchFormData(token, closedFormType);
+        const result = await fetchFormData(token, visaConfig.code, closedFormType);
         const hasProgress = !!(result.formData && Object.keys(result.formData).length > 0);
         setFormProgress(prev => ({
           ...prev,
@@ -189,6 +191,7 @@ export default function VisaDashboardLayout({
               onBack={handleCloseFormFiller}
               formType={activeFormType}
               formName={activeFormName}
+              visaType={visaConfig.code}
             />
           </div>
 

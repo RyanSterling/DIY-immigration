@@ -1034,11 +1034,12 @@ app.get('/k1/form-data/:formType', authMiddleware({ required: true }), async (c)
       return c.json({ error: 'User not found' }, 404);
     }
 
-    // Get form data
+    // Get form data (K-1 specific - uses visa_type='k1')
     const { data: formData, error } = await supabase
       .from('user_form_data')
       .select('*')
       .eq('user_id', dbUser.id)
+      .eq('visa_type', 'k1')
       .eq('form_type', formType)
       .maybeSingle();
 
@@ -1085,17 +1086,18 @@ app.put('/k1/form-data/:formType', authMiddleware({ required: true }), async (c)
       return c.json({ error: 'User not found' }, 404);
     }
 
-    // Upsert form data
+    // Upsert form data (K-1 specific - uses visa_type='k1')
     const { data, error } = await supabase
       .from('user_form_data')
       .upsert({
         user_id: dbUser.id,
+        visa_type: 'k1',
         form_type: formType,
         form_data: formData,
         last_page: lastPage || 1,
         updated_at: new Date().toISOString()
       }, {
-        onConflict: 'user_id,form_type'
+        onConflict: 'user_id,visa_type,form_type'
       })
       .select()
       .single();
@@ -1624,6 +1626,117 @@ app.post('/visa/:visaType/preferences', authMiddleware({ required: true }), asyn
   } catch (error) {
     console.error(`Error saving ${c.req.param('visaType')} preferences:`, error);
     return c.json({ error: 'Failed to save preferences' }, 500);
+  }
+});
+
+// ============================================
+// GENERIC FORM DATA ROUTES (for PDF form filling - any visa type)
+// ============================================
+
+// Get saved form data for a specific visa type and form
+app.get('/visa/:visaType/form-data/:formType', authMiddleware({ required: true }), async (c) => {
+  try {
+    const user = c.get('user');
+    const visaType = c.req.param('visaType');
+    const formType = c.req.param('formType');
+
+    const supabase = createClient(
+      c.env.SUPABASE_URL,
+      c.env.SUPABASE_SERVICE_KEY
+    );
+
+    // Get user's internal ID
+    const { data: dbUser, error: userError } = await supabase
+      .from('users')
+      .select('id')
+      .eq('clerk_user_id', user.clerkId)
+      .single();
+
+    if (userError || !dbUser) {
+      return c.json({ error: 'User not found' }, 404);
+    }
+
+    // Get form data (visa_type + form_type combination)
+    const { data: formData, error } = await supabase
+      .from('user_form_data')
+      .select('*')
+      .eq('user_id', dbUser.id)
+      .eq('visa_type', visaType)
+      .eq('form_type', formType)
+      .maybeSingle();
+
+    if (error) {
+      throw error;
+    }
+
+    return c.json({
+      formData: formData?.form_data || {},
+      lastPage: formData?.last_page || 1,
+      updatedAt: formData?.updated_at || null
+    });
+
+  } catch (error) {
+    console.error('Error fetching form data:', error);
+    return c.json({ error: 'Failed to fetch form data' }, 500);
+  }
+});
+
+// Save form data for a specific visa type and form
+app.put('/visa/:visaType/form-data/:formType', authMiddleware({ required: true }), async (c) => {
+  try {
+    const user = c.get('user');
+    const visaType = c.req.param('visaType');
+    const formType = c.req.param('formType');
+    const { formData, lastPage } = await c.req.json();
+
+    if (!formData || typeof formData !== 'object') {
+      return c.json({ error: 'formData is required and must be an object' }, 400);
+    }
+
+    const supabase = createClient(
+      c.env.SUPABASE_URL,
+      c.env.SUPABASE_SERVICE_KEY
+    );
+
+    // Get user's internal ID
+    const { data: dbUser, error: userError } = await supabase
+      .from('users')
+      .select('id')
+      .eq('clerk_user_id', user.clerkId)
+      .single();
+
+    if (userError || !dbUser) {
+      return c.json({ error: 'User not found' }, 404);
+    }
+
+    // Upsert form data with visa_type
+    const { data, error } = await supabase
+      .from('user_form_data')
+      .upsert({
+        user_id: dbUser.id,
+        visa_type: visaType,
+        form_type: formType,
+        form_data: formData,
+        last_page: lastPage || 1,
+        updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'user_id,visa_type,form_type'
+      })
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return c.json({
+      success: true,
+      updatedAt: data.updated_at
+    });
+
+  } catch (error) {
+    console.error('Error saving form data:', error);
+    return c.json({ error: 'Failed to save form data' }, 500);
   }
 });
 

@@ -6,35 +6,92 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
-import { fetchFormData, saveFormData, fillPdf } from '../../lib/k1Api';
+import { fetchFormData, saveFormData, fillPdf } from '../../lib/visaApi';
 import { getFormGuidance } from '../../data/formGuidance';
 
 // Set worker source from the installed package
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
-// Mapping of fillable forms: document name → { formType, pdfFile, displayName }
+// Mapping of fillable forms: document name → { formType, pdfFile, displayName, visaTypes }
+// visaTypes array specifies which visa types can use this form
 export const FILLABLE_FORMS = {
+  // K-1 Fiancé Visa Forms
   'Form I-129F': {
     formType: 'i-129f',
     pdfFile: '/assets/forms/i-129f.pdf',
-    displayName: 'Form I-129F'
+    displayName: 'Form I-129F',
+    visaTypes: ['k1']
   },
   'Form I-134': {
     formType: 'i-134',
     pdfFile: '/assets/forms/i-134.pdf',
-    displayName: 'Form I-134'
+    displayName: 'Form I-134',
+    visaTypes: ['k1', 'marriage']  // Used by both K-1 (interview) and marriage (if needed)
+  },
+
+  // Marriage-Based Green Card Forms
+  'Form I-130': {
+    formType: 'i-130',
+    pdfFile: '/assets/forms/i-130.pdf',
+    displayName: 'Form I-130',
+    visaTypes: ['marriage']
+  },
+  'Form I-130A': {
+    formType: 'i-130a',
+    pdfFile: '/assets/forms/i-130a.pdf',
+    displayName: 'Form I-130A',
+    visaTypes: ['marriage']
+  },
+  'Form I-485': {
+    formType: 'i-485',
+    pdfFile: '/assets/forms/i-485.pdf',
+    displayName: 'Form I-485',
+    visaTypes: ['marriage']
+  },
+  'Form I-864': {
+    formType: 'i-864',
+    pdfFile: '/assets/forms/i-864.pdf',
+    displayName: 'Form I-864',
+    visaTypes: ['marriage']
+  },
+  'Form I-864A': {
+    formType: 'i-864a',
+    pdfFile: '/assets/forms/i-864a.pdf',
+    displayName: 'Form I-864A',
+    visaTypes: ['marriage']
+  },
+  'Form G-325A': {
+    formType: 'g-325a',
+    pdfFile: '/assets/forms/g-325a.pdf',
+    displayName: 'Form G-325A',
+    visaTypes: ['marriage']
+  },
+  'Form I-765': {
+    formType: 'i-765',
+    pdfFile: '/assets/forms/i-765.pdf',
+    displayName: 'Form I-765',
+    visaTypes: ['marriage']
+  },
+  'Form I-131': {
+    formType: 'i-131',
+    pdfFile: '/assets/forms/i-131.pdf',
+    displayName: 'Form I-131',
+    visaTypes: ['marriage']
   }
 };
 
 const AUTO_SAVE_DELAY = 3000;
 
-export default function FormFillerView({ getToken, onBack, formType = 'i-129f', formName = 'Form I-129F' }) {
+export default function FormFillerView({ getToken, onBack, formType = 'i-129f', formName = 'Form I-129F', visaType = 'k1' }) {
   // Get form config from mapping or use defaults
   const formConfig = Object.values(FILLABLE_FORMS).find(f => f.formType === formType) || {
     formType,
     pdfFile: `/assets/forms/${formType}.pdf`,
     displayName: formName
   };
+
+  // Keep visaType in ref for use in callbacks
+  const visaTypeRef = useRef(visaType);
 
   // Get form guidance for tips panel
   const guidance = getFormGuidance(formType);
@@ -76,6 +133,10 @@ export default function FormFillerView({ getToken, onBack, formType = 'i-129f', 
     currentPageRef.current = currentPage;
   }, [currentPage]);
 
+  useEffect(() => {
+    visaTypeRef.current = visaType;
+  }, [visaType]);
+
   // Load saved form data from backend
   useEffect(() => {
     const loadSavedData = async () => {
@@ -84,7 +145,7 @@ export default function FormFillerView({ getToken, onBack, formType = 'i-129f', 
       try {
         const token = await getToken();
         if (!token) return;
-        const result = await fetchFormData(token, formConfig.formType);
+        const result = await fetchFormData(token, visaType, formConfig.formType);
         if (result.formData && Object.keys(result.formData).length > 0) {
           setFormData(result.formData);
           formDataRef.current = result.formData;
@@ -103,7 +164,7 @@ export default function FormFillerView({ getToken, onBack, formType = 'i-129f', 
     };
 
     loadSavedData();
-  }, [getToken, formConfig.formType]);
+  }, [getToken, visaType, formConfig.formType]);
 
   // Load PDF document
   useEffect(() => {
@@ -170,6 +231,7 @@ export default function FormFillerView({ getToken, onBack, formType = 'i-129f', 
     const getTokenFn = getTokenRef.current;
     const currentFormData = formDataRef.current;
     const page = currentPageRef.current;
+    const currentVisaType = visaTypeRef.current;
 
     if (!getTokenFn) return;
     if (Object.keys(currentFormData).length === 0) return;
@@ -181,7 +243,7 @@ export default function FormFillerView({ getToken, onBack, formType = 'i-129f', 
       if (!token) {
         throw new Error('Not signed in');
       }
-      await saveFormData(token, formConfig.formType, currentFormData, page);
+      await saveFormData(token, currentVisaType, formConfig.formType, currentFormData, page);
       setLastSaved(new Date());
       setHasUnsavedChanges(false);
     } catch (err) {

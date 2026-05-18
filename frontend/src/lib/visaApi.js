@@ -167,3 +167,83 @@ export async function saveVisaPreferences(token, visaType, preferences) {
 
   return response.json();
 }
+
+// ============================================
+// FORM DATA FUNCTIONS (for PDF form filling)
+// ============================================
+
+const PDF_SERVICE_URL = import.meta.env.VITE_PDF_SERVICE_URL || 'http://localhost:3001';
+
+/**
+ * Fetch saved form data (PDF form field values)
+ * @param {string} token - Auth token
+ * @param {string} visaType - Visa type code (e.g., 'k1', 'marriage')
+ * @param {string} formType - Form type (e.g., 'i-130', 'i-485')
+ */
+export async function fetchFormData(token, visaType, formType) {
+  const response = await fetch(`${WORKER_URL}/visa/${visaType}/form-data/${formType}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      return { formData: {}, lastPage: 1, updatedAt: null };
+    }
+    const error = await response.json().catch(() => ({ error: 'Failed to fetch form data' }));
+    throw new Error(error.error || 'Failed to fetch form data');
+  }
+
+  return response.json();
+}
+
+/**
+ * Save form data (PDF form field values)
+ * @param {string} token - Auth token
+ * @param {string} visaType - Visa type code
+ * @param {string} formType - Form type
+ * @param {Object} formData - Form field values
+ * @param {number} lastPage - Last page user was viewing
+ */
+export async function saveFormData(token, visaType, formType, formData, lastPage = 1) {
+  const response = await fetch(`${WORKER_URL}/visa/${visaType}/form-data/${formType}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ formData, lastPage })
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'Failed to save form data' }));
+    throw new Error(error.error || 'Failed to save form data');
+  }
+
+  return response.json();
+}
+
+/**
+ * Fill a PDF form using the PDFtk microservice
+ * Returns a Blob of the filled PDF
+ * @param {string} formType - Form type (e.g., 'i-130')
+ * @param {Object} formData - Form field values
+ */
+export async function fillPdf(formType, formData) {
+  const response = await fetch(`${PDF_SERVICE_URL}/fill-pdf`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ formType, formData })
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'Failed to fill PDF' }));
+    throw new Error(error.error || 'Failed to fill PDF');
+  }
+
+  return response.blob();
+}
