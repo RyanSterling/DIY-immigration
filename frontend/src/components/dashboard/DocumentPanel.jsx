@@ -3,14 +3,96 @@
  * Slide-out panel showing detailed document guidance with video support
  */
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { K1_GUIDANCE } from '../../data/k1Guidance';
 
 const STATUS_OPTIONS = [
-  { value: 'not_started', label: 'Not Complete', hint: 'You still need to gather this document' },
+  { value: 'not_started', label: 'Not Started', hint: 'You still need to gather this document' },
+  { value: 'in_progress', label: 'In Progress', hint: 'You\'re actively working on this document' },
   { value: 'completed', label: 'Complete', hint: 'You have this document ready' },
   { value: 'not_applicable', label: 'N/A', hint: 'This document doesn\'t apply to your situation' }
 ];
+
+// Segmented Control with smooth sliding indicator
+function SegmentedControl({ options, value, onChange }) {
+  const containerRef = useRef(null);
+  const buttonRefs = useRef({});
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+  // Local state for immediate visual feedback (optimistic update)
+  const [localValue, setLocalValue] = useState(value);
+
+  // Sync local value when prop changes (e.g., on drawer open)
+  useEffect(() => {
+    setLocalValue(value);
+  }, [value]);
+
+  // Update indicator position when localValue changes
+  useEffect(() => {
+    const activeButton = buttonRefs.current[localValue];
+    if (activeButton && containerRef.current) {
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const buttonRect = activeButton.getBoundingClientRect();
+      setIndicatorStyle({
+        left: buttonRect.left - containerRect.left,
+        width: buttonRect.width
+      });
+    }
+  }, [localValue]);
+
+  const handleClick = (optionValue) => {
+    setLocalValue(optionValue); // Immediate visual feedback
+    onChange(optionValue); // Trigger actual update
+  };
+
+  const currentHint = options.find(o => o.value === localValue)?.hint;
+
+  return (
+    <div className="px-4 pb-4">
+      <div
+        ref={containerRef}
+        className="relative inline-flex p-1 rounded-lg"
+        style={{ backgroundColor: '#F3F4F6' }}
+      >
+        {/* Sliding indicator */}
+        <div
+          className="absolute top-1 bottom-1 rounded-md transition-all duration-200 ease-out"
+          style={{
+            backgroundColor: '#1E3A5F',
+            width: indicatorStyle.width,
+            left: indicatorStyle.left,
+            boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+          }}
+        />
+        {/* Option buttons */}
+        {options.map((option) => (
+          <button
+            key={option.value}
+            ref={(el) => buttonRefs.current[option.value] = el}
+            onClick={() => handleClick(option.value)}
+            className="relative z-10 px-3 py-1.5 text-sm transition-colors duration-200"
+            style={{
+              fontFamily: 'Soehne, sans-serif',
+              color: localValue === option.value ? 'white' : '#6B7280',
+              fontWeight: localValue === option.value ? '500' : '400'
+            }}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+      {/* Status helper text */}
+      <p
+        className="mt-2 text-xs"
+        style={{
+          fontFamily: 'Soehne, sans-serif',
+          color: '#9CA3AF'
+        }}
+      >
+        {currentHint}
+      </p>
+    </div>
+  );
+}
 
 export default function DocumentPanel({
   document,
@@ -93,37 +175,12 @@ export default function DocumentPanel({
             </button>
           </div>
 
-          {/* Status selector */}
-          <div className="px-4 pb-4">
-            <div className="flex flex-wrap gap-2">
-              {STATUS_OPTIONS.map((status) => (
-                <button
-                  key={status.value}
-                  onClick={() => onStatusChange(document.id, status.value)}
-                  className="px-3 py-1.5 rounded-full text-sm transition-all"
-                  style={{
-                    fontFamily: 'Soehne, sans-serif',
-                    backgroundColor: currentStatus === status.value ? '#1E3A5F' : '#F3F4F6',
-                    color: currentStatus === status.value ? 'white' : '#6B7280',
-                    fontWeight: currentStatus === status.value ? '500' : '400'
-                  }}
-                  title={status.hint}
-                >
-                  {status.label}
-                </button>
-              ))}
-            </div>
-            {/* Status helper text */}
-            <p
-              className="mt-2 text-xs"
-              style={{
-                fontFamily: 'Soehne, sans-serif',
-                color: '#9CA3AF'
-              }}
-            >
-              {STATUS_OPTIONS.find(s => s.value === currentStatus)?.hint}
-            </p>
-          </div>
+          {/* Status selector - Segmented Control */}
+          <SegmentedControl
+            options={STATUS_OPTIONS}
+            value={currentStatus}
+            onChange={(value) => onStatusChange(document.id, value)}
+          />
         </div>
 
         {/* Scrollable content */}
@@ -264,11 +321,11 @@ export default function DocumentPanel({
           {guidance?.tips && (
             <section
               className="rounded-xl p-4"
-              style={{ backgroundColor: '#1E3A5F' }}
+              style={{ backgroundColor: '#F5F5F4', border: '1px solid #E7E5E4' }}
             >
               <div className="flex gap-3">
                 <div className="flex-shrink-0">
-                  <svg className="w-5 h-5" fill="white" viewBox="0 0 20 20">
+                  <svg className="w-5 h-5" fill="#78716C" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                   </svg>
                 </div>
@@ -278,7 +335,7 @@ export default function DocumentPanel({
                     style={{
                       fontFamily: 'Soehne, sans-serif',
                       fontSize: '0.875rem',
-                      color: 'white'
+                      color: '#44403C'
                     }}
                   >
                     Pro tip
@@ -288,7 +345,7 @@ export default function DocumentPanel({
                       fontFamily: 'Soehne, sans-serif',
                       fontSize: '0.875rem',
                       fontWeight: '400',
-                      color: 'rgba(255,255,255,0.9)',
+                      color: '#57534E',
                       lineHeight: '1.5'
                     }}
                   >
